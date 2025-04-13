@@ -23,6 +23,9 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->foreignId('group_task_id')->constrained('group_tasks')->onDelete('cascade')->nullable();
             $table->timestamps();
+            // Add indexes for better performance
+            $table->index(['user_id', 'group_task_id']);
+            $table->index('user_id');
         });
     }
 

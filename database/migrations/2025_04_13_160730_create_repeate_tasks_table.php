@@ -17,6 +17,8 @@ return new class extends Migration
             $table->unsignedSmallInteger('repeat_type')->default(0)->comment('0: none, 1: daily, 2: weekly, 3: monthly, 4: yearly');
             $table->dateTime('repeat_date')->nullable();
             $table->timestamps();
+
+            $table->index('task_id');
         });
     }
 

@@ -18,6 +18,8 @@ return new class extends Migration
             $table->datetime('logout_time')->nullable();
             $table->string('ip_address')->nullable();
             $table->timestamps();
+
+            $table->index('user_id');
         });
     }
 
