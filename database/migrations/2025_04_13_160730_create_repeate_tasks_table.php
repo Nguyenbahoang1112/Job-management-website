@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('repeate_tasks', function (Blueprint $table) {
             $table->id();
             $table->foreignId('task_id')->constrained()->onDelete('cascade');
-            $table->unsignedSmallInteger('repeat_type')->default(0)->comment('0: none, 1: daily, 2: weekly, 3: monthly, 4: yearly');
+            $table->unsignedSmallInteger('repeat_type')->default(0);
             $table->dateTime('repeat_date')->nullable();
             $table->timestamps();
 

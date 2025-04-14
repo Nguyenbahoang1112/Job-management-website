@@ -11,14 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('tags', function (Blueprint $table) {
+        Schema::create('search_histories', function (Blueprint $table) {
             $table->id();
-            $table->string('name')->unique();
-            $table->unsignedSmallInteger('is_admin_created')->default(0);
+            $table->text('search_query');
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->timestamps();
-
-            $table->index('user_id');
         });
     }
 
@@ -27,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('tags');
+        Schema::dropIfExists('search_histories');
     }
 };
