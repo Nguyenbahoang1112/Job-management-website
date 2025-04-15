@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('task_id')->constrained()->onDelete('cascade');
             $table->unsignedSmallInteger('repeat_type')->default(0);
+            $table->integer('repeat_interval')->default(0);
             $table->dateTime('repeat_date')->nullable();
             $table->timestamps();
 
