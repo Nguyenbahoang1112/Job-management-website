@@ -1,15 +1,14 @@
 <?php
 
 use App\Http\Controllers\Auth\Login;
+use App\Http\Controllers\Auth\LoginController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-
 Route::prefix('/auth')->group(function () {
-    Route::post('/login', [Login::class, 'login'])->name('login');
-    Route::post('/register', [Login::class, 'register'])->name('register');
-    Route::post('/logout', [Login::class, 'logout'])->name('logout')->middleware('auth:sanctum');
+    Route::post('/login', [LoginController::class, 'login'])->name('login');
+    Route::post('/register', [LoginController::class, 'register'])->name('register');
+    Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+    Route::get('/user', [LoginController::class, 'getProfile'])->name('user');
+    Route::post('/check-email', [LoginController::class, 'checkEmailExist'])->name('check-email');
 });
-
-Route::get('/user', [Login::class, 'getProfile'])->middleware('auth:sanctum');
-Route::post('/check-email', [Login::class, 'checkEmailExist'])->name('check-email');
