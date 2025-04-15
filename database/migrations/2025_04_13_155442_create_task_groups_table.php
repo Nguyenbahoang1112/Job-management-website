@@ -11,9 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('group_tasks', function (Blueprint $table) {
+        Schema::create('task_groups', function (Blueprint $table) {
             $table->id();
             $table->string('name');
+            $table->unsignedSmallInteger('is_admin_created')->default(0);
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->timestamps();
         });

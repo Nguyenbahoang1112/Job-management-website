@@ -18,13 +18,15 @@ return new class extends Migration
             $table->text('description')->nullable();
             $table->dateTime('due_date');
             $table->time('time');
-            $table->unsignedSmallInteger('priority')->default(0); //0=low, 1=priority, 2=admin
-            $table->unsignedTinyInteger('status')->default(1); //0 = deleting, 1 = pending, 2 = completed
+            $table->unsignedSmallInteger('priority')->default(0); //0=low, 1=star
+            $table->unsignedSmallInteger('status')->default(1); //0 = deleting, 1 = pending, 2 = completed
+            $table->unsignedSmallInteger('is_admin_created')->default(0); //0 = user created, 1 = admin created
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
-            $table->foreignId('group_task_id')->constrained('group_tasks')->onDelete('cascade')->nullable();
+            $table->foreignId('task_group_id')->constrained('task_groups')->onDelete('cascade')->nullable();
+            $table->foreignId('team_id')->constrained('teams')->onDelete('cascade')->nullable();
             $table->timestamps();
             // Add indexes for better performance
-            $table->index(['user_id', 'group_task_id']);
+            $table->index(['user_id', 'task_group_id']);
             $table->index('user_id');
         });
     }
