@@ -25,7 +25,7 @@ class DatabaseSeeder extends Seeder
         RepeatTaskSeeder::class,
         SearchHistorySeeder::class,
         TagSeeder::class,
-      
+
         TaskTagSeeder::class,
         TeamUserSeeder::class,
 

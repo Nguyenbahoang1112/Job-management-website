@@ -1,9 +1,9 @@
-@extends('layouts.admin')
+@extends('Admin.layouts.app')
 
 @section('content')
     <div class="d-flex justify-content-between align-items-center mb-3">
         <h2>Quản lý người dùng</h2>
-        <a href="{{ route('admin.users.create') }}" class="btn btn-primary">+ Thêm người dùng</a>
+        <a href="#" class="btn btn-primary">+ Thêm người dùng</a>
     </div>
 
     <table class="table table-bordered table-hover align-middle">
@@ -16,29 +16,30 @@
             </tr>
         </thead>
         <tbody>
+            @php
+                $users = [
+                    ['id' => 1, 'email' => 'admin@example.com', 'status' => 'active'],
+                    ['id' => 2, 'email' => 'user1@example.com', 'status' => 'banned'],
+                    ['id' => 3, 'email' => 'user2@example.com', 'status' => 'active'],
+                ];
+            @endphp
+
             @foreach ($users as $key => $user)
                 <tr>
                     <td>{{ $key + 1 }}</td>
-                    <td>{{ $user->email }}</td>
+                    <td>{{ $user['email'] }}</td>
                     <td>
-                        @if ($user->status === 'active')
+                        @if ($user['status'] === 'active')
                             <span class="badge bg-success">Active</span>
                         @else
                             <span class="badge bg-danger">Banned</span>
                         @endif
                     </td>
                     <td>
-                        <a href="{{ route('admin.users.edit', $user->id) }}" class="btn btn-sm btn-warning">Sửa</a>
-
-                        <!-- Ban/Unban -->
-                        <button class="btn btn-sm btn-secondary" data-bs-toggle="modal" data-bs-target="#banUserModal"
-                            data-userid="{{ $user->id }}" data-userstatus="{{ $user->status }}">
-                            {{ $user->status === 'active' ? 'Ban' : 'Unban' }}
-                        </button>
-
+                        <a href="#" class="btn btn-sm btn-warning">Sửa</a>
                         <!-- Delete -->
                         <button class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#deleteUserModal"
-                            data-userid="{{ $user->id }}">
+                            data-userid="{{ $user['id'] }}">
                             Xóa
                         </button>
                     </td>
