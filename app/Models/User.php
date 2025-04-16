@@ -11,7 +11,7 @@ use Laravel\Sanctum\HasApiTokens;
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable;
+    use HasApiTokens ,HasFactory, Notifiable;
 
     /**
      * The attributes that are mass assignable.
@@ -30,7 +30,7 @@ class User extends Authenticatable
         self::ROLE_ADMIN => 'Admin',
         self::ROLE_USER => 'Người dùng'
     ];
-    
+
     public static array $statusLables = [
         self::STATUS_ACTIVE => 'Đang hoạt động',
         self::STATUS_BANNED => 'Bị khóa'

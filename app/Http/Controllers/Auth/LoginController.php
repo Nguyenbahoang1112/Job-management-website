@@ -19,7 +19,7 @@ class LoginController extends Controller
     public function __construct(AuthRepository $authRepository)
     {
         $this->authRepository = $authRepository;
-        $this->middleware('auth:sanctum')->only(['logout', 'getProfile']);
+        // $this->middleware('auth:sanctum')->only(['logout', 'getProfile']);
         // $this->middleware('auth:sanctum')->except(['login', 'register', 'checkEmailExist']);
     }
     public function checkEmailExist(Request $request) {
@@ -43,12 +43,13 @@ class LoginController extends Controller
         if ($this->isEmailExist($loginRequest->email) == false) {
             return ApiResponse::error('Email not exist', 404);
         } else {
-            $email = $loginRequest->email;
+            // dd(Auth::attempt($loginRequest->only('email', 'password')));
             if( !Auth::attempt($loginRequest->only('email', 'password'))) {
                 return ApiResponse::error('Wrong password', 401);
             }
             else {
                 $user = auth('sanctum')->user();
+                // dd($user);
                 $user->tokens()->delete();
                 $token = $user->createToken($loginRequest->email);
                 return ApiResponse::success($token->plainTextToken, 'Login successful', 200);
@@ -71,10 +72,11 @@ class LoginController extends Controller
             return ApiResponse::error('Get profile failed', 400);
         }
     }
-    public function register(Request $registerRequest)
+    public function register(RegisterRequest $registerRequest)
     {
-        dd($registerRequest->all());
+        // dd($registerRequest->all());
         $userCreate = User::create([
+            'name' => $registerRequest->name,
             'email' => $registerRequest->email,
             'password' => Hash::make($registerRequest->password),
         ]);

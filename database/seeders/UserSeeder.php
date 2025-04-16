@@ -14,17 +14,27 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
-        $faker = Faker::create();
+        // $faker = Faker::create();
 
-        for($i = 0 ;$i< 40;$i++){
-            User::create([
-                'name' => $faker->name,
-                'email' => $faker->unique()->safeEmail,
-                'password' => encrypt('123456'),
-                'status'=> $faker->numberBetween(0,1),
-                'role' => 0
-            ]);
-        }
-       
+        // for($i = 0 ;$i< 40;$i++){
+        //     User::create([
+        //         'name' => $faker->name,
+        //         'email' => $faker->unique()->safeEmail,
+        //         'password' => encrypt('Hoang@123'),
+        //         'status'=> $faker->numberBetween(0,1),
+        //         'role' => 0
+        //     ]);
+        // }
+        User::updateOrCreate([
+            'name' => 'Admin',
+            'email' => 'admin@gmail.com',
+            'password' => bcrypt('Admin@123')
+        ]);
+        User::updateOrCreate([
+            'name' => 'User',
+            'email' => 'user@gmail.com',
+            'password' => bcrypt('User@123')
+        ]);
+
     }
 }
