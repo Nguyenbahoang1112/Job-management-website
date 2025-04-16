@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('repeate_tasks', function (Blueprint $table) {
+        Schema::create('repeat_tasks', function (Blueprint $table) {
             $table->id();
             $table->foreignId('task_id')->constrained()->onDelete('cascade');
             $table->unsignedSmallInteger('repeat_type')->default(0);

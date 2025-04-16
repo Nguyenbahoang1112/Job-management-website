@@ -6,5 +6,5 @@ use Illuminate\Database\Eloquent\Model;
 
 class TaskGroup extends Model
 {
-    // public $table = 'task_groups';
+    //
 }
