@@ -38,7 +38,7 @@ class LoginController extends Controller
             return false;
         }
     }
-    public function login(LoginRequest $loginRequest)
+    public function login(Request $loginRequest)
     {
         if ($this->isEmailExist($loginRequest->email) == false) {
             return ApiResponse::error('Email not exist', 404);
@@ -74,9 +74,8 @@ class LoginController extends Controller
     }
     public function register(RegisterRequest $registerRequest)
     {
-        // dd($registerRequest->all());
+        dd($registerRequest->all());
         $userCreate = User::create([
-            'name' => $registerRequest->name,
             'email' => $registerRequest->email,
             'password' => Hash::make($registerRequest->password),
         ]);
