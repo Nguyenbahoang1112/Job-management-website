@@ -21,7 +21,7 @@ class TagSeeder extends Seeder
             Tag::create([
                 'name'=>$faker->name,
                 'is_admin_created'=>$faker->numberBetween(0,1),
-                'user_id' => $faker->$userIds->random()
+                'user_id' => $userIds->random()
             ]);
         }
     }
