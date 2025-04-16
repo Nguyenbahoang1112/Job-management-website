@@ -25,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('group_tasks');
+        Schema::dropIfExists('task_groups');
     }
 };

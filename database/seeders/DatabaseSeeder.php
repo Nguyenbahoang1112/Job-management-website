@@ -28,7 +28,7 @@ class DatabaseSeeder extends Seeder
       
         TaskTagSeeder::class,
         TeamUserSeeder::class,
-        UserLog::class
+
       ]);
 
     }

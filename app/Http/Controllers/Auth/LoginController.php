@@ -38,22 +38,28 @@ class LoginController extends Controller
             return false;
         }
     }
-    public function login(LoginRequest $loginRequest)
+    public function login(Request $loginRequest)
     {
-        if ($this->isEmailExist($loginRequest->email) == false) {
-            return ApiResponse::error('Email not exist', 404);
-        } else {
-            $email = $loginRequest->email;
-            if( !Auth::attempt($loginRequest->only('email', 'password'))) {
-                return ApiResponse::error('Wrong password', 401);
-            }
-            else {
-                $user = auth('sanctum')->user();
-                $user->tokens()->delete();
-                $token = $user->createToken($loginRequest->email);
-                return ApiResponse::success($token->plainTextToken, 'Login successful', 200);
-            }
+        // Kiểm tra email có tồn tại không
+        if (!$this->isEmailExist($loginRequest->email)) {
+            return ApiResponse::error('Email không tồn tại', 404);
         }
+    
+        // Thử xác thực người dùng
+        if (!Auth::attempt($loginRequest->only('email', 'password'))) {
+            return ApiResponse::error('Mật khẩu sai', 401);
+        }
+    
+        // Lấy người dùng đã xác thực
+        $user = auth('sanctum')->user();
+    
+        // Xóa các token cũ (tùy chọn)
+        $user->tokens()->delete();
+    
+        // Tạo token mới
+        $token = $user->createToken($loginRequest->email);
+    
+        return ApiResponse::success($token->plainTextToken, 'Đăng nhập thành công', 200);
     }
     public function logout() {
         $user = auth('sanctum')->user();
@@ -73,8 +79,9 @@ class LoginController extends Controller
     }
     public function register(Request $registerRequest)
     {
-        dd($registerRequest->all());
+    
         $userCreate = User::create([
+            'name' => '123',
             'email' => $registerRequest->email,
             'password' => Hash::make($registerRequest->password),
         ]);

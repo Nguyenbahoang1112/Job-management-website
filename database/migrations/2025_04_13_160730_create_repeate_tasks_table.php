@@ -28,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('repeate_tasks');
+        Schema::dropIfExists('repeat_tasks');
     }
 };
