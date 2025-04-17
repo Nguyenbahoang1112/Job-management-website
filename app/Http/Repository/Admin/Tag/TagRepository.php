@@ -51,4 +51,8 @@ class TagRepository extends BaseRepository implements TagRepositoryInterface
     {
         return $this->model::select($columns)->find($id);
     }
+
+    public function paginate($perPage = 10, $columns = ['*']){
+        return $this->model::paginate($perPage,$columns);
+    }
 }
