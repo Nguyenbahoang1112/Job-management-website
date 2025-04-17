@@ -3,8 +3,8 @@ namespace App\Http\Controllers\Admin;
 
 use App\Helpers\RedirectResponse;
 use App\Http\Controllers\Controller;
-use App\Http\Repository\Admin\TagRepository;
-use App\Http\Requests\Admin\TagRequest;
+use App\Http\Repository\Admin\Tag\TagRepository;
+use App\Http\Requests\Admin\TagRequest\TagRequest;
 use Illuminate\Support\Facades\Auth;
 
 class TagController extends Controller

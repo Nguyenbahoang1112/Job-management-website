@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Http\Repository\Admin\UserRepository;
-use App\Http\Requests\Admin\UserRequest;
+use App\Http\Repository\Admin\User\UserRepository;
+use App\Http\Requests\Admin\UserRequest\UserRequest;
 use App\Helpers\RedirectResponse;
 
 class UserController extends Controller

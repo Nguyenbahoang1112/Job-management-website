@@ -3,8 +3,8 @@ namespace App\Http\Controllers\Admin;
 
 use App\Helpers\RedirectResponse;
 use App\Http\Controllers\Controller;
-use App\Http\Repository\Admin\TaskGroupRepository;
-use App\Http\Requests\TaskGroupRequest;
+use App\Http\Repository\Admin\TaskGroup\TaskGroupRepository;
+use App\Http\Requests\Admin\TaskGroupRequest\TaskGroupRequest;
 use Illuminate\Support\Facades\Auth;
 
 class TaskGroupController extends Controller

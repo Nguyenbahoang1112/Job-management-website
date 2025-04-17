@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Repository\Admin;
+namespace App\Http\Repository\Admin\Tag;
 
 use App\Http\Repository\BaseRepository;
 use App\Models\Tag;

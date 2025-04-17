@@ -1,7 +1,7 @@
 <?php
-namespace App\Http\Repository\Admin;
+namespace App\Http\Repository\Admin\TaskGroup;
 
-use App\Http\Repository\Admin\TaskGroupRepositoryInterface;
+use App\Http\Repository\Admin\TaskGroupsTaskGroupRepositoryInterface;
 use App\Http\Repository\BaseRepository;
 use App\Models\TaskGroup;
 
