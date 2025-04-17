@@ -33,7 +33,7 @@
                 <i class="bi bi-person-circle fs-4 me-2"></i>
                 <span>{{ Auth::user()->name ?? 'Admin' }}</span>
             </a>
-            {{-- <ul class="dropdown-menu dropdown-menu-end shadow-lg p-3 rounded-3" aria-labelledby="userDropdown">
+            <ul class="dropdown-menu dropdown-menu-end shadow-lg rounded-3" aria-labelledby="userDropdown">
                 <li>
                     <a class="dropdown-item" href="">
                         <i class="bi bi-gear me-2"></i>Profile
@@ -50,7 +50,7 @@
                         </button>
                     </form>
                 </li>
-            </ul> --}}
+            </ul>
         </div>
     </div>
 </nav>
@@ -67,6 +67,8 @@
     .dropdown-menu {
         display: none;
         opacity: 0;
+        position: absolute;
+        right: 0;
         transform: translateY(-10px);
         /* Tạo hiệu ứng trượt xuống */
         transition: all 0.3s ease-out;
