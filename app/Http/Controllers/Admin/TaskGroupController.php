@@ -1,82 +1,81 @@
 <?php
-
 namespace App\Http\Controllers\Admin;
 
-use App\Helpers\ApiResponse;
+use App\Helpers\RedirectResponse;
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-
-use App\Http\Resources\User\TaskGroup\TaskGroupResource;
-use App\Http\Repository\Admin\TaskGroupRepository;
+use App\Http\Repository\Admin\TaskGroup\TaskGroupRepository;
+use App\Http\Requests\Admin\TaskGroupRequest\TaskGroupRequest;
 use Illuminate\Support\Facades\Auth;
-use Mockery\Expectation;
 
 class TaskGroupController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     protected $taskGroupRepository;
-    public function __construct(TaskGroupRepository $taskGroupRepository){
+
+    public function __construct(TaskGroupRepository $taskGroupRepository)
+    {
         $this->taskGroupRepository = $taskGroupRepository;
         $this->middleware('admin');
     }
+
     public function index()
     {
-        try{
-            $taskGroups = $this->taskGroupRepository->getAll();
-            return ApiResponse::success($taskGroups,'Get all task groups successfully',200);
-        }
-        catch(\Exception $e){
-            return ApiResponse::error('Error',500);
-        }
+        $taskGroups = $this->taskGroupRepository->getAll();
+        return view('task_groups.list', compact('taskGroups'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
-        //
+        return view('task_groups.create');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
+    public function store(TaskGroupRequest $request)
     {
-        //
+        try {
+            $this->taskGroupRepository->create([
+                'name' => $request->name,
+                'user_id' => Auth::id(), 
+            ]);
+
+            return RedirectResponse::success('task-groups.index', 'Tạo nhóm công việc thành công!');
+        } catch (\Exception $e) {
+            return RedirectResponse::error('task-groups.create', 'Tạo nhóm công việc thất bại: ' . $e->getMessage());
+        }
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(string $id)
     {
-        //
+        try {
+            $taskGroup = $this->taskGroupRepository->find($id);
+            if (!$taskGroup) {
+                return RedirectResponse::warning('task-groups.index', 'Nhóm công việc không tồn tại.');
+            }
+
+            return view('task_groups.edit', compact('taskGroup'));
+        } catch (\Exception $e) {
+            return RedirectResponse::error('task-groups.index', 'Có lỗi xảy ra: ' . $e->getMessage());
+        }
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
+    public function update(TaskGroupRequest $request, string $id)
     {
-        //
+        try {
+            $this->taskGroupRepository->update([
+                'name' => $request->name,
+            ], $id);
+
+            return RedirectResponse::success('task-groups.index', 'Cập nhật nhóm công việc thành công!');
+        } catch (\Exception $e) {
+            return RedirectResponse::error('task-groups.edit', 'Cập nhật thất bại: ' . $e->getMessage(), ['id' => $id]);
+        }
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(string $id)
     {
-        //
+        try {
+            $this->taskGroupRepository->delete($id);
+            return RedirectResponse::success('task-groups.index', 'Xóa nhóm công việc thành công!');
+        } catch (\Exception $e) {
+            return RedirectResponse::error('task-groups.index', 'Xóa thất bại: ' . $e->getMessage());
+        }
     }
 }

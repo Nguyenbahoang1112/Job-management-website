@@ -77,6 +77,15 @@ class User extends Authenticatable
         return self::$statusLables[$this->status];
     }
 
+
+    public function isAdmin(): bool{
+        return $this->role === self::ROLE_ADMIN;
+    }
+
+    public function isUser(): bool{
+        return $this->role === self::ROLE_USER;
+    }
+
     public function notes(){
         return $this->hasMany(Note::class);
     }
