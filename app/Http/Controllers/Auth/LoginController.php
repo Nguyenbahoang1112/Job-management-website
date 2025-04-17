@@ -32,28 +32,34 @@ class LoginController extends Controller
     }
     public function isEmailExist($email) {
         $user = User::where('email', $email)->first();
-        if ($user) {
+        if ($user && $user->status != 0) {
             return true;
         } else {
             return false;
         }
     }
-    public function login(Request $loginRequest)
+    public function login(Request $request)
     {
-        if ($this->isEmailExist($loginRequest->email) == false) {
+        //check email exist
+        if (! $this->isEmailExist($request->email)) {
             return ApiResponse::error('Email not exist', 404);
-        } else {
-            if( !Auth::attempt($loginRequest->only('email', 'password'))) {
-                return ApiResponse::error('Wrong password', 401);
-            }
-            else {
-                $user = auth('sanctum')->user();
-                $user->tokens()->delete();
-                $token = $user->createToken($loginRequest->email);
-                return ApiResponse::success($token->plainTextToken, 'Login successful', 200);
-            }
         }
+        //check password
+        if (! Auth::attempt($request->only('email', 'password'))) {
+            return ApiResponse::error('Wrong password', 401);
+        }
+
+        $user = auth('sanctum')->user();
+
+        // Xoá token cũ nếu có
+        $user->tokens()->delete();
+
+        // Tạo token mới
+        $token = $user->createToken($request->email);
+
+        return ApiResponse::success($token->plainTextToken, 'Login successful', 200);
     }
+
     public function logout() {
         $user = auth('sanctum')->user();
         $user->tokens()->delete();
@@ -72,7 +78,6 @@ class LoginController extends Controller
     }
     public function register(RegisterRequest $registerRequest)
     {
-        // dd($registerRequest->all());
         $userCreate = User::create([
             'email' => $registerRequest->email,
             'password' => Hash::make($registerRequest->password),

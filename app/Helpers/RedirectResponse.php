@@ -3,16 +3,17 @@ namespace App\Helpers;
 
 class RedirectResponse
 {
-    public static function redirect($route, $data = null, $message = null)
+    const SUCCESS = 'success';
+    const ERROR = 'error';
+    const WARNING = 'warning';
+    public static function redirectWithMessage($route,  $param = null, $status = null, $message = null)
     {
-        if ($data) {
-            return redirect()->route($route)->with('data', $data);
-        }
+        $message = $message ?? $status;
+        return redirect()->route($route, $param)->with($status, $message);
+    }
 
-        if ($message) {
-            return redirect()->route($route)->with('message', $message);
-        }
-
-        return redirect()->route($route);
+    public static function viewWithMessage($view, $data = [], $status = self::SUCCESS, $message = null)
+    {
+        return view($view, $data)->with($status, $message);
     }
 }

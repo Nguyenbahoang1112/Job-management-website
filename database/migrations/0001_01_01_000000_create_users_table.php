@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('password');
             $table->unsignedSmallInteger('status')->default(1);
             $table->unsignedSmallInteger('role')->default(0);
+            $table->string('otp')->nullable();
             $table->rememberToken();
             $table->timestamps();
         });

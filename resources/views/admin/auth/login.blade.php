@@ -14,10 +14,10 @@
         <div class="content">
             <div class="content__login">
                 <p class="heading">LOGIN</p>
-                <form action="" method="POST">
+                <form action="{{ route('admin.auth.login') }}" method="POST">
                     @csrf
-                    <input type="text" placeholder="Input your email" required>
-                    <input type="password" placeholder="Input your password" required />
+                    <input type="text" name="email" placeholder="Input your email" required>
+                    <input type="password" name="password" placeholder="Input your password" required />
 
                     <div class="options">
                         <label>
@@ -28,22 +28,23 @@
 
                     <button type="submit">Login</button>
 
-                    {{-- <div class="social-login">
+                    <div class="social-login">
                         <p>Or login with</p>
                         <div class="social-buttons">
                             <button class="google">Google</button>
                             <button class="facebook">Facebook</button>
                         </div>
-                    </div> --}}
+                    </div>
 
                     <p class="register-link">
-                        Don't have an account? <a href="{{ route('admin.register') }}">Register</a>
+                        Don't have an account? <a href="{{ route('admin.auth.register') }}">Register</a>
                     </p>
                 </form>
             </div>
         </div>
         <div class="wrapper">
-            <img class="wrapper__image" src="{{ asset('uploads/banners/loginBanner.jpg') }}" alt="">
+            <img class="wrapper__image" src="{{ asset('admin/upload/image/photo_2025-03-18_15-33-35.jpg') }}"
+                alt="">
         </div>
     </div>
 </body>

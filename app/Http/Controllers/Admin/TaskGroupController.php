@@ -19,6 +19,7 @@ class TaskGroupController extends Controller
     protected $taskGroupRepository;
     public function __construct(TaskGroupRepository $taskGroupRepository){
         $this->taskGroupRepository = $taskGroupRepository;
+        $this->middleware('admin');
     }
     public function index()
     {

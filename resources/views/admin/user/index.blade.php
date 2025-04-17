@@ -3,45 +3,59 @@
 @section('content')
     <div class="d-flex justify-content-between align-items-center mb-3">
         <h2>Quản lý người dùng</h2>
-        <a href="#" class="btn btn-primary">+ Thêm người dùng</a>
+
+        <!-- Tìm kiếm -->
+        <form action="{{ route('admin.users.index') }}" method="GET" class="d-flex align-items-center"
+            style=" margin-bottom: 0;">
+            <input type="text" name="search" class="form-control form-control-sm" placeholder="Tìm kiếm người dùng"
+                value="{{ request()->get('search') }}" style="max-width: 200px; height: 40px;">
+            <button type="submit" class="btn btn-secondary btn-sm ms-2" style="height: 40px; width: 100px;">Tìm
+                kiếm</button>
+        </form>
+
+        <a href="{{ route('admin.users.create') }}" class="btn btn-primary">+ Thêm người dùng</a>
     </div>
+
+
+
 
     <table class="table table-bordered table-hover align-middle">
         <thead class="table-dark">
             <tr>
-                <th>#</th>
+                <th class="text-center" style="width: 50px;">Index</th>
                 <th>Email</th>
-                <th>Trạng thái</th>
-                <th>Hành động</th>
+                <th class="text-center">Trạng thái</th>
+                <th class="text-center">Hành động</th>
             </tr>
         </thead>
         <tbody>
-            @php
-                $users = [
-                    ['id' => 1, 'email' => 'admin@example.com', 'status' => 'active'],
-                    ['id' => 2, 'email' => 'user1@example.com', 'status' => 'banned'],
-                    ['id' => 3, 'email' => 'user2@example.com', 'status' => 'active'],
-                ];
-            @endphp
-
-            @foreach ($users as $key => $user)
+            @foreach ($users as $user)
                 <tr>
-                    <td>{{ $key + 1 }}</td>
-                    <td>{{ $user['email'] }}</td>
-                    <td>
-                        @if ($user['status'] === 'active')
+                    <td class="text-center">{{ $user->id }}</td>
+                    <td>{{ $user->email }}</td>
+                    <td class="text-center">
+                        @if ($user->status === 1)
                             <span class="badge bg-success">Active</span>
                         @else
-                            <span class="badge bg-danger">Banned</span>
+                            @if ($user->status === 0)
+                                <span class="badge bg-danger">Banned</span>
+                            @endif
                         @endif
                     </td>
-                    <td>
-                        <a href="#" class="btn btn-sm btn-warning">Sửa</a>
+                    <td class="d-flex justify-content-center align-items-center gap-2">
+                        <a href="{{ route('admin.users.show', $user->id) }}" class="btn btn-sm btn-info">
+                            <i class="bi bi-eye"></i> Xem
+                        </a>
+                        <a href="{{ route('admin.users.edit', $user->id) }}" class="btn btn-sm btn-warning">
+                            <i class="bi bi-pencil-square"></i> Sửa
+                        </a>
                         <!-- Delete -->
-                        <button class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#deleteUserModal"
-                            data-userid="{{ $user['id'] }}">
-                            Xóa
-                        </button>
+                        <a href="{{ route('admin.users.destroy', $user->id) }}">
+                            <button class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#deleteUserModal"
+                                data-userid="{{ $user->id }}">
+                                Xóa
+                            </button>
+                        </a>
                     </td>
                 </tr>
             @endforeach
