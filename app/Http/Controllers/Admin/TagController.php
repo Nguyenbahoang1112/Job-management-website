@@ -16,6 +16,7 @@ class TagController extends Controller
     public function __construct(TagRepository $tagRepository)
     {
         $this->tagRepository = $tagRepository;
+        $this->middleware('admin');
     }
 
     public function index()
@@ -35,7 +36,7 @@ class TagController extends Controller
             $this->tagRepository->create([
                 'name' => $request->name,
                 'user_id' => Auth::id(),
-                'is_admin_created' => 1, 
+                'is_admin_created' => 1,
             ]);
 
             return RedirectResponse::redirectWithMessage('admin.tags.index',[],RedirectResponse::SUCCESS, 'Tạo tag thành công!');

@@ -18,10 +18,9 @@ class UserController extends Controller
      */
     protected $userRepository;
     public function __construct(UserRepository $userRepository)
-    {  
-    
+    {
         $this->middleware('admin');
-        
+
         $this->userRepository = $userRepository;
     }
     public function index()
@@ -44,7 +43,7 @@ class UserController extends Controller
     public function store(RegisterRequest $registerRequest)
     {
         $this->userRepository->create($registerRequest->all());
-        return RedirectResponse::redirectWithMessage('admin.users.index', [],RedirectResponse::SUCCESS, 'Thêm người dùng thành công!');
+        return RedirectResponse::redirectWithMessage('admin.users.index', [], RedirectResponse::SUCCESS, 'Thêm người dùng thành công!');
     }
 
     /**

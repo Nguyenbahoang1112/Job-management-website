@@ -13,7 +13,7 @@ class UserRepository extends BaseRepository
     }
     public function getAll($columns = ['*'])
     {
-        return $this->model::where('role', User::ROLE_USER)->get($columns);
+        return $this->model::select($columns)->where('role', User::ROLE_USER)->paginate(10);
     }
     public function find($id, $columns = ['*'])
     {

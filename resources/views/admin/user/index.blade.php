@@ -17,8 +17,6 @@
     </div>
 
 
-
-
     <table class="table table-bordered table-hover align-middle">
         <thead class="table-dark">
             <tr>
@@ -62,7 +60,6 @@
             @endforeach
         </tbody>
     </table>
-
     <!-- Delete Confirmation Modal -->
     <div class="modal fade" id="deleteUserModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog">
