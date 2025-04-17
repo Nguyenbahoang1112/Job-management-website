@@ -71,7 +71,7 @@
 
 <body>
     <div class="main-layout">
-        @include('Admin.layouts.sidebar') {{-- 💡 Đưa sidebar trước --}}
+        @include('Admin.layouts.sidebar')
         <div class="main-content">
             @include('Admin.layouts.navbar')
             <div class="content-area">
