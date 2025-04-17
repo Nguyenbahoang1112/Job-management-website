@@ -9,7 +9,7 @@ abstract class BaseRepository implements RepositoryInterface
 
     public function __construct($model)
     {
-        $this->model = $model;
+        $this->model = $model; 
     }
 
     public function getAll($columns = ['*'])

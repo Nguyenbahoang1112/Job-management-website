@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Admin;
 use App\Helpers\RedirectResponse;
 use App\Http\Controllers\Controller;
 use App\Http\Repository\Admin\Tag\TagRepository;
+use App\Http\Repository\Admin\User\Repository;
+use App\Http\Repository\Admin\User\UserRepository;
 use App\Http\Requests\Admin\TagRequest\TagRequest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
@@ -12,16 +14,18 @@ use Illuminate\Support\Facades\Redis;
 class TagController extends Controller
 {
     protected $tagRepository;
+    protected $userRepository;
 
-    public function __construct(TagRepository $tagRepository)
+    public function __construct(TagRepository $tagRepository, UserRepository $userRepository)
     {
         $this->tagRepository = $tagRepository;
+        $this->userRepository = $userRepository;
         $this->middleware('admin');
     }
 
     public function index()
     {
-        $tags = $this->tagRepository->getAll();
+        $tags = $this->tagRepository->paginate();
         return view('admin.tag.index', compact('tags'));
     }
 
@@ -52,7 +56,8 @@ class TagController extends Controller
             if (!$tag) {
                 return RedirectResponse::redirectWithMessage('admin.tags.index',[],RedirectResponse::WARNING ,'Tag không tồn tại.');
             }
-            return view('admin.tag.update', compact('tag'));
+            $users = $this->userRepository->getAll();
+            return view('admin.tag.update', ['tag' => $tag, 'users' => $users]);
         } catch (\Exception $e) {
             return RedirectResponse::redirectWithMessage('admin.tags.index', [],RedirectResponse::ERROR,'Có lỗi xảy ra: ' . $e->getMessage());
         }
@@ -63,12 +68,23 @@ class TagController extends Controller
         try {
             $this->tagRepository->update([
                 'name' => $request->name,
+                'user_id' => $request->user_id
             ], $id);
+
 
             return RedirectResponse::redirectWithMessage('admin.tags.index',[],RedirectResponse::SUCCESS, 'Cập nhật tag thành công!');
         } catch (\Exception $e) {
             return RedirectResponse::redirectWithMessage('admin.tags.edit',[],RedirectResponse::ERROR, 'Cập nhật tag thất bại: ' . $e->getMessage());
         }
+    }
+
+    public function show(string $id){
+        $tag = $this->tagRepository->find($id);
+
+        if (!$tag) {
+            return RedirectResponse::redirectWithMessage('admin.tags.index', RedirectResponse::ERROR, 'Không tìm thấy thẻ!');
+        }
+        return view('admin.tag.show', ['tag' => $tag])->with(RedirectResponse::SUCCESS, '');
     }
 
     public function destroy(string $id)

@@ -1,51 +1,43 @@
 @extends('admin.layouts.app')
 
-@section('title', 'Chỉnh sửa người dùng')
+@section('title', 'Chỉnh sửa thẻ')
 
 @section('content')
     <div class="container mt-4">
-        <h2 class="mb-4">Chỉnh sửa người dùng</h2>
+        <h2 class="mb-4">Chỉnh sửa thẻ</h2>
 
-        <form action="{{ route('admin.users.update', $user->id) }}" method="POST">
+        <form action="{{ route('admin.tags.update', $tag->id) }}" method="POST">
             @csrf
             @method('PUT')
             {{-- Email --}}
             <div class="mb-3">
-                <label for="email" class="form-label">Email:</label>
-                <input type="email" name="email" class="form-control @error('email') is-invalid @enderror"
-                    value="{{ old('email', $user->email) }}" required>
-                @error('email')
+                <label for="name" class="form-label">Tên:</label>
+                <input type="name" name="name" class="form-control @error('name') is-invalid @enderror"
+                    value="{{ old('name', $tag->name) }}" required>
+                @error('name')
                     <span class="invalid-feedback">{{ $message }}</span>
                 @enderror
             </div>
 
-            {{-- Trạng thái --}}
+         
             <div class="mb-3">
-                <label for="status" class="form-label">Trạng thái:</label>
-                <select name="status" class="form-select @error('status') is-invalid @enderror">
-                    <option value="1" {{ $user->status == 1 ? 'selected' : '' }}>Active</option>
-                    <option value="0" {{ $user->status == 0 ? 'selected' : '' }}>Banned</option>
+                <label for="user_id" class="form-label">Người sở hữu:</label>
+                <select name="user_id" id="user_id" class="form-select @error('user_id') is-invalid @enderror">
+                    <option value="">-- Chọn người dùng --</option>
+                    @foreach($users as $user)
+                        <option value="{{ $user->id }}" {{ $tag->user_id == $user->id ? 'selected' : '' }}>
+                            {{ $user->name }}
+                        </option>
+                    @endforeach
                 </select>
-                @error('status')
+                @error('user_id')
                     <span class="invalid-feedback">{{ $message }}</span>
                 @enderror
             </div>
-            {{-- Password --}}
+            
+        
             <button type="submit" class="btn btn-primary">Cập nhật</button>
-            <a href="{{ route('admin.users.index') }}" class="btn btn-secondary">Quay lại</a>
+            <a href="{{ route('admin.tags.index') }}" class="btn btn-secondary">Quay lại</a>
         </form>
-        <form action="{{ route('admin.users.change-pass', $user->id) }}" method="POST" class="mt-3">
-            @csrf
-            <div class="mb-3">
-                <label for="password" class="form-label">Mật khẩu:</label>
-                <input type="password" name="password" class="form-control @error('password') is-invalid @enderror"
-                    placeholder="Nhập mật khẩu mới">
-                <input type="password" name="password_confirmation" class="form-control mt-2"
-                    placeholder="Nhập lại mật khẩu">
-                @error('password')
-                    <span class="invalid-feedback">{{ $message }}</span>
-                @enderror
-                <button type="submit" class="btn btn-primary">Đổi mật khẩu</button>
-            </div>
         @endsection
-        <!-- Toast Container -->
+  
