@@ -8,7 +8,7 @@ Route::get('/', function () {
 
 use App\Http\Controllers\Admin\TagController;
 use App\Http\Controllers\Admin\TaskGroupController;
-
+use App\Http\Controllers\Admin\UserController;
 Route::get('/task-groups/create',[TaskGroupController::class,'create']);
 Route::get('/task-groups', [TaskGroupController::class, 'index'])->name('task_groups.index');
 Route::post('/task-groups', [TaskGroupController::class, 'store'])->name('task_groups.store');
@@ -23,4 +23,9 @@ Route::prefix('admin')->name('tags.')->middleware(['auth'])->group(function () {
     Route::get('/tags/{id}/edit', [TagController::class, 'edit'])->name('edit');
     Route::put('/tags/{id}', [TagController::class, 'update'])->name('update');
     Route::delete('/tags/{id}', [TagController::class, 'destroy'])->name('destroy');
+});
+
+
+Route::prefix('admin')->name('admin.')->group(function () {
+    Route::resource('users', UserController::class)->except(['create', 'store', 'show']);
 });
