@@ -32,7 +32,7 @@ class User extends Authenticatable
         self::ROLE_USER => 'Người dùng'
     ];
 
-    public static array $statusLables = [
+    public static array $statusLabels = [
         self::STATUS_ACTIVE => 'Đang hoạt động',
         self::STATUS_BANNED => 'Bị khóa'
     ];
@@ -74,7 +74,7 @@ class User extends Authenticatable
     }
 
     public function getStatusLabel(){
-        return self::$statusLables[$this->status];
+        return self::$statusLabels[$this->status];
     }
 
 

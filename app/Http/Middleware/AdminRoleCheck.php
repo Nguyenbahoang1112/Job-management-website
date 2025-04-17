@@ -17,7 +17,7 @@ class AdminRoleCheck
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (auth('sanctum')->check() && auth('sanctum')->user()->role == User::ROLE_ADMIN) {
+        if (auth('sanctum')->check() && auth('sanctum')->user()->role === User::ROLE_ADMIN) {
             return $next($request);
         } else {
             return RedirectResponse::redirectWithMessage('admin.auth.login', RedirectResponse::ERROR, 'Bạn không có quyền truy cập vào trang này!');

@@ -5,7 +5,7 @@
         <h2>Quản lý người dùng</h2>
 
         <!-- Tìm kiếm -->
-        <form action="{{ route('admin.users.index') }}" method="GET" class="d-flex align-items-center"
+        <form action="{{ route('admin.tags.index') }}" method="GET" class="d-flex align-items-center"
             style=" margin-bottom: 0;">
             <input type="text" name="search" class="form-control form-control-sm" placeholder="Tìm kiếm người dùng"
                 value="{{ request()->get('search') }}" style="max-width: 200px; height: 40px;">
@@ -13,7 +13,7 @@
                 kiếm</button>
         </form>
 
-        <a href="{{ route('admin.users.create') }}" class="btn btn-primary">+ Thêm người dùng</a>
+        <a href="{{ route('admin.tags.create') }}" class="btn btn-primary">+ Thêm người dùng</a>
     </div>
 
 
@@ -29,31 +29,24 @@
             </tr>
         </thead>
         <tbody>
-            @foreach ($users as $user)
+            @foreach ($tags as $tag)
                 <tr>
-                    {{-- <td class="text-center">{{ $user->id }}</td> --}}
+                    {{-- <td class="text-center">{{ $tag->id }}</td> --}}
                     <td class="text-center">{{ $loop->iteration }}</td>
-                    <td>{{ $user->email }}</td>
                     <td class="text-center">
-                        @if ($user->status === 1)
-                            <span class="badge bg-success">Active</span>
-                        @else
-                            @if ($user->status === 0)
-                                <span class="badge bg-danger">Banned</span>
-                            @endif
-                        @endif
+                      
                     </td>
                     <td class="d-flex justify-content-center align-items-center gap-2">
-                        <a href="{{ route('admin.users.show', $user->id) }}" class="btn btn-sm btn-info">
+                        <a href="{{ route('admin.tags.show', $tag->id) }}" class="btn btn-sm btn-info">
                             <i class="bi bi-eye"></i> Xem
                         </a>
-                        <a href="{{ route('admin.users.edit', $user->id) }}" class="btn btn-sm btn-warning">
+                        <a href="{{ route('admin.tags.edit', $tag->id) }}" class="btn btn-sm btn-warning">
                             <i class="bi bi-pencil-square"></i> Sửa
                         </a>
                         <!-- Delete -->
-                        <a href="{{ route('admin.users.destroy', $user->id) }}">
-                            <button class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#deleteUserModal"
-                                data-userid="{{ $user->id }}">
+                        <a href="{{ route('admin.tags.destroy', $tag->id) }}">
+                            <button class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#deletetagModal"
+                                data-tagid="{{ $tag->id }}">
                                 Xóa
                             </button>
                         </a>

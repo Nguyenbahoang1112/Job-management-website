@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Repository\Admin\TaskGroup\TaskGroupRepository;
 use App\Http\Requests\Admin\TaskGroupRequest\TaskGroupRequest;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Redirect;
 
 class TaskGroupController extends Controller
 {
@@ -36,9 +37,9 @@ class TaskGroupController extends Controller
                 'user_id' => Auth::id(), 
             ]);
 
-            return RedirectResponse::success('task-groups.index', 'Tạo nhóm công việc thành công!');
+            return RedirectResponse::redirectWithMessage('task-groups.index',[],RedirectResponse::SUCCESS, 'Tạo nhóm công việc thành công!');
         } catch (\Exception $e) {
-            return RedirectResponse::error('task-groups.create', 'Tạo nhóm công việc thất bại: ' . $e->getMessage());
+            return RedirectResponse::redirectWithMessage('task-groups.create',[],RedirectResponse::ERROR, 'Tạo nhóm công việc thất bại: ' . $e->getMessage());
         }
     }
 
@@ -47,12 +48,12 @@ class TaskGroupController extends Controller
         try {
             $taskGroup = $this->taskGroupRepository->find($id);
             if (!$taskGroup) {
-                return RedirectResponse::warning('task-groups.index', 'Nhóm công việc không tồn tại.');
+                return RedirectResponse::redirectWithMessage('task-groups.index', 'Nhóm công việc không tồn tại.');
             }
 
             return view('task_groups.edit', compact('taskGroup'));
         } catch (\Exception $e) {
-            return RedirectResponse::error('task-groups.index', 'Có lỗi xảy ra: ' . $e->getMessage());
+            return RedirectResponse::redirectWithMessage('task-groups.index',[],RedirectResponse::ERROR, 'Có lỗi xảy ra: ' . $e->getMessage());
         }
     }
 
@@ -63,9 +64,9 @@ class TaskGroupController extends Controller
                 'name' => $request->name,
             ], $id);
 
-            return RedirectResponse::success('task-groups.index', 'Cập nhật nhóm công việc thành công!');
+            return RedirectResponse::redirectWithMessage('task-groups.index',[],RedirectResponse::SUCCESS, 'Cập nhật nhóm công việc thành công!');
         } catch (\Exception $e) {
-            return RedirectResponse::error('task-groups.edit', 'Cập nhật thất bại: ' . $e->getMessage(), ['id' => $id]);
+            return RedirectResponse::redirectWithMessage('task-groups.edit',[],RedirectResponse::ERROR, 'Cập nhật thất bại: ' . $e->getMessage());
         }
     }
 
@@ -73,9 +74,9 @@ class TaskGroupController extends Controller
     {
         try {
             $this->taskGroupRepository->delete($id);
-            return RedirectResponse::success('task-groups.index', 'Xóa nhóm công việc thành công!');
+            return RedirectResponse::redirectWithMessage('task-groups.index',[],RedirectResponse::SUCCESS, 'Xóa nhóm công việc thành công!');
         } catch (\Exception $e) {
-            return RedirectResponse::error('task-groups.index', 'Xóa thất bại: ' . $e->getMessage());
+            return RedirectResponse::redirectWithMessage('task-groups.index',[],RedirectResponse::ERROR, 'Xóa thất bại: ' . $e->getMessage());
         }
     }
 }
