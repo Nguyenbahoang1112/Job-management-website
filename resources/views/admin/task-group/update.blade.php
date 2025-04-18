@@ -1,19 +1,19 @@
 @extends('admin.layouts.app')
 
-@section('title', 'Chỉnh sửa thẻ')
+@section('title', 'Chỉnh sửa nhóm công việc')
 
 @section('content')
     <div class="container mt-4">
-        <h2 class="mb-4">Chỉnh sửa thẻ</h2>
+        <h2 class="mb-4">Chỉnh sửa nhóm công việc</h2>
 
-        <form action="{{ route('admin.tags.update', $tag->id) }}" method="POST">
+        <form action="{{ route('admin.task-groups.update', $taskGroup->id) }}" method="POST">
             @csrf
             @method('PUT')
             {{-- Email --}}
             <div class="mb-3">
                 <label for="name" class="form-label">Tên:</label>
                 <input type="name" name="name" class="form-control @error('name') is-invalid @enderror"
-                    value="{{ old('name', $tag->name) }}" required>
+                    value="{{ old('name', $taskGroup->name) }}" required>
                 @error('name')
                     <span class="invalid-feedback">{{ $message }}</span>
                 @enderror
@@ -24,7 +24,7 @@
                 <label for="user_id" class="form-label">Người sở hữu:</label>
                 <select name="user_id" class="form-select select2">
                     @foreach ($users as $user)
-                        <option value="{{ $user->id }}" {{ old('user_id', $tag->user_id ?? '') == $user->id ? 'selected' : '' }}>
+                        <option value="{{ $user->id }}" {{ old('user_id', $taskGroup->user_id ?? '') == $user->id ? 'selected' : '' }}>
                             {{ $user->email }}
                         </option>
                     @endforeach
@@ -36,7 +36,7 @@
             
         
             <button type="submit" class="btn btn-primary">Cập nhật</button>
-            <a href="{{ route('admin.tags.index') }}" class="btn btn-secondary">Quay lại</a>
+            <a href="{{ route('admin.task-groups.index') }}" class="btn btn-secondary">Quay lại</a>
         </form>
 
 

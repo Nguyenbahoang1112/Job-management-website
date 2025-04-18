@@ -6,7 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Http\Repository\Admin\Tag\TagRepository;
 use App\Http\Repository\Admin\User\Repository;
 use App\Http\Repository\Admin\User\UserRepository;
-use App\Http\Requests\Admin\TagRequest\TagRequest;
+use App\Http\Requests\Admin\TagRequest\TagStoreRequest;
+use App\Http\Requests\Admin\TagRequest\TagUpdateRequest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Redis;
@@ -33,7 +34,7 @@ class TagController extends Controller
         return view('admin.tag.create');
     }
 
-    public function store(TagRequest $request)
+    public function store(TagStoreRequest $request)
     {
         try {
             $this->tagRepository->create([
@@ -41,7 +42,7 @@ class TagController extends Controller
                 'user_id' => Auth::id(),
                 'is_admin_created' => 1, 
             ]);
-
+        
             return RedirectResponse::redirectWithMessage('admin.tags.index',[],RedirectResponse::SUCCESS, 'Tạo tag thành công!');
         } catch (\Exception $e) {
             return RedirectResponse::redirectWithMessage('admin.tags.create',[],RedirectResponse::ERROR, 'Tạo tag thất bại: ' . $e->getMessage());
@@ -62,7 +63,7 @@ class TagController extends Controller
         }
     }
 
-    public function update(TagRequest $request, string $id)
+    public function update(TagUpdateRequest $request, string $id)
     {
         try {
             $this->tagRepository->update([

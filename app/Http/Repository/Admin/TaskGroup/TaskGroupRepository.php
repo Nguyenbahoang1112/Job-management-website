@@ -45,4 +45,7 @@ class TaskGroupRepository extends BaseRepository implements TaskGroupRepositoryI
     public function find($id, $columns = ['*']){
         return $this->model::select($columns)->find($id);
     }
+    public function paginate($perPage = 10, $columns = ['*']){
+        return $this->model::orderBy('updated_at','desc')->paginate($perPage,$columns);
+    }
 }
