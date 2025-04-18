@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests\Admin\TaskGroupRequest;
+namespace App\Http\Requests\Admin\TeamRequest;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class TaskGroupStoreRequest extends FormRequest
+class TeamUpdateRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,16 +22,16 @@ class TaskGroupStoreRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|string|max:255|unique:task_groups,name',
+            'name' => 'required|string|max:255|unique:teams,name',
         ];
     }
 
     public function messages(){
         return [
-            'name.required' => 'Tên nhóm công việc là bắt buộc.',
-            'name.string' => 'Tên nhóm công việc phải là chuỗi.',
-            'name.max' => 'Tên nhóm công việc không được vượt quá 255 ký tự.',
-            'name.unique' => 'Tên nhóm công việc đã tồn tại.',
+            'name.required' => 'Tên đội nhóm là bắt buộc.',
+            'name.string' => 'Tên đội nhóm phải là chuỗi.',
+            'name.max' => 'Tên đội nhóm không được vượt quá 255 ký tự.',
+            'name.unique' => 'Tên đội nhóm đã tồn tại.',
         ];
     }
 }

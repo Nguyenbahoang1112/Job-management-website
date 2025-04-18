@@ -21,14 +21,24 @@ class TaskGroupUpdateRequest extends FormRequest
      */
     public function rules(): array
     {
-        $taskGroupId = $this->route('tag_group');
+        $taskGroupId = $this->route('task_group');
         return [
             'name' => [
                 'required',
                 'string',
                 'max:255',
-                Rule::unique('tags', 'name')->ignore($taskGroupId),
+                Rule::unique('task_groups', 'name')->ignore($taskGroupId),
             ],
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'name.required' => 'Tên nhóm công việc là bắt buộc.',
+            'name.string' => 'Tên nhóm công việc phải là chuỗi.',
+            'name.max' => 'Tên nhóm công việc không được vượt quá 255 ký tự.',
+            'name.unique' => 'Tên nhóm công việc đã tồn tại.',
         ];
     }
 }

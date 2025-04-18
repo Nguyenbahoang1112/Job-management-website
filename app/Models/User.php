@@ -98,9 +98,11 @@ class User extends Authenticatable
         return $this->hasMany(Provider::class);
     }
 
-    public function teams(){
-        return $this->belongsToMany(Team::class);
+    public function teams()
+    {
+        return $this->belongsToMany(Team::class, 'team_users', 'user_id', 'team_id');
     }
+
 
     public function userLogs(){
         return $this->hasMany(UserLog::class);

@@ -28,10 +28,10 @@ class TagStoreRequest extends FormRequest
 
     public function messages(){
         return [
-            'name.required' => 'Tên tag là bắt buộc.',
-            'name.string' => 'Tên tag phải là chuỗi.',
-            'name.max' => 'Tên tag không được vượt quá 255 ký tự.',
-            'name.unique' => 'Tên tag đã tồn tại.',
+            'name.required' => 'Tên thẻ là bắt buộc.',
+            'name.string' => 'Tên thẻ phải là chuỗi.',
+            'name.max' => 'Tên thẻ không được vượt quá 255 ký tự.',
+            'name.unique' => 'Tên thẻ đã tồn tại.',
         ];
     }
 }
