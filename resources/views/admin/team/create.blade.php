@@ -11,8 +11,7 @@
             </div>
         @endif
 
-       
-        <form action="{{ route('admin.tags.store') }}" method="POST">
+        <form action="{{ route('admin.teams.store') }}" method="POST">
             @csrf
             {{-- Email --}}
             <div class="mb-3">

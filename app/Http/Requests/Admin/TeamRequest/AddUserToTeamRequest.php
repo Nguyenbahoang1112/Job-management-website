@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests\Admin\TagRequest;
+namespace App\Http\Requests\Admin\TeamRequest;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class TagRequest extends FormRequest
+class AddUserToTeamRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,17 +22,19 @@ class TagRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|string|max:255|unique:tags,name',
+            'team_id' => 'required|exists:teams,id',
+            'user_ids' => 'required|array',
+            'user_ids.*' => 'exists:users,id',
         ];
     }
 
     public function messages(): array
     {
         return [
-            'name.required' => 'Tên tag là bắt buộc.',
-            'name.string' => 'Tên tag phải là chuỗi.',
-            'name.max' => 'Tên tag không được vượt quá 255 ký tự.',
-            'name.unique' => 'Tên tag đã tồn tại.',
+            'team_id.required' => 'Vui lòng chọn nhóm.',
+            'team_id.exists' => 'Nhóm không hợp lệ.',
+            'user_ids.required' => 'Vui lòng chọn ít nhất một người dùng.',
+            'user_ids.*.exists' => 'Người dùng không tồn tại.',
         ];
     }
 }

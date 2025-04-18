@@ -2,11 +2,10 @@
 
 namespace App\Http\Repository\Team;
 
-use App\Http\Repository\RepositoryInterface;
 use App\Models\Team;
 use App\Http\Repository\BaseRepository;
 
-class TeamRepository extends BaseRepository implements RepositoryInterface{
+class TeamRepository extends BaseRepository{
     public function __construct(Team $team){
         parent::__construct($team);
     }
@@ -15,9 +14,6 @@ class TeamRepository extends BaseRepository implements RepositoryInterface{
         return $this->model::all($columns);
     }
 
-    public function find($id, $columns = ['*']){
-        return $this->model::findOrFail($id,$columns);
-    }
     public function create($attributes = []){
         try{
             return $this->model::create($attributes);

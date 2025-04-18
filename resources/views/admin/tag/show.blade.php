@@ -11,7 +11,7 @@
                 <p><strong>ID:</strong> {{ $tag->id }}</p>
                 <p><strong>Tên:</strong> {{ $tag->name }}</p>
                 <p><strong>Người tạo:</strong>
-                    {{ $tag->user->name }}
+                    {{ $tag->user->email }}
                 </p>
                 <p><strong>Vai trò:</strong>
                     @if ($tag->is_admin_created)

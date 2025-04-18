@@ -4,7 +4,7 @@ namespace App\Http\Requests\Admin\TaskGroupRequest;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class TaskGroupRequest extends FormRequest
+class TaskGroupStoreRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -26,8 +26,7 @@ class TaskGroupRequest extends FormRequest
         ];
     }
 
-    public function messages()
-    {
+    public function messages(){
         return [
             'name.required' => 'Tên nhóm công việc là bắt buộc.',
             'name.string' => 'Tên nhóm công việc phải là chuỗi.',

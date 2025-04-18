@@ -53,6 +53,6 @@ class TagRepository extends BaseRepository
     }
 
     public function paginate($perPage = 10, $columns = ['*']){
-        return $this->model::paginate($perPage,$columns);
+        return $this->model::orderBy('updated_at','desc')->paginate($perPage,$columns);
     }
 }

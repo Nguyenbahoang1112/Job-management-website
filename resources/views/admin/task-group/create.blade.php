@@ -12,7 +12,7 @@
         @endif
 
        
-        <form action="{{ route('admin.tags.store') }}" method="POST">
+        <form action="{{ route('admin.task-groups.store') }}" method="POST">
             @csrf
             {{-- Email --}}
             <div class="mb-3">
@@ -23,7 +23,7 @@
                 @enderror
             </div>
             <button type="submit" class="btn btn-primary">Thêm thẻ</button>
-            <a href="{{ route('admin.tags.index') }}" class="btn btn-secondary">Quay lại</a>
+            <a href="{{ route('admin.task-groups.index') }}" class="btn btn-secondary">Quay lại</a>
         </form>
     </div>
 @endsection
