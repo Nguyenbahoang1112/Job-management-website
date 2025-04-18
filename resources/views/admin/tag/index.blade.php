@@ -36,8 +36,7 @@
                     {{-- <td class="text-center">{{ $tag->id }}</td> --}}
                     <td class="text-center">{{ $loop->iteration }}</td>
                     <td class="text-center">
-
-                      {{ $tag->name }}
+                        {{ $tag->name }}
                     </td>
                     <td class = "text-center">
                         {{ $tag->user->name }}
@@ -64,27 +63,33 @@
                         <!-- Delete -->
 
 
-                        <button class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal{{ $tag->id }}">
+                        <button class="btn btn-sm btn-danger" data-bs-toggle="modal"
+                            data-bs-target="#deleteModal{{ $tag->id }}">
                             <i class="bi bi-trash"></i> Xóa
                         </button>
 
-                        <div class="modal fade" id="deleteModal{{ $tag->id }}" tabindex="-1" aria-labelledby="exampleModalLabel{{ $tag->id }}" aria-hidden="true">
+                        <div class="modal fade" id="deleteModal{{ $tag->id }}" tabindex="-1"
+                            aria-labelledby="exampleModalLabel{{ $tag->id }}" aria-hidden="true">
                             <div class="modal-dialog">
                                 <div class="modal-content">
                                     <div class="modal-header">
                                         <h5 class="modal-title" id="exampleModalLabel{{ $tag->id }}">Cảnh báo</h5>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                            aria-label="Close"></button>
                                     </div>
                                     <div class="modal-body">
                                         Bạn có muốn xóa thẻ <strong>{{ $tag->name }}</strong> không ?
                                     </div>
                                     <div class="modal-footer">
-                                        <form id="deleteForm{{ $tag->id }}" action="{{ route('admin.tags.destroy', $tag->id) }}" method="POST" style="display: inline-block;">
+                                        <form id="deleteForm{{ $tag->id }}"
+                                            action="{{ route('admin.tags.destroy', $tag->id) }}" method="POST"
+                                            style="display: inline-block;">
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit" class="btn btn-danger">Có</button>
                                         </form>
-                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Không</button>
+                                        <button type="button" class="btn btn-secondary"
+                                            data-bs-dismiss="modal">Không</button>
                                     </div>
                                 </div>
                             </div>
@@ -97,8 +102,4 @@
     <div class="d-block card-footer">
         {{ $tags->links('pagination::bootstrap-5') }}
     </div>
-
-
-
-
 @endsection

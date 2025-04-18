@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Repository\Admin\Tag;
+namespace App\Http\Repository\Tag;
 
 use App\Http\Repository\BaseRepository;
 use App\Models\Tag;
 
-class TagRepository extends BaseRepository implements TagRepositoryInterface
+class TagRepository extends BaseRepository
 {
     public function __construct(Tag $tag)
     {

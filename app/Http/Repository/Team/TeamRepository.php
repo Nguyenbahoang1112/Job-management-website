@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Repository\Admin\Team;
+namespace App\Http\Repository\Team;
 
 use App\Http\Repository\RepositoryInterface;
 use App\Models\Team;

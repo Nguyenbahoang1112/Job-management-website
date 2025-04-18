@@ -2,7 +2,7 @@
 
 @section('content')
     <div class="d-flex justify-content-between align-items-center mb-3">
-        <h2>Quản lý người dùng</h2>
+        <h2>Giao nhiệm vụ cho người dùng</h2>
 
         <!-- Tìm kiếm -->
         <form action="{{ route('admin.users.index') }}" method="GET" class="d-flex align-items-center"
@@ -13,7 +13,7 @@
                 kiếm</button>
         </form>
 
-        <a href="{{ route('admin.users.create') }}" class="btn btn-primary">+ Thêm người dùng</a>
+        <a href="{{ route('admin.users.create') }}" class="btn btn-primary">+ Thêm nhiệm vụ</a>
     </div>
 
 
@@ -21,7 +21,7 @@
         <thead class="table-dark">
             <tr>
                 <th class="text-center" style="width: 50px;">STT</th>
-                <th>Email</th>
+                <th>Tên nhiệm vụ</th>
                 <th class="text-center">Trạng thái</th>
                 <th class="text-center">Hành động</th>
             </tr>
@@ -49,37 +49,12 @@
                             <i class="bi bi-pencil-square"></i> Sửa
                         </a>
                         <!-- Delete -->
-                        <button class="btn btn-sm btn-danger" data-bs-toggle="modal"
-                            data-bs-target="#deleteModal{{ $user->id }}">
-                            <i class="bi bi-trash"></i> Xóa
-                        </button>
-
-                        <div class="modal fade" id="deleteModal{{ $user->id }}" tabindex="-1"
-                            aria-labelledby="exampleModalLabel{{ $user->id }}" aria-hidden="true">
-                            <div class="modal-dialog">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <h5 class="modal-title" id="exampleModalLabel{{ $user->id }}">Cảnh báo</h5>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                            aria-label="Close"></button>
-                                    </div>
-                                    <div class="modal-body">
-                                        Bạn có muốn xóa thẻ <strong>{{ $user->email }}</strong> không ?
-                                    </div>
-                                    <div class="modal-footer">
-                                        <form id="deleteForm{{ $user->id }}"
-                                            action="{{ route('admin.users.destroy', $user->id) }}" method="POST"
-                                            style="display: inline-block;">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="btn btn-danger">Có</button>
-                                        </form>
-                                        <button type="button" class="btn btn-secondary"
-                                            data-bs-dismiss="modal">Không</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                        <a href="{{ route('admin.users.destroy', $user->id) }}">
+                            <button class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#deleteUserModal"
+                                data-userid="{{ $user->id }}">
+                                Xóa
+                            </button>
+                        </a>
                     </td>
                 </tr>
             @endforeach

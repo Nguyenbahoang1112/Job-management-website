@@ -1,12 +1,11 @@
 <?php
-namespace App\Http\Repository\Admin\TaskGroup;
+namespace App\Http\Repository\TaskGroup;
 
-use App\Http\Repository\Admin\TaskGroupsTaskGroupRepositoryInterface;
 use App\Http\Repository\BaseRepository;
 use App\Models\TaskGroup;
 
-class TaskGroupRepository extends BaseRepository implements TaskGroupRepositoryInterface{
-    
+class TaskGroupRepository extends BaseRepository{
+
     public function __construct(TaskGroup $taskGroup){
         parent::__construct($taskGroup);
     }

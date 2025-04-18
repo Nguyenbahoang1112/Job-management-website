@@ -15,12 +15,12 @@
                 </p>
                 <p><strong>Vai trò:</strong>
                     @if ($tag->is_admin_created)
-                    <span class="badge bg-danger">Admin</span>
+                        <span class="badge bg-danger">Admin</span>
                     @else
                         <span class="badge bg-primary">User</span>
                     @endif
                 </p>
-                
+
                 <p><strong>Ngày tạo:</strong> {{ $tag->created_at->format('d/m/Y H:i') }}</p>
                 <p><strong>Cập nhật gần nhất:</strong> {{ $tag->updated_at->format('d/m/Y H:i') }}</p>
             </div>

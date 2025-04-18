@@ -20,8 +20,16 @@ Route::prefix('/admin')->name('admin.')->group(function () {
 
     //manage users
     Route::prefix('/users')->name('users.')->group(function () {
-        Route::resource('/', UserController::class);
         Route::post('/change-pass/{id}', [UserController::class, 'changePass'])->name('change-pass');
+        Route::get('/search/email', [UserController::class, 'search'])->name('search');
+
+        Route::get('/', [UserController::class, 'index'])->name('index');
+        Route::get('/create', [UserController::class, 'create'])->name('create');
+        Route::post('/', [UserController::class, 'store'])->name('store');
+        Route::get('/{id}', [UserController::class, 'show'])->name('show');
+        Route::get('/{id}/edit', [UserController::class, 'edit'])->name('edit');
+        Route::put('/{id}', [UserController::class, 'update'])->name('update');
+        Route::delete('/{id}', [UserController::class, 'destroy'])->name('destroy');
     });
 
     //dashboard
@@ -48,5 +56,12 @@ Route::prefix('/admin')->name('admin.')->group(function () {
         Route::put('/{id}', [TagController::class, 'update'])->name('update');
         Route::delete('/{id}', [TagController::class, 'destroy'])->name('destroy');
     });
-
+    Route::prefix('/tasks')->name('tasks.')->group(function () {
+        Route::get('/', [TaskGroupController::class, 'index'])->name('index');
+        // Route::get('/create',[TaskGroupController::class,'create']);
+        // Route::post('/', [TaskGroupController::class, 'store'])->name('store');
+        // Route::get('/{id}/edit', [TaskGroupController::class, 'edit'])->name('edit');
+        // Route::put('/{id}', [TaskGroupController::class, 'update'])->name('update');
+        // Route::delete('/{id}', [TaskGroupController::class, 'destroy'])->name('destroy');
+    });
 });

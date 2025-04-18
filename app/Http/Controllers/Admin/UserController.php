@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Helpers\RedirectResponse;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Http\Repository\Admin\User\UserRepository;
+use App\Http\Repository\User\UserRepository;
 use App\Http\Requests\Admin\User\UpdateUserRequest;
 use App\Http\Requests\Auth\RegisterRequest;
 use App\Http\Requests\User\Auth\PasswordUserRequest;
@@ -26,7 +26,7 @@ class UserController extends Controller
     public function index()
     {
         // Get all users
-        $users = $this->userRepository->getAll();
+        $users = $this->userRepository->getAllUser();
         return view('admin.user.index', compact('users'))->with(RedirectResponse::SUCCESS, 'Danh sách người dùng');
     }
     /**
@@ -51,11 +51,13 @@ class UserController extends Controller
      */
     public function show(string $id)
     {
+        // dd($id);
         $user = $this->userRepository->find($id);
+
         if (!$user) {
             return RedirectResponse::redirectWithMessage('admin.users.index', RedirectResponse::ERROR, 'Không tìm thấy người dùng!');
         }
-        return view('admin.user.show', compact('user'))->with(RedirectResponse::SUCCESS, 'Chi tiết người dùng');
+        return view('admin.user.show', compact('user'));
     }
     public function changePass(PasswordUserRequest $passwordUserRequest, string $id)
     {
@@ -103,6 +105,12 @@ class UserController extends Controller
             return RedirectResponse::redirectWithMessage('admin.users.index', RedirectResponse::ERROR, 'Không tìm thấy người dùng!');
         }
         $this->userRepository->delete($id);
-        return RedirectResponse::redirectWithMessage('admin.users.index', $id,RedirectResponse::SUCCESS, 'Xóa người dùng thành công!');
+        return RedirectResponse::redirectWithMessage('admin.users.index', $id, RedirectResponse::SUCCESS, 'Xóa người dùng thành công!');
+    }
+    public function search(Request $request)
+    {
+        $search = $request->input('search');
+        $users = $this->userRepository->searchByEmail($search);
+        return view('admin.user.index', compact('users'));
     }
 }
