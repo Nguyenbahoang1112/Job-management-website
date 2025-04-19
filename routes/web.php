@@ -6,7 +6,8 @@ use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\TaskGroupController;
-
+use App\Http\Controllers\Admin\TeamController;
+use App\Http\Controllers\Admin\UserTaskController;
 
 Route::prefix('/admin')->name('admin.')->group(function () {
     //authentication
@@ -38,9 +39,10 @@ Route::prefix('/admin')->name('admin.')->group(function () {
     });
 
     //manage task groups
-    Route::prefix('/task-groups')->name('task_groups.')->group(function () {
+    Route::prefix('/task-groups')->name('task-groups.')->group(function () {
         Route::get('/', [TaskGroupController::class, 'index'])->name('index');
-        Route::get('/create',[TaskGroupController::class,'create']);
+        Route::get('/create',[TaskGroupController::class,'create'])->name('create');
+        Route::get('/{id}', [TaskGroupController::class, 'show'])->name('show');
         Route::post('/', [TaskGroupController::class, 'store'])->name('store');
         Route::get('/{id}/edit', [TaskGroupController::class, 'edit'])->name('edit');
         Route::put('/{id}', [TaskGroupController::class, 'update'])->name('update');
@@ -52,16 +54,24 @@ Route::prefix('/admin')->name('admin.')->group(function () {
         Route::get('/', [TagController::class, 'index'])->name('index');
         Route::get('/create', [TagController::class, 'create'])->name('create');
         Route::post('/', [TagController::class, 'store'])->name('store');
+        Route::get('/{id}', [TagController::class, 'show'])->name('show');
         Route::get('/{id}/edit', [TagController::class, 'edit'])->name('edit');
         Route::put('/{id}', [TagController::class, 'update'])->name('update');
         Route::delete('/{id}', [TagController::class, 'destroy'])->name('destroy');
     });
     Route::prefix('/tasks')->name('tasks.')->group(function () {
-        Route::get('/', [TaskGroupController::class, 'index'])->name('index');
-        // Route::get('/create',[TaskGroupController::class,'create']);
-        // Route::post('/', [TaskGroupController::class, 'store'])->name('store');
-        // Route::get('/{id}/edit', [TaskGroupController::class, 'edit'])->name('edit');
-        // Route::put('/{id}', [TaskGroupController::class, 'update'])->name('update');
-        // Route::delete('/{id}', [TaskGroupController::class, 'destroy'])->name('destroy');
+        Route::get('/', [UserTaskController::class, 'index'])->name('index');
+
     });
+    Route::prefix('/teams')->name('teams.')->group(function () {
+        Route::get('/', [TeamController::class, 'index'])->name('index');
+        Route::get('/create', [TeamController::class, 'create'])->name('create');
+        Route::post('/', [TeamController::class, 'store'])->name('store');
+        Route::get('/{id}', [TeamController::class, 'show'])->name('show');
+        Route::get('/{id}/edit', [TeamController::class, 'edit'])->name('edit');
+        Route::put('/{id}', [TeamController::class, 'update'])->name('update');
+        Route::delete('/{id}', [TeamController::class, 'destroy'])->name('destroy');
+    });
+    Route::get('/add-users-to-team', [TeamController::class, 'showAddUsersForm'])->name('teams.showAddUsersForm');
+    Route::post('/add-users-to-team', [TeamController::class, 'addUsersToTeam'])->name('teams.addUsersToTeam');
 });

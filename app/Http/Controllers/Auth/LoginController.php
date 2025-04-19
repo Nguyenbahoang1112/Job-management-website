@@ -11,16 +11,15 @@ use Illuminate\Support\Facades\Hash;
 use App\Http\Requests\Auth\LoginRequest;
 use App\Http\Resources\User\UserResource;
 use App\Http\Requests\Auth\RegisterRequest;
-use App\Http\Repository\Auth\AuthRepository;
+use App\Http\Repository\User\UserRepository;
 
 class LoginController extends Controller
 {
-    protected $authRepository;
-    public function __construct(AuthRepository $authRepository)
+    protected $userRepository;
+    public function __construct(UserRepository $userRepository)
     {
-        $this->authRepository = $authRepository;
+        $this->userRepository = $userRepository;
         $this->middleware('auth:sanctum')->only(['logout', 'getProfile']);
-        // $this->middleware('auth:sanctum')->except(['login', 'register', 'checkEmailExist']);
     }
     public function checkEmailExist(Request $request) {
         $email = $request->email;

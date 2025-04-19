@@ -103,7 +103,6 @@ class User extends Authenticatable
         return $this->belongsToMany(Team::class, 'team_users', 'user_id', 'team_id');
     }
 
-
     public function userLogs(){
         return $this->hasMany(UserLog::class);
     }

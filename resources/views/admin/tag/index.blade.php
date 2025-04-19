@@ -31,7 +31,6 @@
         <tbody>
             @foreach ($tags as $tag)
                 <tr>
-                    {{-- <td class="text-center">{{ $tag->id }}</td> --}}
                     <td class="text-center">{{ $loop->iteration }}</td>
                     <td class="text-center">
                         {{ $tag->name }}

@@ -11,7 +11,7 @@
             </div>
         @endif
 
-       
+
         <form action="{{ route('admin.task-groups.store') }}" method="POST">
             @csrf
             {{-- Email --}}
@@ -27,4 +27,3 @@
         </form>
     </div>
 @endsection
-

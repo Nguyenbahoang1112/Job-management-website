@@ -5,8 +5,7 @@
         <h2>Giao nhiệm vụ cho người dùng</h2>
 
         <!-- Tìm kiếm -->
-        <form action="{{ route('admin.users.index') }}" method="GET" class="d-flex align-items-center"
-            style=" margin-bottom: 0;">
+        <form action="" method="GET" class="d-flex align-items-center" style=" margin-bottom: 0;">
             <input type="text" name="search" class="form-control form-control-sm" placeholder="Tìm kiếm người dùng"
                 value="{{ request()->get('search') }}" style="max-width: 200px; height: 40px;">
             <button type="submit" class="btn btn-secondary btn-sm ms-2" style="height: 40px; width: 100px;">Tìm
@@ -22,36 +21,45 @@
             <tr>
                 <th class="text-center" style="width: 50px;">STT</th>
                 <th>Tên nhiệm vụ</th>
+                <th>Thuộc về người dùng</th>
                 <th class="text-center">Trạng thái</th>
                 <th class="text-center">Hành động</th>
             </tr>
         </thead>
         <tbody>
-            @foreach ($users as $user)
+            @foreach ($tasks as $task)
                 <tr>
-                    {{-- <td class="text-center">{{ $user->id }}</td> --}}
-                    <td class="text-center">{{ $loop->iteration }}</td>
-                    <td>{{ $user->email }}</td>
                     <td class="text-center">
-                        @if ($user->status === 1)
-                            <span class="badge bg-success">Active</span>
-                        @else
-                            @if ($user->status === 0)
-                                <span class="badge bg-danger">Banned</span>
-                            @endif
-                        @endif
+                        {{ ($tasks->currentPage() - 1) * $tasks->perPage() + $loop->iteration }}
+                    </td>
+                    <td>{{ $task->title }}</td>
+                    <td>{{ $task->user->email }}</td>
+                    <td class="text-center">
+                        @switch($task->status)
+                            @case(0)
+                                <span class="badge bg-info">In process</span>
+                            @break
+
+                            @case(1)
+                                <span class="badge bg-success">Done</span>
+                            @break
+
+                            @case(2)
+                                <span class="badge bg-danger">Deleting</span>
+                            @break
+                        @endswitch
                     </td>
                     <td class="d-flex justify-content-center align-items-center gap-2">
-                        <a href="{{ route('admin.users.show', $user->id) }}" class="btn btn-sm btn-info">
+                        <a href="" class="btn btn-sm btn-info">
                             <i class="bi bi-eye"></i> Xem
                         </a>
-                        <a href="{{ route('admin.users.edit', $user->id) }}" class="btn btn-sm btn-warning">
+                        <a href="" class="btn btn-sm btn-warning">
                             <i class="bi bi-pencil-square"></i> Sửa
                         </a>
                         <!-- Delete -->
-                        <a href="{{ route('admin.users.destroy', $user->id) }}">
+                        <a href="">
                             <button class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#deleteUserModal"
-                                data-userid="{{ $user->id }}">
+                                data-userid="{{ $task->id }}">
                                 Xóa
                             </button>
                         </a>
@@ -60,8 +68,11 @@
             @endforeach
         </tbody>
     </table>
+    <div class="d-block card-footer">
+        {{ $tasks->links('pagination::bootstrap-5') }}
+    </div>
     <!-- Delete Confirmation Modal -->
-    <div class="modal fade" id="deleteUserModal" tabindex="-1" aria-hidden="true">
+    {{-- <div class="modal fade" id="deleteUserModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog">
             <form method="POST" id="deleteUserForm">
                 @csrf
@@ -129,5 +140,5 @@
                 'Bạn có chắc muốn ban người dùng này không?' :
                 'Bạn có muốn mở khóa người dùng này không?';
         });
-    </script>
+    </script> --}}
 @endsection

@@ -11,7 +11,7 @@ class TeamRepository extends BaseRepository{
     }
 
     public function getAll($columns = ['*']){
-        return $this->model::all($columns);
+        return $this->model::paginate(12);
     }
 
     public function create($attributes = []){

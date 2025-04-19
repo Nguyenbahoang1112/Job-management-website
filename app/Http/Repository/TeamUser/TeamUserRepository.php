@@ -14,13 +14,13 @@ class TeamUserRepository extends BaseRepository{
     public function getAll($columns = ['*']){
         return $this->model::all();
     }
-    
+
     public function create($attributes = []){
         try{
             return $this->model::create([
                 $attributes
             ]);
-        }  
+        }
         catch(\Exception $e){
             throw new \Exception('Không thể thêm người dùng vào nhóm'.$e->getMessage());
         }

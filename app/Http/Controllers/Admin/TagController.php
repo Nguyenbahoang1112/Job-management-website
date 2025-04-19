@@ -3,9 +3,8 @@ namespace App\Http\Controllers\Admin;
 
 use App\Helpers\RedirectResponse;
 use App\Http\Controllers\Controller;
-use App\Http\Repository\Admin\Tag\TagRepository;
-use App\Http\Repository\Admin\User\Repository;
-use App\Http\Repository\Admin\User\UserRepository;
+use App\Http\Repository\Tag\TagRepository;
+use App\Http\Repository\User\UserRepository;
 use App\Http\Requests\Admin\TagRequest\TagStoreRequest;
 use App\Http\Requests\Admin\TagRequest\TagUpdateRequest;
 use Illuminate\Support\Facades\Auth;
@@ -43,7 +42,7 @@ class TagController extends Controller
                 'user_id' => Auth::id(),
                 'is_admin_created' => 1,
             ]);
-        
+
             return RedirectResponse::redirectWithMessage('admin.tags.index',[],RedirectResponse::SUCCESS, 'Tạo tag thành công!');
         } catch (\Exception $e) {
             return RedirectResponse::redirectWithMessage('admin.tags.create',[],RedirectResponse::ERROR, 'Tạo tag thất bại: ' . $e->getMessage());

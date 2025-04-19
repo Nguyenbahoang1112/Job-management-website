@@ -3,8 +3,8 @@ namespace App\Http\Controllers\Admin;
 
 use App\Helpers\RedirectResponse;
 use App\Http\Controllers\Controller;
-use App\Http\Repository\Admin\TaskGroup\TaskGroupRepository;
-use App\Http\Repository\Admin\User\UserRepository;
+use App\Http\Repository\TaskGroup\TaskGroupRepository;
+use App\Http\Repository\User\UserRepository;
 use App\Http\Requests\Admin\TaskGroupRequest\TaskGroupStoreRequest;
 use App\Http\Requests\Admin\TaskGroupRequest\TaskGroupUpdateRequest;
 use Illuminate\Support\Facades\Auth;
@@ -30,7 +30,6 @@ class TaskGroupController extends Controller
 
     public function create()
     {
-
         return view('admin.task-group.create');
     }
 
@@ -39,8 +38,8 @@ class TaskGroupController extends Controller
         try {
             $this->taskGroupRepository->create([
                 'name' => $request->name,
-                'user_id' => Auth::id(), 
-                'is_admin_created' => 1, 
+                'user_id' => Auth::id(),
+                'is_admin_created' => 1,
             ]);
 
             return RedirectResponse::redirectWithMessage('admin.task-groups.index',[],RedirectResponse::SUCCESS, 'Tạo nhóm công việc thành công!');
@@ -79,7 +78,7 @@ class TaskGroupController extends Controller
 
     public function show(string $id){
         $taskGroup = $this->taskGroupRepository->find($id);
-      
+
         if (!$taskGroup) {
             return RedirectResponse::redirectWithMessage('admin.task-group.index', RedirectResponse::ERROR, 'Không tìm thấy nhóm công việc!');
         }

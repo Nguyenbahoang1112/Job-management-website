@@ -4,9 +4,8 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Http\Repository\Admin\Team\TeamRepository;
-use App\Http\Repository\Admin\User\UserRepository;
-use App\Http\Repository\Admin\TeamUser\TeamUserRepository;
+use App\Http\Repository\Team\TeamRepository;
+use App\Http\Repository\User\UserRepository;
 use App\Http\Requests\Admin\TeamRequest\TeamStoreRequest;
 use App\Http\Requests\Admin\TeamRequest\TeamUpdateRequest;
 use App\Helpers\RedirectResponse;
@@ -21,15 +20,16 @@ class TeamController extends Controller
      */
     protected $teamRepository;
     protected $userRepository;
+
     public function __construct(TeamRepository $teamRepository,UserRepository $userRepository){
         $this->teamRepository = $teamRepository;
         $this->userRepository = $userRepository;
     }
-    
+
     public function index()
     {
-        $teams = $this->teamRepository->paginate();
-        return view('admin.team.index',['teams'=>$teams]);
+        $teams = $this->teamRepository->getAll();
+        return view('admin.team.index', ['teams' => $teams]);
     }
 
     /**
@@ -49,10 +49,10 @@ class TeamController extends Controller
             $this->teamRepository->create([
                 'name' => $request->name,
             ]);
-        
-            return RedirectResponse::redirectWithMessage('admin.teams.index',[],RedirectResponse::SUCCESS, 'Tạo đội nhóm thành công!');
+
+            return RedirectResponse::redirectWithMessage('admin.teams.index', [], RedirectResponse::SUCCESS, 'Tạo đội nhóm thành công!');
         } catch (\Exception $e) {
-            return RedirectResponse::redirectWithMessage('admin.teams.create',[],RedirectResponse::ERROR, 'Tạo đội nhóm thất bại: ' . $e->getMessage());
+            return RedirectResponse::redirectWithMessage('admin.teams.create', [], RedirectResponse::ERROR, 'Tạo đội nhóm thất bại: ' . $e->getMessage());
         }
     }
 
@@ -76,7 +76,7 @@ class TeamController extends Controller
         try{
             $team = $this->teamRepository->find($id);
             if(!$team){
-                return RedirectResponse::redirectWithMessage('admin.teams.index',[],RedirectResponse::WARNING,'Đội nhóm không tồn tại!'); 
+                return RedirectResponse::redirectWithMessage('admin.teams.index',[],RedirectResponse::WARNING,'Đội nhóm không tồn tại!');
             }
             return view('admin.team.update',['team' => $team]);
         }
@@ -92,7 +92,7 @@ class TeamController extends Controller
     {
         try{
             $this->teamRepository->update([
-                'name' => $request->name   
+                'name' => $request->name
             ],$id);
             return RedirectResponse::redirectWithMessage('admin.teams.index',[],RedirectResponse::SUCCESS,'Cập nhật thành công');
 

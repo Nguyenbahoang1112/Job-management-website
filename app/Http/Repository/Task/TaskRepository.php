@@ -13,9 +13,13 @@ class TaskRepository extends BaseRepository
         parent::__construct($task);
     }
 
-    public function getAll($columns = ['*'])
+    public function getAllByAdmin($columns = ['*'], $page = [10])
     {
-        return $this->model::select($columns)->where('is_admin_created')->paginate(12);
+        return $this->model
+            ->select($columns)
+            ->with(['user:id,email'])
+            ->where('is_admin_created', 1)
+            ->paginate($page);
     }
 
     public function find($id, $columns = ['*'])
