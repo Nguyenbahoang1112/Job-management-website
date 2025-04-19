@@ -33,7 +33,7 @@
 
 @section('scripts')
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', function() {
             const userSelect = document.getElementById('user_ids');
             const choices = new Choices(userSelect, {
                 removeItemButton: true,

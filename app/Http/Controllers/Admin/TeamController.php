@@ -120,7 +120,7 @@ class TeamController extends Controller
         $teams = $this->teamRepository->getAll();
         $users = $this->teamRepository->getAll();
 
-    return view('admin.team.add_users', compact('teams', 'users'));
+        return view('admin.team.add_users', compact('teams', 'users'));
     }
 
     public function addUsersToTeam(AddUserToTeamRequest $request)

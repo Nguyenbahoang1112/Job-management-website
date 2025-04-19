@@ -71,7 +71,8 @@ Route::prefix('/admin')->name('admin.')->group(function () {
         Route::get('/{id}/edit', [TeamController::class, 'edit'])->name('edit');
         Route::put('/{id}', [TeamController::class, 'update'])->name('update');
         Route::delete('/{id}', [TeamController::class, 'destroy'])->name('destroy');
+        Route::get('teams/add-users-to-team', [TeamController::class, 'showAddUsersForm'])->name('showAddUsersForm');
+        Route::post('teams/add-users-to-team', [TeamController::class, 'addUsersToTeam'])->name('addUsersToTeam');
     });
-    Route::get('/add-users-to-team', [TeamController::class, 'showAddUsersForm'])->name('teams.showAddUsersForm');
-    Route::post('/add-users-to-team', [TeamController::class, 'addUsersToTeam'])->name('teams.addUsersToTeam');
+
 });
