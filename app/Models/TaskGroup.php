@@ -17,15 +17,22 @@ class TaskGroup extends Model
         self::CREATED_BY_USER => 'Được tạo bởi user'
     ];
 
+    public function getCreatedByLabel(){
+        return self::$createdByLabels[$this->is_admin_created];
+    }
 
-
-    protected $fillable = ['name','is_admin_created','user_id'];
+    protected $fillable = [
+        'name',
+        'is_admin_created',
+        'user_id'
+    ];
 
     public function user(){
         return $this->belongsTo(User::class);
     }
 
-    public function getCreatedByLabel(){
-        return self::$createdByLabels[$this->is_admin_created];
+    public function tasks(){
+        return $this->hasMany(Task::class);
     }
+
 }

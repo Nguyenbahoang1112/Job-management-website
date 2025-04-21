@@ -9,12 +9,16 @@ class Tag extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name','is_admin_created','user_id'];
+    protected $fillable = [
+        'name',
+        'is_admin_created',
+        'user_id'
+    ];
 
     public function user(){
         return $this->belongsTo(User::class);
     }
-    
+
     public function tasks(){
         return $this->belongsToMany(Task::class);
     }

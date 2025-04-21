@@ -9,6 +9,9 @@ class TeamUser extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['team_id','user_id'];
+    protected $fillable = [
+        'team_id',
+        'user_id'
+    ];
 
 }
