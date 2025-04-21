@@ -16,10 +16,7 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->datetime('login_time')->default(now());
             $table->datetime('logout_time')->nullable();
-            $table->string('ip_address')->nullable();
             $table->timestamps();
-
-            $table->index('user_id');
         });
     }
 

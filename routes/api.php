@@ -1,9 +1,10 @@
 <?php
 
-use App\Http\Controllers\Auth\Login;
-use App\Http\Controllers\Auth\LoginController;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Auth\Login;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\User\NoteController;
+use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Admin\TaskGroupController;
 
 Route::prefix('/auth')->group(function () {
@@ -14,5 +15,8 @@ Route::prefix('/auth')->group(function () {
     Route::post('/check-email', [LoginController::class, 'checkEmailExist'])->name('check-email');
 });
 
-
-Route::get('/task-groups', [TaskGroupController::class, 'index']);
+Route::prefix('/note')->name('note.')->group(function () {
+    Route::get('/', [NoteController::class, 'index'])->name('index');
+    Route::post('/create', [NoteController::class, 'store'])->name('store');
+    Route::put('/update/{id}', [NoteController::class, 'update'])->name('update');
+});

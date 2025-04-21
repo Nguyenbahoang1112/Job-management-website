@@ -22,7 +22,7 @@ Route::prefix('/admin')->name('admin.')->group(function () {
     //manage users
     Route::prefix('/users')->name('users.')->group(function () {
         Route::post('/change-pass/{id}', [UserController::class, 'changePass'])->name('change-pass');
-        Route::get('/search/email', [UserController::class, 'search'])->name('search');
+        Route::get('/search/email', [UserController::class, 'searchByEmail'])->name('search');
 
         Route::get('/', [UserController::class, 'index'])->name('index');
         Route::get('/create', [UserController::class, 'create'])->name('create');
@@ -61,6 +61,7 @@ Route::prefix('/admin')->name('admin.')->group(function () {
     });
     Route::prefix('/tasks')->name('tasks.')->group(function () {
         Route::get('/', [UserTaskController::class, 'index'])->name('index');
+        Route::get('/create', [UserTaskController::class, 'create'])->name('create');
 
     });
     Route::prefix('/teams')->name('teams.')->group(function () {

@@ -5,7 +5,7 @@
         <h2>Quản lý người dùng</h2>
 
         <!-- Tìm kiếm -->
-        <form action="{{ route('admin.users.index') }}" method="GET" class="d-flex align-items-center"
+        <form action="{{ route('admin.users.search') }}" method="GET" class="d-flex align-items-center"
             style=" margin-bottom: 0;">
             <input type="text" name="search" class="form-control form-control-sm" placeholder="Tìm kiếm người dùng"
                 value="{{ request()->get('search') }}" style="max-width: 200px; height: 40px;">

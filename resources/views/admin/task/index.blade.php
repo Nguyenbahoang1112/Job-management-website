@@ -12,7 +12,7 @@
                 kiếm</button>
         </form>
 
-        <a href="{{ route('admin.users.create') }}" class="btn btn-primary">+ Thêm nhiệm vụ</a>
+        <a href="{{ route('admin.tasks.create') }}" class="btn btn-primary">+ Thêm nhiệm vụ</a>
     </div>
 
 
@@ -20,7 +20,7 @@
         <thead class="table-dark">
             <tr>
                 <th class="text-center" style="width: 50px;">STT</th>
-                <th>Tên nhiệm vụ</th>
+                <th>Tiêu đề công việc</th>
                 <th>Thuộc về người dùng</th>
                 <th class="text-center">Trạng thái</th>
                 <th class="text-center">Hành động</th>
@@ -37,11 +37,11 @@
                     <td class="text-center">
                         @switch($task->status)
                             @case(0)
-                                <span class="badge bg-info">In process</span>
+                                <span class="badge bg-warning">In process</span>
                             @break
 
                             @case(1)
-                                <span class="badge bg-success">Done</span>
+                                <span class="badge bg-info">Done</span>
                             @break
 
                             @case(2)

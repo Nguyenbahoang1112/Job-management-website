@@ -12,10 +12,10 @@ class TagRepository extends BaseRepository
         parent::__construct($tag);
     }
 
-    public function getAll($columns = ['*'])
-    {
-        return $this->model::all($columns);
-    }
+    // public function getAll($columns = ['*'])
+    // {
+    //     return $this->model::all($columns);
+    // }
 
     public function create($attributes = [])
     {

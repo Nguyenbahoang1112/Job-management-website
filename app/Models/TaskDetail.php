@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class RepeatTask extends Model
+class TaskDetail extends Model
 {
-    public $table = 'repeat_tasks';
+    //
 }

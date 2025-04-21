@@ -107,7 +107,7 @@ class UserController extends Controller
         $this->userRepository->delete($id);
         return RedirectResponse::redirectWithMessage('admin.users.index', $id, RedirectResponse::SUCCESS, 'Xóa người dùng thành công!');
     }
-    public function search(Request $request)
+    public function searchByEmail(Request $request)
     {
         $search = $request->input('search');
         $users = $this->userRepository->searchByEmail($search);

@@ -11,15 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('repeat_tasks', function (Blueprint $table) {
+        Schema::create('repeat_rules', function (Blueprint $table) {
             $table->id();
             $table->foreignId('task_id')->constrained()->onDelete('cascade');
-            $table->unsignedSmallInteger('repeat_type')->default(0);
-            $table->integer('repeat_interval')->default(0);
-            $table->dateTime('repeat_date')->nullable();
+            $table->unsignedSmallInteger('repeat_type');
+            $table->unsignedSmallInteger('repeat_interval')->nullable();
+            $table->dateTime('repeat_due_date')->nullable();
+            $table->unsignedSmallInteger('status_repeat_task')->nullable();
+            $table->unsignedSmallInteger('priority_repeat_task')->default(0);
             $table->timestamps();
-
-            $table->index('task_id');
         });
     }
 
@@ -28,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('repeat_tasks');
+        Schema::dropIfExists('repeat_rules');
     }
 };

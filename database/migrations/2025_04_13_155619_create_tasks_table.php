@@ -14,12 +14,6 @@ return new class extends Migration
         // Create the tasks table
         Schema::create('tasks', function (Blueprint $table) {
             $table->id();
-            $table->string('title');
-            $table->text('description')->nullable();
-            $table->dateTime('due_date');
-            $table->time('time');
-            $table->unsignedSmallInteger('priority')->default(0); //0=low, 1=star
-            $table->unsignedSmallInteger('status')->default(1); //0 = deleting, 1 = pending, 2 = completed
             $table->unsignedSmallInteger('is_admin_created')->default(0); //0 = user created, 1 = admin created
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->foreignId('task_group_id')->constrained('task_groups')->onDelete('cascade')->nullable();
@@ -27,7 +21,6 @@ return new class extends Migration
             $table->timestamps();
             // Add indexes for better performance
             $table->index(['user_id', 'task_group_id']);
-            $table->index('user_id');
         });
     }
 

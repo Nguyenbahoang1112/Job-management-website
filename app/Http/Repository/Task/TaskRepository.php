@@ -19,6 +19,7 @@ class TaskRepository extends BaseRepository
             ->select($columns)
             ->with(['user:id,email'])
             ->where('is_admin_created', 1)
+            ->where('status', '!=', 2) // task do admin giao thì admin sẽ xóa hẳn và k có trạng thái deleting
             ->paginate($page);
     }
 

@@ -23,6 +23,7 @@ class ApiResponse
             'status_code' => $statusCode
         ], self::SUCCESS);
     }
+
     public static function error($message, $statusCode = 200): JsonResponse
     {
         return response()->json([

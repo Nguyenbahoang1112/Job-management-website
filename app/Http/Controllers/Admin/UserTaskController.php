@@ -22,5 +22,12 @@ class UserTaskController extends Controller
         $tasks = $this->taskRepository->getAllByAdmin('*', 10);
         return view('admin.task.index', compact('tasks'));
     }
-
+    public function create()
+    {
+        return view('admin.task.create');
+    }
+    public function store(Request $request)
+    {
+        
+    }
 }

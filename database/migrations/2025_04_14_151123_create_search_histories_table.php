@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('search_histories', function (Blueprint $table) {
             $table->id();
-            $table->text('search_query');
+            $table->string('search_query');
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->timestamps();
         });

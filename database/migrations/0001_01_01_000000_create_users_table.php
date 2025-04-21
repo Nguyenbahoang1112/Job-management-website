@@ -16,7 +16,7 @@ return new class extends Migration
             // $table->string('name')->nullable();
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
-            $table->string('password');
+            $table->string('password', 6);
             $table->unsignedSmallInteger('status')->default(1);
             $table->unsignedSmallInteger('role')->default(0);
             $table->string('otp')->nullable();
