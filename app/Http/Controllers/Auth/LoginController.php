@@ -12,7 +12,7 @@ use App\Http\Requests\Auth\LoginRequest;
 use App\Http\Resources\User\UserResource;
 use App\Http\Requests\Auth\RegisterRequest;
 use App\Http\Repository\Auth\AuthRepository;
-
+use Illuminate\Auth\Events\Registered;
 class LoginController extends Controller
 {
     protected $authRepository;
@@ -82,6 +82,8 @@ class LoginController extends Controller
             'email' => $registerRequest->email,
             'password' => Hash::make($registerRequest->password),
         ]);
+          // Gửi mail xác minh
+        event(new Registered($userCreate));
         if ($userCreate) {
             return ApiResponse::success('Register successful', 201);
         } else {

@@ -7,6 +7,23 @@ use App\Http\Controllers\Admin\TaskGroupController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\TeamController;
 
+
+use Illuminate\Support\Facades\Mail;
+
+Route::get('/test-mail', function () {
+    try {
+        Mail::raw('Test gửi mail thành công!', function ($message) {
+            $message->to('your_email@gmail.com')
+                    ->subject('Test mail');
+        });
+
+        return 'Gửi mail ok';
+    } catch (\Exception $e) {
+        return 'Lỗi: ' . $e->getMessage();
+    }
+});
+
+
 Route::prefix('admin/auth')->name('admin.auth.')->group(function () {
     Route::get('/login', [\App\Http\Controllers\Admin\AuthController::class, 'showLoginForm'])->name('showLogin');
     Route::post('/login', [\App\Http\Controllers\Admin\AuthController::class, 'login'])->name('login');
