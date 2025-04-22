@@ -20,23 +20,11 @@ class User extends Authenticatable implements MustVerifyEmail
      * @var list<string>
      */
 
+    const ROLE_ADMIN = 1;
+    const ROLE_USER = 0;
 
-    public const ROLE_ADMIN = 1;
-    public const ROLE_USER = 0;
-
-    public const STATUS_ACTIVE = 1;
-    public const STATUS_BANNED = 0;
-
-    public static array $roleLabels = [
-        self::ROLE_ADMIN => 'Admin',
-        self::ROLE_USER => 'Người dùng'
-    ];
-
-    public static array $statusLabels = [
-        self::STATUS_ACTIVE => 'Đang hoạt động',
-        self::STATUS_BANNED => 'Bị khóa'
-    ];
-
+    const STATUS_ACTIVE = 1;
+    const STATUS_BANNED = 0;
 
     protected $fillable = [
         'name',
@@ -45,7 +33,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'role',
         'email_verified_at',
         'status',
-        'otp'
+    
     ];
 
     /**
@@ -71,22 +59,6 @@ class User extends Authenticatable implements MustVerifyEmail
         ];
     }
 
-    public function getRoleLabel(){
-        return self::$roleLabels[$this->role];
-    }
-
-    public function getStatusLabel(){
-        return self::$statusLabels[$this->status];
-    }
-
-
-    public function isAdmin(): bool{
-        return $this->role === self::ROLE_ADMIN;
-    }
-
-    public function isUser(): bool{
-        return $this->role === self::ROLE_USER;
-    }
 
     public function notes(){
         return $this->hasMany(Note::class);

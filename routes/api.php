@@ -15,21 +15,22 @@ Route::prefix('/auth')->group(function () {
     Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
     Route::get('/user', [LoginController::class, 'getProfile'])->name('user');
     Route::post('/check-email', [LoginController::class, 'checkEmailExist'])->name('check-email');
+    //forgot password
+    Route::post('/send-otp', [ForgotPasswordController::class, 'sendOtp']);
+    Route::post('/reset-password', [ForgotPasswordController::class, 'resetPasswordWithOtp']);
 });
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/email/verify/{id}/{hash}', [VerifyEmailController::class, 'verify'])->name('verification.verify');
     Route::post('/email/resend', [VerifyEmailController::class, 'resend'])->name('verification.send');
 });
+
 Route::prefix('/note')->name('note.')->group(function () {
     Route::get('/', [NoteController::class, 'index'])->name('index');
     Route::post('/create', [NoteController::class, 'store'])->name('store');
     Route::put('/update/{id}', [NoteController::class, 'update'])->name('update');
 });
-Route::prefix('auth')->group(function () {
-    Route::post('/send-otp', [ForgotPasswordController::class, 'sendOtp']);
-    Route::post('/reset-password', [ForgotPasswordController::class, 'resetPasswordWithOtp']);
-});
+
 
 
 
