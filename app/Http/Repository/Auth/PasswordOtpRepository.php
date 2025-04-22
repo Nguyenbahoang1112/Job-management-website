@@ -3,22 +3,23 @@
 namespace App\Http\Repository\Auth;
 
 use App\Models\PasswordOtp;
+use App\Models\User;
 use Carbon\Carbon;
 
 class PasswordOtpRepository
 {
     public function create(string $email, string $otp)
     {
-        return PasswordOtp::create([
-            'email' => $email,
-            'otp' => $otp,
-            'expires_at' => now()->addMinutes(10),
-        ]);
+        $user = User::where('email',$email);
+        $user->otp = $otp;
+        $user->otp_expires_at  = now()->addMinutes(10);
+        $user->update();
+        return $user;
     }
 
     public function verify(string $email, string $otp): bool
     {
-        $record = PasswordOtp::where('email', $email)
+        $record = User::where('email', $email)
             ->where('otp', $otp)
             ->where('expires_at', '>', now())
             ->first();
@@ -28,6 +29,9 @@ class PasswordOtpRepository
 
     public function deleteAllForEmail(string $email)
     {
-        PasswordOtp::where('email', $email)->delete();
+        $user = User::where('email', $email);
+        $user->otp = null;
+        $user->otp_expires_at = null;
+        $user->update();
     }
 }

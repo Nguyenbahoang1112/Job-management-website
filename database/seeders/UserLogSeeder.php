@@ -25,7 +25,6 @@ class UserLogSeeder extends Seeder
                 'user_id'=>$userIds->random(),
                 'login_time'=>$login,
                 'logout_time'=>$logout,
-                'ip_address' => $faker->ipv4
             ]);
         }
     }

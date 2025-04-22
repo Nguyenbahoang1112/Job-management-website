@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 use App\Helpers\RedirectResponse;
 use App\Http\Controllers\Controller;
 use App\Http\Repository\Tag\TagRepository;
+use App\Http\Repository\Admin\User\Repository;
 use App\Http\Repository\User\UserRepository;
 use App\Http\Requests\Admin\TagRequest\TagStoreRequest;
 use App\Http\Requests\Admin\TagRequest\TagUpdateRequest;
@@ -40,9 +41,9 @@ class TagController extends Controller
             $this->tagRepository->create([
                 'name' => $request->name,
                 'user_id' => Auth::id(),
-                'is_admin_created' => 1,
+                'is_admin_created' => 1, 
             ]);
-
+        
             return RedirectResponse::redirectWithMessage('admin.tags.index',[],RedirectResponse::SUCCESS, 'Tạo tag thành công!');
         } catch (\Exception $e) {
             return RedirectResponse::redirectWithMessage('admin.tags.create',[],RedirectResponse::ERROR, 'Tạo tag thất bại: ' . $e->getMessage());
@@ -60,7 +61,7 @@ class TagController extends Controller
             return view('admin.tag.update', ['tag' => $tag, 'users' => $users]);
         } catch (\Exception $e) {
             return RedirectResponse::redirectWithMessage('admin.tags.index', [],RedirectResponse::ERROR,'Có lỗi xảy ra: ' . $e->getMessage());
-        }
+        }   
     }
 
     public function update(TagUpdateRequest $request, string $id)
@@ -70,7 +71,7 @@ class TagController extends Controller
                 'name' => $request->name,
                 'user_id' => $request->user_id
             ], $id);
-
+          
 
             return RedirectResponse::redirectWithMessage('admin.tags.index',[],RedirectResponse::SUCCESS, 'Cập nhật tag thành công!');
         } catch (\Exception $e) {
@@ -80,7 +81,7 @@ class TagController extends Controller
 
     public function show(string $id){
         $tag = $this->tagRepository->find($id);
-
+      
         if (!$tag) {
             return RedirectResponse::redirectWithMessage('admin.tags.index', RedirectResponse::ERROR, 'Không tìm thấy thẻ!');
         }

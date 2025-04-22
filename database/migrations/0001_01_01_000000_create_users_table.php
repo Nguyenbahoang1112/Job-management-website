@@ -16,10 +16,11 @@ return new class extends Migration
             // $table->string('name')->nullable();
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
-            $table->string('password', 6);
+            $table->string('password');
             $table->unsignedSmallInteger('status')->default(1);
             $table->unsignedSmallInteger('role')->default(0);
-            $table->string('otp')->nullable();
+            $table->string('otp',6)->nullable();
+            $table->timestamp('otp_expires_at')->nullable();
             $table->rememberToken();
             $table->timestamps();
         });
