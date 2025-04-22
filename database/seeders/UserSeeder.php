@@ -17,6 +17,13 @@ class UserSeeder extends Seeder
     {
         $faker = Faker::create();
 
+        User::create([
+            'email' => 'admin@gmail.com',
+            'password' => bcrypt('Chien123@'),
+            'status'=> 1,
+            'role' => 1
+        ]);
+
         for($i = 0 ;$i< 40;$i++){
             User::create([
                 'email' => $faker->unique()->safeEmail,

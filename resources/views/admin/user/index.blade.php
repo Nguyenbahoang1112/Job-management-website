@@ -29,7 +29,6 @@
         <tbody>
             @foreach ($users as $user)
                 <tr>
-                    {{-- <td class="text-center">{{ $user->id }}</td> --}}
                     <td class="text-center">{{ $loop->iteration }}</td>
                     <td>{{ $user->email }}</td>
                     <td class="text-center">
@@ -85,6 +84,10 @@
             @endforeach
         </tbody>
     </table>
+
+    <div class="d-block card-footer">
+        {{ $users->links('pagination::bootstrap-5') }}
+    </div>
     <!-- Delete Confirmation Modal -->
     <div class="modal fade" id="deleteUserModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog">

@@ -12,17 +12,10 @@ class UserRepository extends BaseRepository
         parent::__construct($user);
     }
 
-    //get all account
-    // public function getAll($columns = ['*'])
-    // {
-    //     //admin can see all users
-    //     return $this->model::all($columns);
-    // }
-
-    //get all user
+    //get all user (not admin)
     public function getAllUser($columns = ['*'])
     {
-        return $this->model::select($columns)->where('role', User::ROLE_USER)->paginate(12);
+        return $this->model::select($columns)->where('role', User::ROLE_USER)->paginate(10);
     }
 
     //find user by id
@@ -66,6 +59,8 @@ class UserRepository extends BaseRepository
 
     public function searchByEmail($query)
     {
-        return $this->model::where('email', 'like', '%' . $query . '%')->paginate(12);
+        return $this->model::where('email', 'like', '%' . $query . '%')
+                        ->where('role', User::ROLE_USER)
+                        ->paginate(10);
     }
 }

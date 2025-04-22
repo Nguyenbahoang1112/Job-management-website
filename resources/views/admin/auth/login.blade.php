@@ -23,7 +23,7 @@
                         <label>
                             <input type="checkbox" name="remember"> Remember Me
                         </label>
-                        <a  class="forgot-password">Forgot Password?</a>
+                        <a class="forgot-password">Forgot Password?</a>
                     </div>
 
                     <button type="submit">Login</button>

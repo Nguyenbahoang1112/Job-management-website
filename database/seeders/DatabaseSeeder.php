@@ -16,20 +16,22 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-      $this->call([
-        UserSeeder::class,
-        NoteSeeder::class,
-        TeamSeeder::class,
-        TaskGroupSeeder::class,
-        TaskSeeder::class,
-        RepeatTaskSeeder::class,
-        SearchHistorySeeder::class,
-        TagSeeder::class,
-        AdminSeeder::class,
-        UserLogSeeder::class,
-        TaskTagSeeder::class,
-        TeamUserSeeder::class,
+        $this->call([
+            UserSeeder::class,
+            // AdminSeeder::class,
+            TeamSeeder::class,
+            TeamUserSeeder::class,
+            TaskGroupSeeder::class,
+            TaskSeeder::class,
+            TagSeeder::class,
+            TaskTagSeeder::class,
+            NoteSeeder::class,
+            UserLogSeeder::class,
+            SearchHistorySeeder::class,
 
+            RepeatRuleSeeder::class,
+
+            TaskDetailSeeder::class,
       ]);
 
     }

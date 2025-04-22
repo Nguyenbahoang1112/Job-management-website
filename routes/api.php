@@ -31,9 +31,6 @@ Route::prefix('/note')->name('note.')->group(function () {
     Route::put('/update/{id}', [NoteController::class, 'update'])->name('update');
 });
 
-
-
-
 // Nhóm route quên mật khẩu OTP
 Route::prefix('auth')->group(function () {
     Route::post('/forgot-password', [ForgotPasswordController::class, 'sendOtp'])->name('password.forgot'); // Gửi OTP

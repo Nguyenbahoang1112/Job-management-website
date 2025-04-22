@@ -14,10 +14,11 @@ class TeamSeeder extends Seeder
     public function run(): void
     {
         $faker = Faker::create();
-        
+
         for($i = 0 ;$i<20;$i++){
             Team::create([
                 'name' => $faker->name,
+                'description' => $faker->text,
             ]);
         }
     }

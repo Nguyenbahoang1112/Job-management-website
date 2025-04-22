@@ -28,6 +28,6 @@ class UserTaskController extends Controller
     }
     public function store(Request $request)
     {
-        
+
     }
 }
