@@ -3,7 +3,7 @@
 namespace App\Http\Requests\Admin\TeamRequest;
 
 use Illuminate\Foundation\Http\FormRequest;
-
+use Illuminate\Validation\Rule;
 class TeamUpdateRequest extends FormRequest
 {
     /**
@@ -21,8 +21,11 @@ class TeamUpdateRequest extends FormRequest
      */
     public function rules(): array
     {
+        $teamId = $this->route('team');
         return [
-            'name' => 'required|string|max:255|unique:teams,name',
+            'name' => 'required|string|max:255',
+            'description' => 'required|max:255',
+            Rule::unique('tags', 'name')->ignore($teamId)
         ];
     }
 

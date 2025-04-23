@@ -58,11 +58,11 @@ Route::prefix('/admin')->name('admin.')->group(function () {
         Route::get('/{id}/edit', [TagController::class, 'edit'])->name('edit');
         Route::put('/{id}', [TagController::class, 'update'])->name('update');
         Route::delete('/{id}', [TagController::class, 'destroy'])->name('destroy');
+        Route::get('/search/name', [TagController::class, 'searchByName'])->name('search');
     });
     Route::prefix('/tasks')->name('tasks.')->group(function () {
         Route::get('/', [UserTaskController::class, 'index'])->name('index');
         Route::get('/create', [UserTaskController::class, 'create'])->name('create');
-
     });
     Route::prefix('/teams')->name('teams.')->group(function () {
         Route::get('/', [TeamController::class, 'index'])->name('index');
@@ -72,8 +72,9 @@ Route::prefix('/admin')->name('admin.')->group(function () {
         Route::get('/{id}/edit', [TeamController::class, 'edit'])->name('edit');
         Route::put('/{id}', [TeamController::class, 'update'])->name('update');
         Route::delete('/{id}', [TeamController::class, 'destroy'])->name('destroy');
-        Route::get('teams/add-users-to-team', [TeamController::class, 'showAddUsersForm'])->name('showAddUsersForm');
         Route::post('teams/add-users-to-team', [TeamController::class, 'addUsersToTeam'])->name('addUsersToTeam');
+        Route::delete('/{team_id}/users/{user_id}', [TeamController::class, 'removeUser'])->name('removeUser');
+
     });
 
 });

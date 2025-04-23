@@ -27,7 +27,7 @@ class LoginRequest extends BaseFormRequest
     {
         return [
             'email' => 'required|email|max:255',
-            'password' => 'required|string|min:8|max:255',
+            'password' => 'required|min:8|max:255',
         ];
     }
     public function withValidator($validator)

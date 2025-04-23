@@ -2,7 +2,7 @@
 
 @section('content')
     <div class="container">
-        <h2>Tạo thẻ mới</h2>
+        <h2>Tạo đội nhóm</h2>
 
         <!-- Display Success Message -->
         @if (session('success'))

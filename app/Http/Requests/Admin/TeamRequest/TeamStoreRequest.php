@@ -23,6 +23,8 @@ class TeamStoreRequest extends FormRequest
     {
         return [
             'name' => 'required|string|max:255|unique:teams,name',
+            'description' => 'required|max:255',
+    
         ];
     }
 
@@ -32,6 +34,8 @@ class TeamStoreRequest extends FormRequest
             'name.string' => 'Tên đội nhóm phải là chuỗi.',
             'name.max' => 'Tên đội nhóm không được vượt quá 255 ký tự.',
             'name.unique' => 'Tên đội nhóm đã tồn tại.',
+            'description.required' => 'Mô tả là bắt buộc.',
+            'description.max' => 'Mô tả không được vượt quá 255 ký tự,'  
         ];
     }
 }

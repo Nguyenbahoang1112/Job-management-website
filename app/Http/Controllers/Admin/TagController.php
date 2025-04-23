@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 use App\Helpers\RedirectResponse;
 use App\Http\Controllers\Controller;
 use App\Http\Repository\Tag\TagRepository;
+use Illuminate\Http\Request;
 use App\Http\Repository\Admin\User\Repository;
 use App\Http\Repository\User\UserRepository;
 use App\Http\Requests\Admin\TagRequest\TagStoreRequest;
@@ -96,5 +97,12 @@ class TagController extends Controller
         } catch (\Exception $e) {
             return RedirectResponse::redirectWithMessage('admin.tags.index',[],RedirectResponse::ERROR, 'Xóa tag thất bại: ' . $e->getMessage());
         }
+    }
+
+    public function searchByName(Request $request)
+    {
+        $search = $request->input('search');
+        $tags = $this->tagRepository->searchByName($search);
+        return view('admin.tag.index', compact('tags'));
     }
 }

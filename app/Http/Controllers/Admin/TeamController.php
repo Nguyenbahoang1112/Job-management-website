@@ -48,6 +48,7 @@ class TeamController extends Controller
         try {
             $this->teamRepository->create([
                 'name' => $request->name,
+                'description' => $request->description
             ]);
 
             return RedirectResponse::redirectWithMessage('admin.teams.index', [], RedirectResponse::SUCCESS, 'Tạo đội nhóm thành công!');
@@ -61,11 +62,13 @@ class TeamController extends Controller
      */
     public function show(string $id)
     {
+        $users = $this->userRepository->getAllUser();
+        $teams = $this->teamRepository->getAll();
         $team = $this->teamRepository->find($id);
         if(!$team){
             return RedirectResponse::redirectWithMessage('admin.teams.index',RedirectResponse::ERROR,'Không tìm thấy đội nhóm');
         }
-        return view('admin.team.show',['team'=>$team]);
+        return view('admin.team.show',['team'=>$team,'teams'=>$teams,'users'=>$users]);
     }
 
     /**
@@ -92,7 +95,8 @@ class TeamController extends Controller
     {
         try{
             $this->teamRepository->update([
-                'name' => $request->name
+                'name' => $request->name,
+                'description' => $request->description
             ],$id);
             return RedirectResponse::redirectWithMessage('admin.teams.index',[],RedirectResponse::SUCCESS,'Cập nhật thành công');
 
@@ -115,22 +119,26 @@ class TeamController extends Controller
         }
     }
 
-    public function showAddUsersForm()
-    {
-        $teams = $this->teamRepository->getAll();
-        $users = $this->teamRepository->getAll();
-
-        return view('admin.team.add_users', compact('teams', 'users'));
-    }
-
     public function addUsersToTeam(AddUserToTeamRequest $request)
     {
         try {
             $team = $this->teamRepository->find($request->team_id);
             $team->users()->syncWithoutDetaching($request->user_ids);
-            return RedirectResponse::redirectWithMessage('admin.teams.showAddUsersForm', [],RedirectResponse::SUCCESS,'Thêm người dùng vào nhóm thành công!');
+            return RedirectResponse::redirectWithMessage('admin.teams.show', [$team->id],RedirectResponse::SUCCESS,'Thêm người dùng vào nhóm thành công!');
         } catch (\Exception $e) {
-            return RedirectResponse::redirectWithMessage('admin.teams.showAddUsersForm',[],RedirectResponse::ERROR, 'Lỗi khi thêm người dùng vào nhóm: ' . $e->getMessage());
+            return RedirectResponse::redirectWithMessage('admin.teams.index',[],RedirectResponse::ERROR, 'Lỗi khi thêm người dùng vào nhóm: ' . $e->getMessage());
         }
     }
+
+    public function removeUser($teamId, $userId)
+{
+    try {
+        $team = $this->teamRepository->find($teamId);
+        $team->users()->detach($userId);
+
+        return RedirectResponse::redirectWithMessage('admin.teams.show', [$team->id],RedirectResponse::SUCCESS, 'Xóa người dùng khỏi nhóm thành công!');
+    } catch (\Exception $e) {
+        return RedirectResponse::redirectWithMessage('admin.teams.show', [], RedirectResponse::ERROR,'Lỗi khi xóa người dùng khỏi nhóm: ' . $e->getMessage());
+    }
+}
 }

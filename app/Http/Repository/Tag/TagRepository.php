@@ -53,6 +53,13 @@ class TagRepository extends BaseRepository
     }
 
     public function paginate($perPage = 10, $columns = ['*']){
-        return $this->model::orderBy('updated_at','desc')->paginate($perPage,$columns);
+        return $this->model::orderBy('updated_at','desc')->orderBy('is_admin_created','desc')->paginate($perPage,$columns);
+    }
+
+    public function searchByName($query)
+    {
+        return $this->model::where('name', 'like', '%' . $query . '%')
+                        ->orderBy('is_admin_created','desc')
+                        ->paginate(10);
     }
 }

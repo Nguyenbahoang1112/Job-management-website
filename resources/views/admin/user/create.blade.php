@@ -4,8 +4,8 @@
     <div class="container">
         <h2>Create New User</h2>
 
-        <!-- Display Success Message -->
-        @if (session('success'))
+            <!-- Display Success Message -->
+            @if (session('success'))
             <div class="alert alert-success">
                 {{ session('success') }}
             </div>

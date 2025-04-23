@@ -4,6 +4,7 @@ namespace App\Http\Repository\Admin\TeamUser;
 use App\Models\TeamUser;
 use App\Http\Repository\BaseRepository;
 use Faker\Provider\Base;
+use App\Models\Team;
 use SebastianBergmann\Type\TrueType;
 
 class TeamUserRepository extends BaseRepository{
@@ -26,11 +27,11 @@ class TeamUserRepository extends BaseRepository{
         }
     }
 
-    public function addUsers($teamId, array $userIds)
-    {
-        $team = $this->model::findOrFail($teamId);
-        $team->users()->syncWithoutDetaching($userIds);
-    }
+    // public function addUsers($teamId, array $userIds)
+    // {
+    //     $team = Team::findOrFail($teamId);
+    //     $team->users()->syncWithoutDetaching($userIds);
+    // }
 
     public function removeUser($teamId, $userId)
     {
