@@ -10,10 +10,14 @@ class PasswordOtpRepository
 {
     public function create(string $email, string $otp)
     {
-        $user = User::where('email',$email);
+        $user = User::where('email', $email)->first(); // LẤY model instance
+        if (!$user) {
+            return null; 
+        }
+
         $user->otp = $otp;
         $user->otp_expires_at  = now()->addMinutes(10);
-        $user->update();
+        $user->save(); 
         return $user;
     }
 
@@ -29,9 +33,9 @@ class PasswordOtpRepository
 
     public function deleteAllForEmail(string $email)
     {
-        $user = User::where('email', $email);
+        $user = User::where('email', $email)->first();
         $user->otp = null;
         $user->otp_expires_at = null;
-        $user->update();
+        $user->save();
     }
 }

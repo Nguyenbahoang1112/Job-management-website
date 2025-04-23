@@ -43,7 +43,7 @@ class ForgotPasswordController extends Controller
     
         $otp = User::where('email', $request->email)
                   ->where('otp', $request->otp)
-                  ->where('otp_expires_at', '>=', now()->addMinutes(10))
+                  ->where('otp_expires_at', '>=', now())
                   ->first();
     
         if (!$otp) {
@@ -53,9 +53,7 @@ class ForgotPasswordController extends Controller
         $user = User::where('email', $request->email)->first();
         $user->password = bcrypt($request->password);
         $user->save();
-    
-        // Xóa OTP sau khi sử dụng
-        User::where('email', $request->email)->delete();
+        $this->otpRepo->deleteAllForEmail($user->email);
     
         return response()->json(['message' => 'Đặt lại mật khẩu thành công.']);
     }
