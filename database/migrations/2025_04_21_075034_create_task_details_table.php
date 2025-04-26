@@ -17,10 +17,10 @@ return new class extends Migration
 
             $table->string('title');
             $table->text('description');
-            $table->dateTime('due_date');
+            $table->date('due_date');
             $table->time('time');
             $table->unsignedSmallInteger('priority')->default(0); //0=low, 1=star
-            $table->unsignedSmallInteger('status')->default(1); //0 = completed, 1 = pending, 2 = deleting
+            $table->unsignedSmallInteger('status')->default(0); //0 = processing, 1 = done, 2 = deleting
             $table->unsignedBigInteger('parent_id')->nullable();
 
             $table->timestamps();

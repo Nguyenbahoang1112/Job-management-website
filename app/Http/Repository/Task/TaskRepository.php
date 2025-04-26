@@ -2,9 +2,11 @@
 
 namespace App\Http\Repository\Task;
 
-use App\Http\Repository\BaseRepository;
-
 use App\Models\Task;
+use App\Models\RepeatRule;
+use Illuminate\Support\Facades\DB;
+use App\Http\Repository\BaseRepository;
+use Illuminate\Http\Request;
 
 class TaskRepository extends BaseRepository
 {
@@ -12,35 +14,28 @@ class TaskRepository extends BaseRepository
     {
         parent::__construct($task);
     }
-
-    public function getAllByAdmin($columns = ['*'], $page = [10])
+    //Lấy tất cả task của admin tạo
+    public function getAllByAdmin($columns = ['*'], $page = 10)
     {
-        return $this->model
-            ->select($columns)
-            ->with(['user:id,email'])
-            ->where('is_admin_created', 1)
-            ->where('status', '!=', 2) // task do admin giao thì admin sẽ xóa hẳn và k có trạng thái deleting
-            ->paginate($page);
+        $tasks = $this->model
+        ->with(['taskDetails' => function ($query) {
+            $query->where('status', 0);
+        }])
+        ->whereHas('taskDetails', function ($query) {
+            $query->where('status', 0);
+        })
+        ->where('is_admin_created', 1)
+        ->paginate($page);
+
+        return $tasks;
     }
 
-    public function find($id, $columns = ['*'])
+    // Tạo task không lặp lại
+    public function createTaskToUser($user_id)
     {
-        return $this->model::find($id, $columns);
-    }
-
-    public function create($attributes = [])
-    {
-        return $this->model::create($attributes);
-    }
-
-    public function update($attributes = [], $id)
-    {
-        return $this->model::where('id', $id)->update($attributes);
-    }
-
-    public function delete($id)
-    {
-        $record = $this->model::findOrFail($id);
-        return $record->delete();
+        return $this->model->create([
+            'user_id' => $user_id,
+            'is_admin_created' => 1,
+        ]);
     }
 }

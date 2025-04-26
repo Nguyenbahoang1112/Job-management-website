@@ -26,7 +26,7 @@ class UserController extends Controller
     public function index()
     {
         // Get all users
-        $users = $this->userRepository->getAllUser();
+        $users = $this->userRepository->getAllUser()->paginate(10);
         return view('admin.user.index', compact('users'))->with(RedirectResponse::SUCCESS, 'Danh sách người dùng');
     }
     /**

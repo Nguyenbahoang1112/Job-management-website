@@ -15,7 +15,7 @@ class UserRepository extends BaseRepository
     //get all user (not admin)
     public function getAllUser($columns = ['*'])
     {
-        return $this->model::select($columns)->where('role', User::ROLE_USER)->paginate(10);
+        return $this->model::select($columns)->where('role', User::ROLE_USER);
     }
 
     //find user by id

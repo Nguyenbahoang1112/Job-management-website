@@ -7,6 +7,5 @@
         <li><a href="{{ route('admin.teams.index') }}">Đội nhóm</a></li>
         <li><a href="{{ route('admin.teams.showAddUsersForm') }}">Thêm người dùng vào đội nhóm</a></li>
         <li><a href="{{ route('admin.tasks.index') }}">Giao nhiệm vụ cho từng người dùng</a></li>
-        <li><a href="#">Logout</a></li>
     </ul>
 </aside>
