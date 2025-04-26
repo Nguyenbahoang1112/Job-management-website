@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\TaskGroupController;
 use App\Http\Controllers\Admin\TeamController;
 use App\Http\Controllers\Admin\UserTaskController;
+use App\Http\Controllers\Auth\VerifyEmailController;
 
 Route::prefix('/admin')->name('admin.')->group(function () {
     //authentication
@@ -78,3 +79,8 @@ Route::prefix('/admin')->name('admin.')->group(function () {
     });
 
 });
+
+
+Route::get('/email/verify/{id}/{hash}', [VerifyEmailController::class, 'verify'])
+    ->middleware(['signed'])
+    ->name('verification.verify');

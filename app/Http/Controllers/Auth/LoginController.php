@@ -13,9 +13,12 @@ use App\Http\Resources\User\UserResource;
 use App\Http\Requests\Auth\RegisterRequest;
 use App\Http\Repository\User\UserRepository;
 use Illuminate\Auth\Events\Registered;
+
 class LoginController extends Controller
 {
     protected $userRepository;
+
+  
     public function __construct(UserRepository $userRepository)
     {
         $this->userRepository = $userRepository;
