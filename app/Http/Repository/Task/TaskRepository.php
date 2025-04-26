@@ -7,6 +7,7 @@ use App\Models\RepeatRule;
 use Illuminate\Support\Facades\DB;
 use App\Http\Repository\BaseRepository;
 use Carbon\Carbon;
+use Illuminate\Http\Request;
 
 use App\Models\Team;
 class TaskRepository extends BaseRepository
@@ -18,35 +19,28 @@ class TaskRepository extends BaseRepository
     //Lấy tất cả task của admin tạo
     public function getAllByAdmin($columns = ['*'], $page = 10)
     {
-        return $this->model
-            ->select($columns)
-            ->with(['user:id,email'])
-            ->where('is_admin_created', 1)
-            ->where('status', '!=', 2) // task do admin giao thì admin sẽ xóa hẳn và k có trạng thái deleting
-            ->paginate($page);
+        $tasks = $this->model
+        ->with(['taskDetails' => function ($query) {
+            $query->where('status', 0);
+        }])
+        ->whereHas('taskDetails', function ($query) {
+            $query->where('status', 0);
+        })
+        ->where('is_admin_created', 1)
+        ->paginate($page);
+
+        return $tasks;
     }
 
-    public function find($id, $columns = ['*'])
+    // Tạo task không lặp lại
+    public function createTaskToUser($user_id)
     {
-        return $this->model::find($id, $columns);
+        return $this->model->create([
+            'user_id' => $user_id,
+            'is_admin_created' => 1,
+        ]);
     }
 
-    public function create($attributes = [])
-    {
-        return $this->model::create($attributes);
-    }
-
-    public function update($attributes = [], $id)
-    {
-        return $this->model::where('id', $id)->update($attributes);
-    }
-
-    public function delete($id)
-    {
-        $record = $this->model::findOrFail($id);
-        return $record->delete();
-    }
-    
 
     public function getTasksByType(string $type, int $userId)
     {
@@ -55,7 +49,7 @@ class TaskRepository extends BaseRepository
             $query->where('user_id', $userId);
         })->pluck('id')->toArray();
 
-       
+
 
         // Lấy task của user hoặc task thuộc team mà user tham gia
         $query = Task::with([
@@ -87,13 +81,13 @@ class TaskRepository extends BaseRepository
 
         $tasks = $query->get();
 
-       
+
 
         // Nhóm task theo taskGroup
         $formattedTasks = [];
         foreach ($tasks as $task) {
             if ($task->taskDetails->isEmpty()) {
-               
+
                 continue;
             }
 
@@ -112,7 +106,7 @@ class TaskRepository extends BaseRepository
             }
         }
 
-     
+
 
         return $formattedTasks;
     }
