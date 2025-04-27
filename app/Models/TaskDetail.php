@@ -24,8 +24,9 @@ class TaskDetail extends Model
         'parent_id'
     ];
 
-    public function task() {
-        return $this->belongsTo(Task::class);
+    public function task()
+    {
+        return $this->belongsTo(Task::class, 'task_id', 'id');
     }
 
     public function parent(){

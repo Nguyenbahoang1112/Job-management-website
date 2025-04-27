@@ -24,24 +24,29 @@ class Task extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function tags(){
-        return $this->belongsToMany(Tag::class);
+    public function tags()
+    {
+        return $this->belongsToMany(Tag::class, 'task_tags', 'task_id', 'tag_id');
     }
 
     public function repeatRule(){
         return $this->hasOne(RepeatRule::class);
     }
 
-    public function taskDetails() {
-        return $this->hasMany(TaskDetail::class);
+    public function taskDetails()
+    {
+        return $this->hasMany(TaskDetail::class, 'task_id', 'id');
     }
 
-    public function taskGroup() {
-        return $this->belongsTo(TaskGroup::class);
+    public function taskGroup()
+    {
+        return $this->belongsTo(TaskGroup::class, 'task_group_id', 'id');
     }
 
-    public function team() {
-        return $this->belongsTo(Team::class);
+    public function team()
+    {
+        return $this->belongsTo(Team::class, 'team_id', 'id');
     }
 
+   
 }

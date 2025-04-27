@@ -8,6 +8,7 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Admin\TaskGroupController;
 use App\Http\Controllers\Auth\VerifyEmailController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
+use App\Http\Controllers\User\TaskController;
 
 Route::prefix('/auth')->group(function () {
     Route::post('/login', [LoginController::class, 'login'])->name('login');
@@ -46,3 +47,8 @@ Route::prefix('auth')->group(function () {
 Route::post('/email/resend', [VerifyEmailController::class, 'resend'])
     ->middleware(['auth:sanctum'])
     ->name('verification.send');
+
+
+Route::prefix('/task')->middleware('auth:sanctum')->name('task.')->group(function () {
+    Route::get('/', [TaskController::class, 'getTasks'])->name('list');
+});

@@ -19,7 +19,8 @@ class Tag extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function tasks(){
-        return $this->belongsToMany(Task::class);
+    public function tasks()
+    {
+        return $this->belongsToMany(Task::class, 'task_tags', 'tag_id', 'task_id');
     }
 }
