@@ -2,9 +2,12 @@
 
 namespace App\Http\Repository\Task;
 
+use App\Models\Task;
+use App\Models\RepeatRule;
+use Illuminate\Support\Facades\DB;
 use App\Http\Repository\BaseRepository;
 use Carbon\Carbon;
-use App\Models\Task;
+
 use App\Models\Team;
 class TaskRepository extends BaseRepository
 {
@@ -12,8 +15,8 @@ class TaskRepository extends BaseRepository
     {
         parent::__construct($task);
     }
-
-    public function getAllByAdmin($columns = ['*'], $page = [10])
+    //Lấy tất cả task của admin tạo
+    public function getAllByAdmin($columns = ['*'], $page = 10)
     {
         return $this->model
             ->select($columns)

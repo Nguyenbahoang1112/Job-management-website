@@ -35,7 +35,8 @@ class TaskDetail extends Model
 
     public function children()
     {
-        return $this->hasMany(TaskDetail::class, 'parent_id', 'id');
+        return $this->hasOne(TaskDetail::class, 'parent_id', 'id'); //select where parent_id = $task_id
     }
+
 
 }

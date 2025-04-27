@@ -29,7 +29,7 @@ class DatabaseSeeder extends Seeder
             UserLogSeeder::class,
             SearchHistorySeeder::class,
 
-            RepeatRuleSeeder::class,
+            // RepeatRuleSeeder::class,
 
             TaskDetailSeeder::class,
       ]);

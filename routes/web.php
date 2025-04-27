@@ -64,6 +64,9 @@ Route::prefix('/admin')->name('admin.')->group(function () {
     Route::prefix('/tasks')->name('tasks.')->group(function () {
         Route::get('/', [UserTaskController::class, 'index'])->name('index');
         Route::get('/create', [UserTaskController::class, 'create'])->name('create');
+        Route::post('/', [UserTaskController::class, 'store'])->name('store');
+        Route::get('/show/{id}', [UserTaskController::class, 'show'])->name('show');
+        Route::get('/{id}/edit', [UserTaskController::class, 'edit'])->name('edit');
     });
     Route::prefix('/teams')->name('teams.')->group(function () {
         Route::get('/', [TeamController::class, 'index'])->name('index');

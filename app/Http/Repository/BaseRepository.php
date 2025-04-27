@@ -24,6 +24,13 @@ abstract class BaseRepository implements RepositoryInterface
     {
         return $this->model::create($attributes);
     }
+    public function insertMany(array $data)
+    {
+        if (!empty($data)) {
+            return $this->model::insert($data);
+        }
+        return false;
+    }
     public function update($attributes = [], $id)
     {
         $model = $this->model::find($id);

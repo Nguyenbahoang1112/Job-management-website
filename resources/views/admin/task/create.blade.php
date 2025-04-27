@@ -1,103 +1,177 @@
 @extends('admin.layouts.app')
 
 @section('content')
+    <style>
+        .card {
+            max-width: 800px;
+            margin: 40px auto;
+            border-radius: 15px;
+        }
 
-    <div class="absolute z-10">
-      <div
-        class="w-[487px] rounded-xl shadow-[0px_10px_18px_-2px_rgba(10,9,11,0.07)] outline outline-1 outline-offset-[-1px] outline-Colors-state-stroke-soft-200 inline-flex flex-col justify-start items-start overflow-hidden"
-      >
-        <div
-          class="self-stretch px-5 py-3 bg-Colors-state-bg-white-0 rounded-tl-xl rounded-tr-xl flex flex-col justify-start items-start gap-3 overflow-hidden"
-        >
-          <div class="self-stretch inline-flex justify-start items-start gap-3">
-            <div
-              class="flex-1 inline-flex flex-col justify-start items-start gap-1"
-            >
-              <input type="text" class="text-black text-lg outline-none" />
-              <input
-                type="text"
-                placeholder="Thêm mô tả"
-                class="placeholder-Colors-state-text-soft-400 text-black text-sm outline-none"
-              />
-            </div>
-          </div>
-          <div class="px-3 py-1 inline-flex justify-start items-center gap-3">
-            <select class="text-sm">
-              <option>Việc cần làm</option>
-            </select>
-          </div>
-          <div class="inline-flex justify-start items-center gap-3">
-            <select
-              class="text-sm outline outline-1 outline-Colors-state-stroke-soft-200 rounded-lg px-2 py-1"
-            >
-              <option>Hôm nay</option>
-              <option>Ngày mai</option>
-            </select>
-            <input
-              type="date"
-              class="text-sm outline outline-1 outline-Colors-state-stroke-soft-200 rounded-lg px-2 py-1"
-            />
-            <div class="relative">
-              <img
-                :src="`/icons/Sidebar_icons/repeat.svg`"
-                class="outline outline-1 outline-Colors-state-stroke-soft-200 rounded-lg px-2 py-1"
-              />
-            </div>
-            <div
-              class="absolute top-[10rem] left-[14rem] z-50 bg-white outline outline-1 outline-Colors-state-stroke-soft-200 rounded-lg w-[16.5rem] px-2 py-2 flex flex-col gap-2"
-            >
-              <div class="flex flex-col text-sm gap-1">
-                <p>Lặp lại</p>
-                <select class="w-full border px-2 py-1 rounded-lg">
-                  <option>Không lặp lại</option>
-                  <option>Hàng ngày</option>
-                  <option>Hàng tuần</option>
-                  <option>Hàng tháng</option>
+        .form-control,
+        .form-select {
+            border-radius: 10px;
+            width: 500px;
+        }
+
+        .repeat-options {
+            display: none;
+        }
+
+        #custom-date {
+            display: none;
+        }
+    </style>
+    <div class="container mt-4">
+        <h2 class="mb-4">Thêm nhiệm vụ</h2>
+
+        <div class="card shadow p-4">
+            <form action="{{ route('admin.tasks.store') }}" method="POST">
+                @csrf
+                <label class="form-label">Chọn người dùng</label>
+                <select class="form-select mb-3" name="user_id"> {{-- user_id --}}
+                    <option value="" disabled selected hidden>Chọn người dùng</option>
+                    @foreach ($users as $user)
+                        <option value="{{ $user->id }}">{{ $user->email }}</option>
+                    @endforeach
                 </select>
-              </div>
-              <div class="flex flex-col text-sm gap-2">
-                <p>Kết thúc</p>
-                <div class="inline-flex justify-between items-center">
-                  <div class="inline-flex items-center justify-center gap-1">
-                    <input type="radio" name="end" id="counter"/>
-                    <p>Số lần lặp lại</p>
-                  </div>
-                  <input type="text" class="border w-8 h-8 text-center">
-                </div>
-                <div class="inline-flex justify-between items-center">
-                  <div class="inline-flex items-center justify-center gap-1">
-                    <input type="radio" name="end" id="date"/>
-                    <p>Vào ngày</p>
-                  </div>
-                  <input type="date" class="border px-2 py-1 rounded-lg">
-                </div>
-              </div>
-              <div></div>
-            </div>
-            <img
-              :src="`/icons/tag.svg`"
-              class="outline outline-1 outline-Colors-state-stroke-soft-200 rounded-lg px-2 py-1"
-            />
-          </div>
-        </div>
-        <div
-          class="self-stretch p-5 bg-Colors-state-bg-white-0 rounded-bl-xl rounded-br-xl border-t border-Colors-state-stroke-soft-200 inline-flex justify-between items-center"
-        >
-          <div class="flex-1 flex justify-end items-center gap-4">
-            <div class="flex justify-start items-center gap-4">
-              <button
-                class="text-sm outline outline-1 outline-Colors-state-stroke-soft-200 rounded-lg px-4 py-2"
-              >
-                Hủy bỏ
-              </button>
-              <button class="text-sm bg-orange-100 rounded-lg px-4 py-2">
-                Tạo mới
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
 
-  
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <input class="form-control" type="text" name="title" placeholder="tiêu đề">
+                        {{-- title --}}
+                        <input class="form-control mt-2" type="text" name="description" placeholder="mô tả">
+                        {{-- description --}}
+                    </div>
+                </div>
+
+                <div class="mt-3">
+                    <label for="time-select" class="form-label">Chọn thời gian:</label>
+                    <div class="d-flex gap-2 mb-3">
+
+                        <body class="p-4">
+                            <div class="container">
+                                <div class="mb-3">
+                                    <select id="date-select" class="form-select" name="due_date_select">
+                                        {{-- due_date_select --}}
+                                        <option value="1">Hôm nay</option>
+                                        <option value="2">Ngày mai</option>
+                                        <option value="3">Tuần này</option>
+                                        <option id="time-select" value="custom">Tùy chỉnh &gt;</option>
+                                    </select>
+                                </div>
+
+                                <div id="custom-date" class="mb-3">
+                                    <input type="date" id="deadline-date" name="due_date" class="form-control"
+                                        value="{{ DateFormat::formatDate(now()) }}">
+                                </div>
+                            </div>
+                    </div>
+                    <input type="time" name="time" class="form-control" value="09:00">
+
+                    <div>
+                        <label class="form-label">Lặp lại</label>
+                        <select class="form-select mb-3" id="repeatSelect" name="repeat_type">
+                            <option selected value="0">Không lặp lại</option>
+                            <option value="1">Hằng ngày</option>
+                            <option value="2">Ngày trong tuần</option>
+                            <option value="3">Hằng tháng</option>
+                        </select>
+
+                        <div class="repeat-options border rounded p-3">
+                            <label class="form-label">Kết thúc</label>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="repeat_option" id="endAfter"
+                                    value="interval" checked>
+                                <label class="form-check-label" for="endAfter">
+                                    Số lần lặp lại
+                                </label>
+                                <input type="number" class="form-control mt-2" value="1" min="1"
+                                    name="repeat_interval"> {{-- repeat_interval --}}
+                            </div>
+
+                            <div class="form-check mt-2">
+                                <input class="form-check-input" type="radio" name="repeat_option" id="endByDate"
+                                    value="endDate">
+                                <label class="form-check-label" for="endByDate">
+                                    Vào ngày
+                                </label>
+                                <input type="date" class="form-control mt-2" name="repeat_due_date"
+                                    value="{{ DateFormat::formatDate(now(), 'Y-m-d') }}"> {{-- repeat_interval --}}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group mb-3">
+                    <label for="tag_ids">Chọn thẻ:</label>
+                    <select name="tag_ids[]" id="tag_ids" multiple> {{-- tag --}}
+                        @foreach ($tags as $tag)
+                            <option value="{{ $tag->id }}">{{ $tag->name }}</option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <div class="d-flex justify-content-center">
+                    <button type="submit" class="btn btn-warning">Tạo mới</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <script>
+        const repeatSelect = document.getElementById("repeatSelect");
+        const repeatOptions = document.querySelector(".repeat-options");
+
+        repeatSelect.addEventListener("change", function() {
+            repeatOptions.style.display = this.value !== "Không lặp lại" ? "block" : "none";
+        });
+    </script>
+@endsection
+@section('scripts')
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const userSelect = document.getElementById('tag_ids');
+            const choices = new Choices(userSelect, {
+                removeItemButton: true,
+                placeholderValue: 'Chọn thẻ',
+                searchPlaceholderValue: 'Tìm kiếm...',
+                maxItemCount: -1,
+                shouldSort: true
+            });
+        });
+    </script>
+    <script>
+        const timeSelect = document.getElementById('date-select');
+        const customDate = document.getElementById('custom-date');
+
+        timeSelect.addEventListener('change', function() {
+            if (this.value === 'custom') {
+                customDate.style.display = 'block';
+            } else {
+                customDate.style.display = 'none';
+            }
+        });
+    </script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const radios = document.querySelectorAll('input[name="repeat_option"]');
+            const repeatInputs = document.querySelectorAll('.repeat-input');
+
+            function toggleRepeatInputs() {
+                const selectedValue = document.querySelector('input[name="repeat_option"]:checked').value;
+                repeatInputs.forEach(input => input.style.display = 'none');
+
+                if (selectedValue === 'interval') {
+                    document.querySelector('.repeat-interval').style.display = 'block';
+                } else if (selectedValue === 'date') {
+                    document.querySelector('.repeat-date').style.display = 'block';
+                }
+            }
+
+            radios.forEach(radio => {
+                radio.addEventListener('change', toggleRepeatInputs);
+            });
+
+            toggleRepeatInputs(); // Khởi động lần đầu
+        });
+    </script>
 @endsection

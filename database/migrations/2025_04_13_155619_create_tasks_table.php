@@ -16,8 +16,8 @@ return new class extends Migration
             $table->id();
             $table->unsignedSmallInteger('is_admin_created')->default(0); //0 = user created, 1 = admin created
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
-            $table->foreignId('task_group_id')->constrained('task_groups')->onDelete('cascade')->nullable();
-            $table->foreignId('team_id')->constrained('teams')->onDelete('cascade')->nullable();
+            $table->foreignId('task_group_id')->nullable()->constrained('task_groups')->onDelete('cascade');
+            $table->foreignId('team_id')->nullable()->constrained('teams')->onDelete('cascade');
             $table->timestamps();
             // Add indexes for better performance
             $table->index(['user_id', 'task_group_id']);
