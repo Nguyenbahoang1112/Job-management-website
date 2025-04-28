@@ -3,7 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
-
+use App\Models\RepeatRule;
 return new class extends Migration
 {
     /**
@@ -17,8 +17,8 @@ return new class extends Migration
             $table->unsignedSmallInteger('repeat_type');
             $table->unsignedSmallInteger('repeat_interval')->nullable();
             $table->date('repeat_due_date')->nullable();
-            $table->unsignedSmallInteger('status_repeat_task')->default(0);
-            $table->unsignedSmallInteger('priority_repeat_task')->default(0);
+            $table->unsignedSmallInteger('status_repeat_task')->default((RepeatRule::STATUS_IN_PROGRESS));
+            $table->unsignedSmallInteger('priority_repeat_task')->default(RepeatRule::PRIORITY_LOW);
             $table->timestamps();
         });
     }

@@ -3,7 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
-
+use App\Models\User;
 return new class extends Migration
 {
     /**
@@ -16,8 +16,8 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
-            $table->unsignedSmallInteger('status')->default(1);
-            $table->unsignedSmallInteger('role')->default(0);
+            $table->unsignedSmallInteger('status')->default(User::STATUS_ACTIVE);
+            $table->unsignedSmallInteger('role')->default(User::ROLE_USER);
             $table->string('otp',6)->nullable();
             $table->timestamp('otp_expires_at')->nullable();
             $table->rememberToken();

@@ -9,6 +9,8 @@ class Tag extends Model
 {
     use HasFactory;
 
+    const TAG_CREATED_BY_ADMIN = 1;
+    const TAG_CREATED_BY_USER = 0;
     protected $fillable = [
         'name',
         'is_admin_created',
