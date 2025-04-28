@@ -7,7 +7,6 @@ use App\Models\RepeatRule;
 use Illuminate\Support\Facades\DB;
 use App\Http\Repository\BaseRepository;
 use Carbon\Carbon;
-use Illuminate\Http\Request;
 
 use App\Models\Team;
 class TaskRepository extends BaseRepository
@@ -26,8 +25,8 @@ class TaskRepository extends BaseRepository
         ->whereHas('taskDetails', function ($query) {
             $query->where('status', 0);
         })
-        ->where('is_admin_created', 1)
-        ->paginate($page);
+            ->where('is_admin_created', 1)
+            ->paginate($page);
 
         return $tasks;
     }
@@ -40,7 +39,7 @@ class TaskRepository extends BaseRepository
             'is_admin_created' => 1,
         ]);
     }
-
+    
 
     public function getTasksByType(string $type, int $userId)
     {
@@ -49,7 +48,7 @@ class TaskRepository extends BaseRepository
             $query->where('user_id', $userId);
         })->pluck('id')->toArray();
 
-
+       
 
         // Lấy task của user hoặc task thuộc team mà user tham gia
         $query = Task::with([
@@ -81,13 +80,13 @@ class TaskRepository extends BaseRepository
 
         $tasks = $query->get();
 
-
+       
 
         // Nhóm task theo taskGroup
         $formattedTasks = [];
         foreach ($tasks as $task) {
             if ($task->taskDetails->isEmpty()) {
-
+               
                 continue;
             }
 
@@ -106,8 +105,11 @@ class TaskRepository extends BaseRepository
             }
         }
 
-
+     
 
         return $formattedTasks;
     }
+
+
+    
 }

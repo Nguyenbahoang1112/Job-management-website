@@ -12,13 +12,13 @@ class VerifyEmailController extends Controller
     public function __invoke(EmailVerificationRequest $request)
     {
         $request->fulfill();
-        return redirect($this->redirectTo() . '?verified=1');
+        return redirect($this->redirectTo());
     }
 
     protected function redirectTo()
     {
         // URL frontend muốn chuyển đến, ví dụ trang login FE
-        return 'http://192.168.0.183:3000/login';
+        return 'http://192.168.0.6:3000/login';
     }
     public function verify(Request $request, $id, $hash)
     {
@@ -38,7 +38,7 @@ class VerifyEmailController extends Controller
         $user->markEmailAsVerified();
         event(new Verified($user));
 
-        return redirect($this->redirectTo() . '?verified=1');
+        return redirect($this->redirectTo());
     }
 
     public function resend(Request $request)
@@ -46,7 +46,6 @@ class VerifyEmailController extends Controller
         if ($request->user()->hasVerifiedEmail()) {
             return response()->json(['message' => 'Email đã được xác minh.'], 400);
         }
-
         $request->user()->sendEmailVerificationNotification();
 
         return response()->json(['message' => 'Email xác thực đã được gửi.']);
