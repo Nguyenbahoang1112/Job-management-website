@@ -21,7 +21,7 @@ class TaskGroupUpdateRequest extends FormRequest
      */
     public function rules(): array
     {
-        $taskGroupId = $this->route('task_group');
+        $taskGroupId = $this->route('id');
         return [
             'name' => [
                 'required',

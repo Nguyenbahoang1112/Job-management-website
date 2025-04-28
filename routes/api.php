@@ -21,10 +21,10 @@ Route::prefix('/auth')->group(function () {
     Route::post('/reset-password', [ForgotPasswordController::class, 'resetPasswordWithOtp']);
 });
 
-Route::middleware('auth:sanctum')->group(function () {
-    Route::get('/email/verify/{id}/{hash}', [VerifyEmailController::class, 'verify'])->name('verification.verify');
-    Route::post('/email/resend', [VerifyEmailController::class, 'resend'])->name('verification.send');
-});
+// Route::middleware('auth:sanctum')->group(function () {
+//     Route::get('/email/verify/{id}/{hash}', [VerifyEmailController::class, 'verify'])->name('verification.verify');
+//     Route::post('/email/resend', [VerifyEmailController::class, 'resend'])->name('verification.send');
+// });
 
 Route::prefix('/note')->name('note.')->group(function () {
     Route::get('/', [NoteController::class, 'index'])->name('index');
@@ -40,15 +40,12 @@ Route::prefix('auth')->group(function () {
 });
 
 
-// Route::get('/email/verify/{id}/{hash}', [VerifyEmailController::class, 'verify'])
-//     ->middleware(['signed'])
-//     ->name('verification.verify');
-
-Route::post('/email/resend', [VerifyEmailController::class, 'resend'])
-    ->middleware(['auth:sanctum'])
-    ->name('verification.send');
+// Route::post('/email/resend', [VerifyEmailController::class, 'resend'])
+//     ->middleware(['auth:sanctum'])
+//     ->name('verification.send');
 
 
 Route::prefix('/task')->middleware('auth:sanctum')->name('task.')->group(function () {
     Route::get('/', [TaskController::class, 'getTasks'])->name('list');
+    Route::get('/completed', [TaskController::class, 'getCompletedTasks']);
 });

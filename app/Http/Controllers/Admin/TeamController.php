@@ -62,7 +62,7 @@ class TeamController extends Controller
      */
     public function show(string $id)
     {
-        $users = $this->userRepository->getAllUser();
+        $users = $this->userRepository->getAllUser()->get();
         $teams = $this->teamRepository->getAll();
         $team = $this->teamRepository->find($id);
         if(!$team){

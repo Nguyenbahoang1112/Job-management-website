@@ -26,4 +26,16 @@ class TaskController extends Controller
             'data' => $groupedTasks
         ]);
     }
+
+    // API mới để lấy tất cả task đã hoàn thành
+    public function getCompletedTasks(Request $request)
+    {
+        $userId = $request->user()->id;
+
+        $groupedTasks = $this->taskRepo->getCompletedTasks($userId);
+
+        return response()->json([
+            'data' => $groupedTasks
+        ]);
+    }
 }
