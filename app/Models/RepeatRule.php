@@ -13,6 +13,16 @@ class RepeatRule extends Model
     const PRIORITY_LOW = 0;
     const PRIORITY_ADMIN = 1;
 
+    const REPEAT_TYPE_NONE = 0;
+    const REPEAT_TYPE_DAILY = 1;
+    const REPEAT_TYPE_DAY_OF_WEEK = 2;
+    const REPEAT_TYPE_MONTHLY = 3;
+
+    const TODAY = 1;
+    const TOMORROW = 2;
+    const WEEKEND = 3;
+    const CUSTOM = 4;
+
     protected $fillable = [
         'task_id',
         'repeat_type',
@@ -23,6 +33,6 @@ class RepeatRule extends Model
     ];
 
     public function task(){
-        return $this->belongsTo(Task::class);
+        return $this->belongsTo(Task::class, 'task_id', 'id');
     }
 }

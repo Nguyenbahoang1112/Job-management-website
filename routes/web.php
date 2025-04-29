@@ -67,6 +67,7 @@ Route::prefix('/admin')->name('admin.')->group(function () {
         Route::post('/', [UserTaskController::class, 'store'])->name('store');
         Route::get('/show/{id}', [UserTaskController::class, 'show'])->name('show');
         Route::get('/{id}/edit', [UserTaskController::class, 'edit'])->name('edit');
+        Route::delete('/{id}', [UserTaskController::class, 'destroy'])->name('destroy');
     });
     Route::prefix('/teams')->name('teams.')->group(function () {
         Route::get('/', [TeamController::class, 'index'])->name('index');
@@ -78,6 +79,9 @@ Route::prefix('/admin')->name('admin.')->group(function () {
         Route::delete('/{id}', [TeamController::class, 'destroy'])->name('destroy');
         Route::post('teams/add-users-to-team', [TeamController::class, 'addUsersToTeam'])->name('addUsersToTeam');
         Route::delete('/{team_id}/users/{user_id}', [TeamController::class, 'removeUser'])->name('removeUser');
+
+        Route::get('add-task/{id}', [TeamController::class, 'addTaskView'])->name('addTaskView');
+        Route::post('add-task/{id}', [TeamController::class, 'addTaskToTeam'])->name('addTaskToTeam');
 
     });
 

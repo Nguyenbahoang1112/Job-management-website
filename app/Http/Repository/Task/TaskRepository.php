@@ -6,6 +6,7 @@ use App\Models\Task;
 use App\Models\RepeatRule;
 use Illuminate\Support\Facades\DB;
 use App\Http\Repository\BaseRepository;
+use App\Models\TaskDetail;
 use Carbon\Carbon;
 
 use App\Models\Team;
@@ -16,18 +17,27 @@ class TaskRepository extends BaseRepository
         parent::__construct($task);
     }
     //Lấy tất cả task của admin tạo
-    public function getAllByAdmin($columns = ['*'], $page = 10)
+    public function getAllUserTaskByAdmin($columns = ['*'], $page = 10)
     {
         $tasks = $this->model
-        ->with(['taskDetails' => function ($query) {
-            $query->where('status', 0);
-        }])
-        ->whereHas('taskDetails', function ($query) {
-            $query->where('status', 0);
-        })
-            ->where('is_admin_created', 1)
+            ->with(['taskDetails' => function ($query) {
+                $query->where('status', TaskDetail::STATUS_IN_PROGRESS);
+            }])
+            ->whereHas('taskDetails', function ($query) {
+                $query->where('status', TaskDetail::STATUS_IN_PROGRESS);
+            })
+            ->where('is_admin_created', Task::TASK_CREATED_BY_ADMIN)
+            ->where('team_id', null)
             ->paginate($page);
 
+        return $tasks;
+    }
+
+    public function getAllTeamTaskByAdmin($columns = ['*'], $teamId,$page = 10)
+    {
+        $tasks = $this->model
+            ->where('team_id', $teamId)
+            ->paginate($page);
         return $tasks;
     }
 
@@ -36,10 +46,10 @@ class TaskRepository extends BaseRepository
     {
         return $this->model->create([
             'user_id' => $user_id,
-            'is_admin_created' => 1,
+            'is_admin_created' => Task::TASK_CREATED_BY_ADMIN,
         ]);
     }
-    
+
 
     public function getTasksByType(string $type, int $userId)
     {
@@ -48,7 +58,7 @@ class TaskRepository extends BaseRepository
             $query->where('user_id', $userId);
         })->pluck('id')->toArray();
 
-       
+
 
         // Lấy task của user hoặc task thuộc team mà user tham gia
         $query = Task::with([
@@ -80,13 +90,13 @@ class TaskRepository extends BaseRepository
 
         $tasks = $query->get();
 
-       
+
 
         // Nhóm task theo taskGroup
         $formattedTasks = [];
         foreach ($tasks as $task) {
             if ($task->taskDetails->isEmpty()) {
-               
+
                 continue;
             }
 
@@ -105,7 +115,7 @@ class TaskRepository extends BaseRepository
             }
         }
 
-     
+
 
         return $formattedTasks;
     }
@@ -168,5 +178,5 @@ public function getCompletedTasks(int $userId)
 
     return $formattedTasks;
 }
-    
+
 }
