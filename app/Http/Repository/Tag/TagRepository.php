@@ -2,8 +2,9 @@
 
 namespace App\Http\Repository\Tag;
 
-use App\Http\Repository\BaseRepository;
 use App\Models\Tag;
+use App\Models\User;
+use App\Http\Repository\BaseRepository;
 
 class TagRepository extends BaseRepository
 {
@@ -12,6 +13,17 @@ class TagRepository extends BaseRepository
         parent::__construct($tag);
     }
 
+    public function getAllByUser($userId)
+    {
+        $tags = $this->model
+            ->where('user_id', $userId)
+            ->orWhere('is_admin_created', '1')
+            ->orderBy('name')
+            ->get();
+        return $tags;
+    }
+
+    //lấy ra tag của admin tạo
     public function getAllByAdmin($columns = ['*'])
     {
         return $this->model::where('is_admin_created', '1');
@@ -26,7 +38,31 @@ class TagRepository extends BaseRepository
         }
     }
 
-    public function update($attributes = [], $id)
+    //sửa tag trừ tag tạo bởi admin
+    public function updateByUser($attributes = [], $id)
+    {
+        {
+            $tag = $this->model::findOrFail($id);
+            if ($tag->is_admin_created == 0)
+            {
+                $tag->update($attributes);
+                return $tag;
+            }
+        }
+        return false;
+    }
+    //xóa tag trừ tag của admin
+    public function deleteByUser($id)
+    {
+        $tag = $this->model::findOrFail($id);
+        if ($tag->is_admin_created == 0)
+        {
+            $tag->delete();
+            return $tag;
+        }
+    }
+
+    public function updateByAdmin($attributes = [], $id)
     {
         try {
             $tag = $this->model::findOrFail($id);

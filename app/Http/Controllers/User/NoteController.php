@@ -57,10 +57,10 @@ class NoteController extends Controller
     public function destroy($id)
     {
         $noteDelete = $this->noteRepository->delete($id);
+
         if ($noteDelete) {
-            return ApiResponse::success(new NoteResource($noteDelete), 'Delete note successful', 200);
+            return ApiResponse::success($noteDelete, 'Delete note successful', 200);
         }
         return ApiResponse::error('Delete note failed', 400);
-
     }
 }

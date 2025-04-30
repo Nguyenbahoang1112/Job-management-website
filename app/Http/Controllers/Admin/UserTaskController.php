@@ -43,7 +43,7 @@ class UserTaskController extends Controller
     public function index()
     {
         // Get all users
-        $tasks = $this->taskRepository->getAllTeamTaskByAdmin('*', 10);
+        $tasks = $this->taskRepository->getAllUserTaskByAdmin('*', 10);
         return view('admin.task.index', compact('tasks'));
     }
     public function create()
