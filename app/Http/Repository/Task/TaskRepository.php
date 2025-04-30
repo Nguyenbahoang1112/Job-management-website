@@ -43,6 +43,16 @@ class TaskRepository extends BaseRepository
     }
 
 
+ 
+
+  public function getAllTeamTaskByAdmin($columns = ['*'], $teamId,$page = 10)
+    {
+        $tasks = $this->model
+            ->where('team_id', $teamId)
+            ->paginate($page);
+        return $tasks;
+    }
+
     public function getTasksByType(string $type, int $userId)
     {
         $teamIds = Team::whereHas('users', function ($query) use ($userId) {
