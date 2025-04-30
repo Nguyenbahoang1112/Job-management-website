@@ -5,7 +5,7 @@ namespace App\Http\Controllers\User;
 use App\Http\Controllers\Controller;
 use App\Http\Repository\Task\TaskRepository;
 use Illuminate\Http\Request;
-
+use App\Helpers\ApiResponse;
 class TaskController extends Controller
 {
     protected $taskRepo;
@@ -19,23 +19,23 @@ class TaskController extends Controller
     {
         $type = $request->input('type', 'all');
         $userId = $request->user()->id;
-
         $groupedTasks = $this->taskRepo->getTasksByType($type, $userId);
 
-        return response()->json([
-            'data' => $groupedTasks
-        ]);
+        if (empty($groupedTasks)) {
+            return ApiResponse::error('No tasks found for the given criteria.', ApiResponse::NOT_FOUND);
+        }
+
+        return ApiResponse::success($groupedTasks, 'Tasks retrieved successfully.', ApiResponse::SUCCESS);
     }
 
-    // API mới để lấy tất cả task đã hoàn thành
     public function getCompletedTasks(Request $request)
     {
         $userId = $request->user()->id;
-
         $groupedTasks = $this->taskRepo->getCompletedTasks($userId);
+        if (empty(array_filter($groupedTasks, fn($group) => !empty($group)))) {
+            return ApiResponse::error('No completed tasks found.', ApiResponse::NOT_FOUND);
+        }
 
-        return response()->json([
-            'data' => $groupedTasks
-        ]);
+        return ApiResponse::success($groupedTasks, 'Completed tasks retrieved successfully.', ApiResponse::SUCCESS);
     }
 }

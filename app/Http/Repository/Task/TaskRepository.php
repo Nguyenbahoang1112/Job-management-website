@@ -31,7 +31,7 @@ class TaskRepository extends BaseRepository
         return $tasks;
     }
 
-    // Tạo task không lặp lại
+ 
     public function createTaskToUser($user_id)
     {
         return $this->model->create([
@@ -43,18 +43,14 @@ class TaskRepository extends BaseRepository
 
     public function getTasksByType(string $type, int $userId)
     {
-        // Lấy danh sách team mà user tham gia
         $teamIds = Team::whereHas('users', function ($query) use ($userId) {
             $query->where('user_id', $userId);
         })->pluck('id')->toArray();
 
-       
-
-        // Lấy task của user hoặc task thuộc team mà user tham gia
         $query = Task::with([
             'taskDetails:id,task_id,title,description,due_date,time,priority,status,parent_id',
             'taskGroup:id,name',
-            'repeatRule:id,task_id,repeat_type', // Quan hệ 1-1
+            'repeatRule:id,task_id,repeat_type',
             'tags:id,name'
         ])
         ->where(function ($query) use ($userId, $teamIds) {
@@ -62,53 +58,113 @@ class TaskRepository extends BaseRepository
                   ->orWhereIn('team_id', $teamIds);
         });
 
-        // Lọc theo loại thời gian
-        if ($type === 'today') {
-            $query->whereHas('taskDetails', function ($q) {
-                $q->whereDate('due_date', Carbon::today());
+        // Xây dựng điều kiện lọc thời gian
+        $dateFilter = function ($q) use ($type) {
+            $q->where('status', 0); // Chỉ lấy taskDetails chưa hoàn thành
+            if ($type === 'today') {
+                // Kết hợp due_date và time để tạo thời gian đầy đủ
+                $q->where(function ($subQuery) {
+                    $subQuery->whereDate('due_date', Carbon::today()->toDateString())
+                             ->whereRaw("CONCAT(due_date, ' ', COALESCE(time, '00:00:00')) >= ?", [Carbon::today()->startOfDay()])
+                             ->whereRaw("CONCAT(due_date, ' ', COALESCE(time, '00:00:00')) <= ?", [Carbon::today()->endOfDay()]);
+                });
+            } elseif ($type === 'three_days') {
+                $startOfDay = Carbon::today()->startOfDay();
+                $endOfDay = Carbon::today()->addDays(3)->endOfDay();
+                $q->whereRaw("CONCAT(due_date, ' ', COALESCE(time, '00:00:00')) BETWEEN ? AND ?", [$startOfDay, $endOfDay]);
+            } elseif ($type === 'seven_days') {
+                $startOfDay = Carbon::today()->startOfDay();
+                $endOfDay = Carbon::today()->addDays(7)->endOfDay();
+                $q->whereRaw("CONCAT(due_date, ' ', COALESCE(time, '00:00:00')) BETWEEN ? AND ?", [$startOfDay, $endOfDay]);
+            }
+            // Với type = 'all', không cần thêm điều kiện thời gian
+        };
+
+        // Áp dụng điều kiện lọc: lấy task theo type hoặc task trễ hạn
+        if ($type !== 'all') {
+            $query->where(function ($query) use ($dateFilter) {
+                $query->whereHas('taskDetails', $dateFilter) // Task thỏa mãn điều kiện thời gian
+                      ->orWhereHas('taskDetails', function ($q) {
+                          // Task trễ hạn: thời gian đầy đủ nhỏ hơn thời điểm hiện tại
+                          $q->whereRaw("CONCAT(due_date, ' ', COALESCE(time, '00:00:00')) < ?", [Carbon::now()])
+                            ->where('status', 0); // Chưa hoàn thành
+                      });
             });
-        } elseif ($type === 'three_days') {
+        } else {
+            // Với type = 'all', lấy tất cả task chưa hoàn thành (bao gồm cả trễ hạn)
             $query->whereHas('taskDetails', function ($q) {
-                $q->whereBetween('due_date', [Carbon::today(), Carbon::today()->addDays(3)]);
-            });
-        } elseif ($type === 'seven_days') {
-            $query->whereHas('taskDetails', function ($q) {
-                $q->whereBetween('due_date', [Carbon::today(), Carbon::today()->addDays(7)]);
+                $q->where('status', 0);
             });
         }
-        // Nếu type là 'all', không cần thêm điều kiện lọc thời gian
 
         $tasks = $query->get();
-
-       
 
         // Nhóm task theo taskGroup
         $formattedTasks = [];
         foreach ($tasks as $task) {
             if ($task->taskDetails->isEmpty()) {
-               
                 continue;
             }
 
             $groupName = $task->taskGroup ? $task->taskGroup->name : 'Khác';
+            $isRepeating = !is_null($task->repeatRule);
 
-            foreach ($task->taskDetails as $detail) {
+            if ($isRepeating) {
+                // Với task lặp lại, chỉ lấy taskDetail gần nhất với ngày hôm nay
+                $taskDetail = $task->taskDetails
+                    ->where('status', 0) // Chưa hoàn thành
+                    ->sortBy(function ($detail) {
+                        // Kết hợp due_date và time để tính khoảng cách thời gian
+                        $taskDateTime = Carbon::parse($detail->due_date . ' ' . ($detail->time ?? '00:00:00'));
+                        return abs($taskDateTime->diffInSeconds(Carbon::now()));
+                    })
+                    ->first();
+
+                if (!$taskDetail) {
+                    continue; // Nếu không có taskDetail chưa hoàn thành, bỏ qua task này
+                }
+
+                $dueDate = Carbon::parse($taskDetail->due_date . ' ' . ($taskDetail->time ?? '00:00:00'))
+                    ->setTimezone('Asia/Ho_Chi_Minh')
+                    ->format('Y-m-d\TH:i:s.000000P');
+
                 $formattedTasks[$groupName][] = [
-                    'id' => $detail->id,
-                    'title' => $detail->title,
-                    'description' => $detail->description,
-                    'dueDate' => Carbon::parse($detail->due_date)->toISOString(), // Định dạng ISO cho dueDate
-                    'isRepeating' => !is_null($task->repeatRule), // Kiểm tra có repeatRule không
-                    'isImportant' => $detail->priority > 0, // Dựa vào priority
-                    'tags' => $task->tags->pluck('name')->toArray() // Lấy danh sách tag
+                    'id' => $taskDetail->id,
+                    'title' => $taskDetail->title,
+                    'description' => $taskDetail->description,
+                    'dueDate' => $dueDate,
+                    'isRepeating' => true,
+                    'isImportant' => $taskDetail->priority > 0,
+                    'tags' => $task->tags->pluck('name')->toArray()
                 ];
+            } else {
+                // Với task không lặp lại hoặc type = 'all', lấy tất cả taskDetails
+                foreach ($task->taskDetails as $detail) {
+                    // Chỉ lấy taskDetails chưa hoàn thành
+                    if ($detail->status != 0) {
+                        continue;
+                    }
+
+                    $dueDate = Carbon::parse($detail->due_date . ' ' . ($detail->time ?? '00:00:00'))
+                        ->setTimezone('Asia/Ho_Chi_Minh')
+                        ->format('Y-m-d\TH:i:s.000000P');
+
+                    $formattedTasks[$groupName][] = [
+                        'id' => $detail->id,
+                        'title' => $detail->title,
+                        'description' => $detail->description,
+                        'dueDate' => $dueDate,
+                        'isRepeating' => $isRepeating,
+                        'isImportant' => $detail->priority > 0,
+                        'tags' => $task->tags->pluck('name')->toArray()
+                    ];
+                }
             }
         }
 
-     
-
         return $formattedTasks;
     }
+    
 
 // Hàm mới để lấy tất cả task đã hoàn thành
 public function getCompletedTasks(int $userId)
