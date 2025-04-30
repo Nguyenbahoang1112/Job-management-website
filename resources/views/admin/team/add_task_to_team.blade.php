@@ -23,19 +23,19 @@
         }
     </style>
     <div class="container mt-4">
-        <h2 class="mb-4">Thêm nhiệm vụ</h2>
+        <div class="d-flex justify-between">
+            <h2 class="mb-4">Thêm nhiệm vụ cho đội nhóm: {{ $team->name }}</h2>
+            <div class="p-2">
+                <a href="{{ route('admin.teams.show', $team->id) }}" class="btn btn-primary">Quay về</a>
+            </div>
+        </div>
 
         <div class="card shadow p-4">
-            <form action="{{ route('admin.tasks.store') }}" method="POST">
+            <form action="{{ route('admin.teams.addTaskToTeam', $team->id) }}" method="POST">
                 @csrf
-                <label class="form-label">Chọn người dùng</label>
-                <select class="form-select mb-3" name="user_id"> {{-- user_id --}}
-                    <option value="" disabled selected hidden>Chọn người dùng</option>
-                    @foreach ($users as $user)
-                        <option value="{{ $user->id }}">{{ $user->email }}</option>
-                    @endforeach
-                </select>
-
+                @foreach ($team->users as $user)
+                    <input type="hidden" name="users[]" value="{{ $user->id }}">
+                @endforeach
                 <div class="d-flex justify-content-between align-items-start">
                     <div>
                         <input class="form-control" type="text" name="title" placeholder="Tiêu đề">

@@ -43,7 +43,7 @@ class UserTaskController extends Controller
     public function index()
     {
         // Get all users
-        $tasks = $this->taskRepository->getAllByAdmin('*', 10);
+        $tasks = $this->taskRepository->getAllUserTaskByAdmin('*', 10);
         return view('admin.task.index', compact('tasks'));
     }
     public function create()
@@ -57,13 +57,13 @@ class UserTaskController extends Controller
     public function store(CreateTaskRequest $request)
     {
         switch ($request->due_date_select) {
-            case "1":
+            case RepeatRule::TODAY:
                 $due_date = now()->startOfDay();
                 break;
-            case "2":
+            case RepeatRule::TOMORROW:
                 $due_date = now()->addDay()->startOfDay();
                 break;
-            case "3":
+            case RepeatRule::WEEKEND:
                 $due_date = now()->next(Carbon::SUNDAY)->startOfDay();
                 break;
             default:
@@ -77,7 +77,7 @@ class UserTaskController extends Controller
         //xét kiểu lặp lại
         switch ($request->repeat_type) {
             //tạo mới task không lặp lại
-            case 0:
+            case RepeatRule::REPEAT_TYPE_NONE:
                 DB::transaction(function () use ($request, $due_date) {
                     //tạo task
                     $taskCreate = $this->taskRepository->createTaskToUser($request->user_id);
@@ -93,7 +93,7 @@ class UserTaskController extends Controller
                 });
                 break;
             //tạo mới task lặp lại "hàng ngày"
-            case 1:
+            case RepeatRule::REPEAT_TYPE_DAILY:
                 DB::transaction(function () use ($request, $due_date) {
                     //tạo task
                     $taskCreate = $this->taskRepository->createTaskToUser($request->user_id);
@@ -117,7 +117,7 @@ class UserTaskController extends Controller
                     if ($request->repeat_option === "interval")
                     {
                         //vòng lặp tạo task detail theo số lần lặp lại
-                        for ($i = 0; $i < $request->repeat_interval; $i++) {
+                        for ($i = 0; $i <= $request->repeat_interval; $i++) {
 
                             //thêm task detail vào array
                             $taskDetail = ArrayFormat::taskDetailByAdmin($request, $due_date->copy(), $taskCreate->id, $parent_id);
@@ -156,7 +156,7 @@ class UserTaskController extends Controller
                 });
                 break;
                 //tạo mới task lặp lại "ngày trong tuần"
-                case 2:
+                case RepeatRule::REPEAT_TYPE_DAY_OF_WEEK:
                     DB::transaction(function () use ($request, $due_date) {
                         //tạo task
                         $taskCreate = $this->taskRepository->createTaskToUser($request->user_id);
@@ -183,7 +183,7 @@ class UserTaskController extends Controller
                             $indexOfInterval = 0;
 
                             //vòng lặp tạo task detail theo số lần lặp lại
-                            while ($indexOfInterval < $request->repeat_interval) {
+                            while ($indexOfInterval <= $request->repeat_interval) {
                                 //kiểm tra khoảng thứ 2 đến t6
                                 if ($due_date->dayOfWeek >= 1 && $due_date->dayOfWeek <= 5) {
                                     //thêm task detail vào array
@@ -244,7 +244,7 @@ class UserTaskController extends Controller
                     });
                 break;
             //tạo mới task lặp lại "hàng tháng"
-            case 3:
+            case RepeatRule::REPEAT_TYPE_MONTHLY:
                 DB::transaction(function () use ($request, $due_date) {
                     //tạo task
                     $taskCreate = $this->taskRepository->createTaskToUser($request->user_id);
@@ -271,7 +271,7 @@ class UserTaskController extends Controller
                         $indexOfInterval = 0;
 
                         //vòng lặp tạo task detail theo số lần lặp lại
-                        while ($indexOfInterval < $request->repeat_interval) {
+                        while ($indexOfInterval <= $request->repeat_interval) {
                             //tạo taskDetail
                             $taskDetail = $this->taskDetailRepository->createTaskDetail($request, $due_date->copy(), $taskCreate->id, $parent_id);
 
@@ -328,8 +328,14 @@ class UserTaskController extends Controller
 
     }
 
-    public function delete($id)
+    public function destroy($id)
     {
-
+        $taskRemove = $this->taskRepository->delete($id);
+        if ($taskRemove)
+        {
+            return RedirectResponse::redirectWithMessage('admin.tasks.index', null, RedirectResponse::SUCCESS, 'Xóa task thành công!');
+        }
+        return RedirectResponse::redirectWithMessage('admin.tasks.index', null, RedirectResponse::ERROR, 'Không xóa được task!');
     }
+
 }

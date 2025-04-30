@@ -4,8 +4,12 @@
 
 @section('content')
     <div class="container mt-4">
-        <h2 class="mb-4">Chi tiết nhóm</h2>
-
+        <div class="d-flex justify-between">
+            <h2 class="mb-4">Chi tiết nhóm</h2>
+            <div>
+                <a href="{{ route('admin.teams.addTaskView', $team->id) }}" class="btn btn-primary">+ Thêm nhiệm vụ</a>
+            </div>
+        </div>
         {{-- Thông tin nhóm --}}
         <div class="card mb-4">
             <div class="card-body">
@@ -70,7 +74,8 @@
                                         <div class="modal-dialog">
                                             <div class="modal-content">
                                                 <div class="modal-header">
-                                                    <h5 class="modal-title" id="exampleModalLabel{{ $user->id }}">Cảnh báo</h5>
+                                                    <h5 class="modal-title" id="exampleModalLabel{{ $user->id }}">Cảnh
+                                                        báo</h5>
                                                     <button type="button" class="btn-close" data-bs-dismiss="modal"
                                                         aria-label="Close"></button>
                                                 </div>
@@ -79,8 +84,8 @@
                                                 </div>
                                                 <div class="modal-footer">
                                                     <form id="deleteForm{{ $user->id }}"
-                                                        action="{{route('admin.teams.removeUser', [$team->id, $user->id]) }}}}" method="POST"
-                                                        style="display: inline-block;">
+                                                        action="{{ route('admin.teams.removeUser', [$team->id, $user->id]) }}}}"
+                                                        method="POST" style="display: inline-block;">
                                                         @csrf
                                                         @method('DELETE')
                                                         <button type="submit" class="btn btn-danger">Có</button>
@@ -92,10 +97,10 @@
                                         </div>
                                     </div>
                                     <button class="btn btn-sm btn-danger" data-bs-toggle="modal"
-                                    data-bs-target="#deleteModal{{ $user->id }}">
-                                    <i class="bi bi-trash"></i> Xóa
+                                        data-bs-target="#deleteModal{{ $user->id }}">
+                                        <i class="bi bi-trash"></i> Xóa
                                     </button>
-                                  
+
                                 </td>
                             </tr>
                         @endforeach
@@ -109,7 +114,62 @@
                 </table>
             </div>
         </div>
+        {{-- Danh sách thành viên --}}
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Danh sách thành viên</h5>
+                <table class="table table-bordered table-hover">
+                    <thead>
+                        <tr>
+                            <th>Task id</th>
+                            <th>Tên nhóm</th>
+                            <th>Kiểu lặp lại</th>
+                            <th>Hành động</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($tasks as $task)
+                            <tr>
+                                <td>{{ $task->id }}</td>
+                                <td>{{ $task->user->email }}</td>
+                                <td>
+                                    @if (empty($task->repeatRule))
+                                        <span class="badge bg-danger">Không</span>
+                                    @else
+                                        @switch($task->repeatRule->repeat_type)
+                                            @case(1)
+                                                <span class="badge bg-success">Hằng ngày</span>
+                                            @break
 
+                                            @case(2)
+                                                <span class="badge bg-info">Theo tuần</span>
+                                            @break
+
+                                            @case(3)
+                                                <span class="badge bg-primary">Theo tháng</span>
+                                            @break
+
+                                            @default
+                                                <span class="badge bg-secondary">Khác</span>
+                                        @endswitch
+                                    @endif
+                                </td>
+
+                            </tr>
+                        @endforeach
+
+                        @if ($tasks->isEmpty())
+                            <tr>
+                                <td colspan="4" class="text-center">Chưa có task nào.</td>
+                            </tr>
+                        @endif
+                    </tbody>
+                </table>
+                <div class="d-block card-footer">
+                    {{ $tasks->links('pagination::bootstrap-5') }}
+                </div>
+            </div>
+        </div>
         <a href="{{ route('admin.teams.index') }}" class="btn btn-secondary mt-3">Quay lại danh sách</a>
         <a href="{{ route('admin.teams.edit', $team->id) }}" class="btn btn-warning mt-3">Chỉnh sửa</a>
     </div>
@@ -118,7 +178,7 @@
 @section('scripts')
     <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', function() {
             new Choices('#user_ids', {
                 removeItemButton: true,
                 placeholderValue: 'Chọn người dùng',

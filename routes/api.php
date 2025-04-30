@@ -3,12 +3,13 @@
 use Illuminate\Http\Request;
 use App\Http\Controllers\Auth\Login;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\User\TagController;
 use App\Http\Controllers\User\NoteController;
+use App\Http\Controllers\User\TaskController;
 use App\Http\Controllers\Auth\LoginController;
-use App\Http\Controllers\Admin\TaskGroupController;
+use App\Http\Controllers\User\TaskGroupController;
 use App\Http\Controllers\Auth\VerifyEmailController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
-use App\Http\Controllers\User\TaskController;
 
 Route::prefix('/auth')->group(function () {
     Route::post('/login', [LoginController::class, 'login'])->name('login');
@@ -26,10 +27,28 @@ Route::prefix('/auth')->group(function () {
 //     Route::post('/email/resend', [VerifyEmailController::class, 'resend'])->name('verification.send');
 // });
 
-Route::prefix('/note')->name('note.')->group(function () {
+//Chức năng quản lý notes của user
+Route::prefix('/notes')->name('notes.')->group(function () {
     Route::get('/', [NoteController::class, 'index'])->name('index');
     Route::post('/create', [NoteController::class, 'store'])->name('store');
     Route::put('/update/{id}', [NoteController::class, 'update'])->name('update');
+    Route::delete('/delete/{id}', [NoteController::class, 'destroy'])->name('destroy');
+});
+
+//Chức năng quản lý tag của user
+Route::prefix('/tags')->name('tags.')->group(function () {
+    Route::get('/', [TagController::class, 'getAll'])->name('index');
+    Route::post('/create', [TagController::class, 'store'])->name('store');
+    Route::put('/update/{id}', [TagController::class, 'update'])->name('update');
+    Route::delete('/delete/{id}', [TagController::class, 'destroy'])->name('destroy');
+});
+
+//Chức năng quản lý group của user
+Route::prefix('/task-groups')->name('task-groups.')->group(function () {
+    Route::get('/', [TaskGroupController::class, 'index'])->name('index');
+    Route::post('/create', [TaskGroupController::class, 'store'])->name('store');
+    Route::put('/update/{id}', [TaskGroupController::class, 'update'])->name('update');
+    Route::delete('/delete/{id}', [TaskGroupController::class, 'destroy'])->name('destroy');
 });
 
 // Nhóm route quên mật khẩu OTP

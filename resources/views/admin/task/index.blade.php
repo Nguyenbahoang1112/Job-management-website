@@ -65,12 +65,38 @@
                             <i class="bi bi-pencil-square"></i> Sửa
                         </a>
                         <!-- Delete -->
-                        <a href="">
-                            <button class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#deleteUserModal"
-                                data-userid="{{ $task->id }}">
-                                Xóa
-                            </button>
-                        </a>
+                        <button class="btn btn-sm btn-danger" data-bs-toggle="modal"
+                            data-bs-target="#deleteModal{{ $task->id }}">
+                            <i class="bi bi-trash"></i> Xóa
+                        </button>
+
+                        <div class="modal fade" id="deleteModal{{ $task->id }}" tabindex="-1"
+                            aria-labelledby="exampleModalLabel{{ $task->id }}" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="exampleModalLabel{{ $task->id }}">Cảnh báo</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                            aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        Bạn có muốn xóa thẻ <strong>{{ $task->user->email }}</strong> không ?
+                                    </div>
+                                    <div class="modal-footer">
+                                        <form id="deleteForm{{ $task->id }}"
+                                            action="{{ route('admin.tasks.destroy', $task->id) }}" method="POST"
+                                            style="display: inline-block;">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn btn-danger">Có</button>
+                                        </form>
+                                        <button type="button" class="btn btn-secondary"
+                                            data-bs-dismiss="modal">Không</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                     </td>
                 </tr>
             @endforeach

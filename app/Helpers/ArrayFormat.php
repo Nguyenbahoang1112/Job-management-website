@@ -22,7 +22,8 @@ class ArrayFormat
             'due_date' => $due_date,
             'time' => $request->time,
             'priority' => TaskDetail::PRIORITY_ADMIN,
-            'parent_id' => $parent_id
+            'parent_id' => $parent_id,
+            'created_at' => now()
         ];
     }
 }

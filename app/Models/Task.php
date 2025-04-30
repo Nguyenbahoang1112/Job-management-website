@@ -30,7 +30,7 @@ class Task extends Model
     }
 
     public function repeatRule(){
-        return $this->hasOne(RepeatRule::class);
+        return $this->hasOne(RepeatRule::class, 'task_id', 'id');
     }
 
     public function taskDetails()
@@ -48,5 +48,5 @@ class Task extends Model
         return $this->belongsTo(Team::class, 'team_id', 'id');
     }
 
-   
+
 }

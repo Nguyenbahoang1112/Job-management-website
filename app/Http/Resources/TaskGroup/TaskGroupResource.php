@@ -1,5 +1,5 @@
 <?php
-namespace App\Http\Resources\User\TaskGroup;
+namespace App\Http\Resources\TaskGroup;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -12,8 +12,8 @@ class TaskGroupResource extends JsonResource
             'name' => $this->name,
             'is_admin_created' => (bool) $this->is_admin_created,
             'user_id' => $this->user_id,
-            'created_at' => $this->created_at->toDateTimeString(),
-            'updated_at' => $this->updated_at->toDateTimeString(),
+            'created_at' => $this->created_at,
+            'updated_at' => $this->updated_at,
         ];
     }
 }

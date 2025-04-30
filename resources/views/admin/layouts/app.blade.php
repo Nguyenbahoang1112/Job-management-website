@@ -20,14 +20,14 @@
 
 </head>
 
-<body>
+<body class="p-0">
     <div class="main-layout">
         @include('Admin.layouts.sidebar')
         <div class="main-content">
             @include('Admin.layouts.navbar')
             <div class="content-area">
                 {{-- Hiển thị thông báo tại đây --}}
-                @if(session('success'))
+                @if (session('success'))
                     <div class="alert alert-success">
                         {{ session('success') }}
                     </div>

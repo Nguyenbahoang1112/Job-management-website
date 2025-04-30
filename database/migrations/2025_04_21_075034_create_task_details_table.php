@@ -20,8 +20,8 @@ return new class extends Migration
             $table->text('description');
             $table->date('due_date');
             $table->time('time');
-            $table->unsignedSmallInteger('priority')->default(TaskDetail::PRIORITY_LOW); //0=low, 1=star
-            $table->unsignedSmallInteger('status')->default(TaskDetail::STATUS_IN_PROGRESS); //0 = processing, 1 = done, 2 = deleting
+            $table->unsignedSmallInteger('priority')->default(TaskDetail::PRIORITY_LOW);
+            $table->unsignedSmallInteger('status')->default(TaskDetail::STATUS_IN_PROGRESS);
             $table->unsignedBigInteger('parent_id')->nullable();
 
             $table->timestamps();

@@ -13,10 +13,10 @@ class NoteRepository extends BaseRepository
     }
     public function getAllByUser($paginate)
     {
-        $user_id = auth('sanctum')->user()->id;
+        $userId = auth('sanctum')->user()->id;
 
         return $this->model
-                    ->where('user_id', $user_id)
+                    ->where('user_id', $userId)
                     ->orderBy('created_at', 'asc')
                     ->paginate($paginate);
     }
@@ -36,5 +36,5 @@ class NoteRepository extends BaseRepository
         return false;
     }
 
-    
+
 }
