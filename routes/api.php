@@ -29,7 +29,7 @@ Route::prefix('/auth')->group(function () {
 
 //Chức năng quản lý notes của user
 Route::prefix('/notes')->name('notes.')->group(function () {
-    Route::get('/', [NoteController::class, 'index'])->name('index');
+    Route::get('/{paginate}', [NoteController::class, 'index'])->name('index');
     Route::post('/create', [NoteController::class, 'store'])->name('store');
     Route::put('/update/{id}', [NoteController::class, 'update'])->name('update');
     Route::delete('/delete/{id}', [NoteController::class, 'destroy'])->name('destroy');

@@ -11,7 +11,7 @@ class NoteRepository extends BaseRepository
     {
         parent::__construct($note);
     }
-    public function getAllByUser($paginate)
+    public function getAllByUser($paginate = 4)
     {
         $userId = auth('sanctum')->user()->id;
 
