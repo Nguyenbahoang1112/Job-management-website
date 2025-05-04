@@ -12,19 +12,19 @@ class RepeatRuleRepository extends BaseRepository
         parent::__construct($repeatRule);
     }
 
-    public function createByAdmin($request, $taskId)
+    public function createByAdmin($request, $taskId, $priority = RepeatRule::PRIORITY_ADMIN)
     {
         $data = [
             'repeat_type' => $request->repeat_type,
             'task_id' => $taskId,
             'repeat_interval' => null,
             'repeat_due_date' => null,
-            'priority_repeat_task' => RepeatRule::PRIORITY_ADMIN,
+            'priority_repeat_task' => $priority,
         ];
 
-        if ($request->repeat_option === 'interval') {
+        if ($request->repeat_option == RepeatRule::REPEAT_BY_INTERVAL) {
             $data['repeat_interval'] = $request->repeat_interval;
-        } else if ($request->repeat_option === 'endDate') {
+        } else if ($request->repeat_option == RepeatRule::REPEAT_BY_DUE_DATE) {
             $data['repeat_due_date'] = $request->repeat_due_date;
         }
         return self::create($data);

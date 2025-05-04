@@ -24,14 +24,13 @@ class ApiResponse
                     'message' => $message,
                     'status_code' => $statusCode
                 ])->response()->getData(true),
-                $statusCode
+                self::SUCCESS
             );
         }
-
         return response()->json([
             'data' => $data,
             'message' => $message,
-            'status_code' => $statusCode
+            'status_code' => $statusCode,
         ], self::SUCCESS);
     }
 

@@ -114,7 +114,7 @@ class UserTaskController extends Controller
                     $taskDetails = [];
 
                     // lặp lại hàng ngày theo số lần (repeat_interval)
-                    if ($request->repeat_option === "interval")
+                    if ($request->repeat_option == RepeatRule::REPEAT_BY_INTERVAL)
                     {
                         //vòng lặp tạo task detail theo số lần lặp lại
                         for ($i = 0; $i <= $request->repeat_interval; $i++) {
@@ -134,7 +134,7 @@ class UserTaskController extends Controller
                         //insert mảng task detail vào db
                         $taskDetailCreate = $this->taskDetailRepository->insertMany($taskDetails);
                     }
-                    else if ($request->repeat_option === "endDate")
+                    else if ($request->repeat_option == RepeatRule::REPEAT_BY_DUE_DATE)
                     {
                         //vòng lặp tạo task detail theo hạn lặp lại
                         while ($due_date <= Carbon::parse($request->repeat_due_date)) {
@@ -177,7 +177,7 @@ class UserTaskController extends Controller
                         $taskDetails = [];
 
                         // lặp lại ngày trong tuần theo số lần (repeat_interval)
-                        if ($request->repeat_option === "interval")
+                        if ($request->repeat_option == RepeatRule::REPEAT_BY_INTERVAL)
                         {
                             //biến đếm số lần lặp lại
                             $indexOfInterval = 0;
@@ -211,7 +211,7 @@ class UserTaskController extends Controller
                             }
                             //insert mảng task detail vào db
                             $taskDetailCreate = $this->taskDetailRepository->insertMany($taskDetails);
-                        } else if ($request->repeat_option === "endDate")
+                        } else if ($request->repeat_option == RepeatRule::REPEAT_BY_DUE_DATE)
                         {
                             //vòng lặp tạo task detail theo hạn lặp lại
                             while ($due_date <= Carbon::parse($request->repeat_due_date)) {
@@ -265,15 +265,18 @@ class UserTaskController extends Controller
                     $taskDetails = [];
 
                     // lặp lại hàng tháng theo số lần (repeat_interval)
-                    if ($request->repeat_option === "interval")
+                    if ($request->repeat_option == RepeatRule::REPEAT_BY_INTERVAL)
                     {
                         //biến đếm số lần lặp lại
                         $indexOfInterval = 0;
 
                         //vòng lặp tạo task detail theo số lần lặp lại
                         while ($indexOfInterval <= $request->repeat_interval) {
-                            //tạo taskDetail
-                            $taskDetail = $this->taskDetailRepository->createTaskDetail($request, $due_date->copy(), $taskCreate->id, $parent_id);
+                            //thêm task detail vào array
+                            $taskDetail = ArrayFormat::taskDetailByAdmin($request, $due_date->copy(), $taskCreate->id, $parent_id);
+
+                            //thêm task detail vào mảng task details
+                            array_push($taskDetails, $taskDetail);
 
                             //tăng parent_id
                             $parent_id++;
@@ -286,20 +289,24 @@ class UserTaskController extends Controller
                         }
                         //insert mảng task detail vào db
                         $taskDetailCreate = $this->taskDetailRepository->insertMany($taskDetails);
-                    } else if ($request->repeat_option === "endDate")
+                    } else if ($request->repeat_option == RepeatRule::REPEAT_BY_DUE_DATE)
                     {
                         //vòng lặp tạo task detail theo hạn lặp lại
                         while ($due_date <= Carbon::parse($request->repeat_due_date)) {
+                            //thêm task detail vào array
+                            $taskDetail = ArrayFormat::taskDetailByAdmin($request, $due_date->copy(), $taskCreate->id, $parent_id);
 
-                            //tạo taskDetail
-                            $taskDetail = $this->taskDetailRepository->createTaskDetail($request, $due_date->copy(), $taskCreate->id, $parent_id);
+                            //thêm task detail vào mảng task details
+                            array_push($taskDetails, $taskDetail);
 
                             //lấy taskDetail->id vừa tạo
-                            $parent_id = $taskDetail->id;
+                            $parent_id++;
 
                             //tăng 1 tháng
                             $due_date->addMonth();
                         }
+                        //insert mảng task detail vào db
+                        $taskDetailCreate = $this->taskDetailRepository->insertMany($taskDetails);
                     }
                 });
             break;

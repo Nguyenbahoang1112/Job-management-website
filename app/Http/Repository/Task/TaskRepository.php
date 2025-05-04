@@ -33,7 +33,6 @@ class TaskRepository extends BaseRepository
         return $tasks;
     }
 
- 
     public function createTaskToUser($user_id)
     {
         return $this->model->create([
@@ -42,16 +41,13 @@ class TaskRepository extends BaseRepository
         ]);
     }
 
-
- 
-
-  public function getAllTeamTaskByAdmin($columns = ['*'], $teamId,$page = 10)
-    {
-        $tasks = $this->model
-            ->where('team_id', $teamId)
-            ->paginate($page);
-        return $tasks;
-    }
+    public function getAllTeamTaskByAdmin($columns = ['*'], $teamId,$page = 10)
+        {
+            $tasks = $this->model
+                ->where('team_id', $teamId)
+                ->paginate($page);
+            return $tasks;
+        }
 
     public function getTasksByType(string $type, int $userId)
     {
@@ -176,7 +172,7 @@ class TaskRepository extends BaseRepository
 
         return $formattedTasks;
     }
-    
+
 
 // Hàm mới để lấy tất cả task đã hoàn thành
 public function getCompletedTasks(int $userId)

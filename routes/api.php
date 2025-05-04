@@ -58,13 +58,10 @@ Route::prefix('auth')->group(function () {
     Route::post('/reset', [ForgotPasswordController::class, 'resetPasswordWithOtp'])->name('password.reset'); // Đổi mật khẩu
 });
 
-
-// Route::post('/email/resend', [VerifyEmailController::class, 'resend'])
-//     ->middleware(['auth:sanctum'])
-//     ->name('verification.send');
-
-
-Route::prefix('/task')->middleware('auth:sanctum')->name('task.')->group(function () {
+Route::prefix('/tasks')->middleware('auth:sanctum')->name('tasks.')->group(function () {
     Route::get('/', [TaskController::class, 'getTasks'])->name('list');
     Route::get('/completed', [TaskController::class, 'getCompletedTasks']);
+    Route::post('/create', [TaskController::class, 'create'])->name('create');
+    Route::put('/update/{id}', [TaskController::class, 'update'])->name('update');
+    Route::delete('/delete/{id}', [TaskController::class, 'destroy'])->name('destroy');
 });

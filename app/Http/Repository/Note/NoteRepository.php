@@ -17,7 +17,7 @@ class NoteRepository extends BaseRepository
 
         return $this->model
                     ->where('user_id', $userId)
-                    ->orderBy('created_at', 'asc')
+                    ->orderBy('created_at', 'desc')
                     ->paginate($paginate);
     }
 
