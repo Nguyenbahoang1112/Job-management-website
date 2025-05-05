@@ -32,7 +32,7 @@ class TaskController extends Controller
     protected $repeatRuleRepository;
     protected $searchHistoryRepo;
 
-    public function __construct(TaskRepository $taskRepo,SearchHistoryRepository $searchHistoryRepository, TaskDetailRepository $taskDetailRepository, TaskTagRepository $taskTagRepository, RepeatRuleRepository $repeatRuleRepository)
+    public function __construct(TaskRepository $taskRepository,SearchHistoryRepository $searchHistoryRepo, TaskDetailRepository $taskDetailRepository, TaskTagRepository $taskTagRepository, RepeatRuleRepository $repeatRuleRepository)
     {
         $this->middleware('auth:sanctum');
         $this->middleware('auth:sanctum');
@@ -47,7 +47,7 @@ class TaskController extends Controller
     {
         $type = $request->input('type', 'all');
         $userId = auth('sanctum')->user()->id;
-        $groupedTasks = $this->taskRepo->getTasksByType($type, $userId);
+        $groupedTasks = $this->taskRepository->getTasksByType($type, $userId);
 
         if (empty($groupedTasks)) {
             return ApiResponse::error('No tasks found for the given criteria.', ApiResponse::NOT_FOUND);
@@ -59,7 +59,7 @@ class TaskController extends Controller
     public function getCompletedTasks()
     {
         $userId = auth('sanctum')->user()->id;
-        $groupedTasks = $this->taskRepo->getCompletedTasks($userId);
+        $groupedTasks = $this->taskRepository->getCompletedTasks($userId);
         if (empty(array_filter($groupedTasks, fn($group) => !empty($group)))) {
             return ApiResponse::error('No completed tasks found.', ApiResponse::NOT_FOUND);
         }
@@ -365,7 +365,7 @@ class TaskController extends Controller
     public function getDeletedTasks()
     {
         $userId = auth('sanctum')->user()->id;
-        $groupedTasks = $this->taskRepo->getDeletedTasks($userId);
+        $groupedTasks = $this->taskRepository->getDeletedTasks($userId);
         if (empty(array_filter($groupedTasks, fn($group) => !empty($group)))) {
             return ApiResponse::error('No deleted tasks found.', ApiResponse::NOT_FOUND);
         }
@@ -376,7 +376,7 @@ class TaskController extends Controller
     public function getImportantTasks()
     {
         $userId = auth('sanctum')->user()->id;
-        $tasks = $this->taskRepo->getImportantTasks($userId);
+        $tasks = $this->taskRepository->getImportantTasks($userId);
         if (empty(array_filter($tasks, fn($group) => !empty($group)))) {
             return ApiResponse::error('No important tasks found.', ApiResponse::NOT_FOUND);
         }
@@ -392,7 +392,7 @@ class TaskController extends Controller
 
         $userId = $request->user()->id;
         $title = $request->input('title');
-        $groupedTasks = $this->taskRepo->searchTasksByTitle($userId, $title);
+        $groupedTasks = $this->taskRepository->searchTasksByTitle($userId, $title);
 
        
         $this->searchHistoryRepo->createSearchHistory($title, $userId);
@@ -409,7 +409,7 @@ class TaskController extends Controller
     public function getTasksByUserInTeams()
     {
         $userId = auth('sanctum')->user()->id;
-        $groupedTasks = $this->taskRepo->getTasksByUserInTeams($userId);
+        $groupedTasks = $this->taskRepository->getTasksByUserInTeams($userId);
 
         if (empty(array_filter($groupedTasks, fn($group) => !empty($group)))) {
             return ApiResponse::error('No tasks found for the user in teams.', ApiResponse::NOT_FOUND);
@@ -423,7 +423,7 @@ class TaskController extends Controller
     {
         $userId = auth('sanctum')->user()->id;
 
-        $result = $this->taskRepo->getTeamsAndTaskGroups($userId);
+        $result = $this->taskRepository->getTeamsAndTaskGroups($userId);
 
         if (empty($result['teams']) && empty($result['task_groups'])) {
             return ApiResponse::error('No teams or task groups found for the user.', ApiResponse::NOT_FOUND);
@@ -463,7 +463,7 @@ class TaskController extends Controller
         }
 
         // Gọi repository để lấy task
-        $tasks = $this->taskRepo->getTasksByTeamOrGroup($userId, $teamId, $taskGroupId);
+        $tasks = $this->taskRepository->getTasksByTeamOrGroup($userId, $teamId, $taskGroupId);
 
         if (empty(array_filter($tasks, fn($group) => !empty($group)))) {
             return ApiResponse::error('No tasks found for the specified team or task group.', ApiResponse::NOT_FOUND);
@@ -486,7 +486,7 @@ class TaskController extends Controller
         $tagId = (int)$tagId;
 
         // Gọi repository để lấy task
-        $tasks = $this->taskRepo->getTasksByTag($userId, $tagId);
+        $tasks = $this->taskRepository->getTasksByTag($userId, $tagId);
 
         if (empty(array_filter($tasks, fn($group) => !empty($group)))) {
             return ApiResponse::error('No tasks found for the specified tag.', ApiResponse::NOT_FOUND);
