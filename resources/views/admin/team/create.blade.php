@@ -16,12 +16,13 @@
             {{-- Email --}}
             <div class="mb-3">
                 <label for="name" class="form-label">Tên:</label>
-                <input type="name" name="name" class="form-control @error('name') is-invalid @enderror" >
+                <input type="name" name="name" class="form-control @error('name') is-invalid @enderror">
                 @error('name')
                     <span class="invalid-feedback">{{ $message }}</span>
                 @enderror
                 <label for="name" class="form-label">Mô tả:</label>
-                <input type="description" name="description" class="form-control @error('description') is-invalid @enderror" >
+                <input type="description" name="description"
+                    class="form-control @error('description') is-invalid @enderror">
                 @error('description')
                     <span class="invalid-feedback">{{ $message }}</span>
                 @enderror
@@ -31,4 +32,3 @@
         </form>
     </div>
 @endsection
-

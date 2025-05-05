@@ -13,7 +13,7 @@ class ArrayFormat
             'task_id' => $taskId,
         ], $tagIds);
     }
-    static function taskDetailByAdmin($request, $due_date, $task_id, $parent_id)
+    static function taskDetailByAdmin($request, $due_date, $task_id, $parent_id, $priority = TaskDetail::PRIORITY_ADMIN)
     {
         return [
             'task_id' => $task_id,
@@ -21,7 +21,7 @@ class ArrayFormat
             'description' => $request->description,
             'due_date' => $due_date,
             'time' => $request->time,
-            'priority' => TaskDetail::PRIORITY_ADMIN,
+            'priority' => $priority,
             'parent_id' => $parent_id,
             'created_at' => now()
         ];

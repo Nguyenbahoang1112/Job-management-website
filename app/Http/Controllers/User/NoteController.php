@@ -22,9 +22,9 @@ class NoteController extends Controller
         $this->noteRepository = $noteRepository;
     }
 
-    public function index(Request $request)
+    public function index($paginate)
     {
-        $notes = $this->noteRepository->getAllByUser($request->paginate);
+        $notes = $this->noteRepository->getAllByUser($paginate);
 
         if ($notes) {
             return ApiResponse::success(NoteResource::collection($notes), 'Get notes successful', 200);

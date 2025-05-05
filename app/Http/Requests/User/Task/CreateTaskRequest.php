@@ -1,8 +1,9 @@
 <?php
 
-namespace App\Http\Requests\Admin\Task;
+namespace App\Http\Requests\User\Task;
 
 use App\Http\Requests\BaseFormRequest;
+use Illuminate\Foundation\Http\FormRequest;
 
 class CreateTaskRequest extends BaseFormRequest
 {
@@ -22,10 +23,10 @@ class CreateTaskRequest extends BaseFormRequest
     public function rules(): array
     {
         return [
-            'user_id'            => 'required|integer|exists:users,id',
+            'group_id'           => 'required|integer|exists:task_groups,id',
             'title'              => 'required|string|max:255',
             'description'        => 'required|string|max:255',
-            'due_date_select'    => 'required|string|in:1,2,3,custom', // nếu có danh sách cố định
+            'due_date_select'    => 'required|integer|in:1,2,3,4', // nếu có danh sách cố định
             'due_date'           => 'nullable|date|after_or_equal:today',
             'time'               => 'required|date_format:H:i',
             'repeat_type'        => 'required|integer|in:0,1,2,3', // kiểu lặp: không lặp, hằng ngày, v.v...

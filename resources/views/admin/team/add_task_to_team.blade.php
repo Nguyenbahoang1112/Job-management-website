@@ -82,7 +82,7 @@
                             <label class="form-label">Kết thúc</label>
                             <div class="form-check">
                                 <input class="form-check-input" type="radio" name="repeat_option" id="endAfter"
-                                    value="interval" checked>
+                                    value="1" checked>
                                 <label class="form-check-label" for="endAfter">
                                     Số lần lặp lại
                                 </label>
@@ -92,7 +92,7 @@
 
                             <div class="form-check mt-2">
                                 <input class="form-check-input" type="radio" name="repeat_option" id="endByDate"
-                                    value="endDate">
+                                    value="2">
                                 <label class="form-check-label" for="endByDate">
                                     Vào ngày
                                 </label>

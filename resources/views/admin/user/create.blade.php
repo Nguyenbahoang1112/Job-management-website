@@ -4,8 +4,8 @@
     <div class="container">
         <h2>Create New User</h2>
 
-            <!-- Display Success Message -->
-            @if (session('success'))
+        <!-- Display Success Message -->
+        @if (session('success'))
             <div class="alert alert-success">
                 {{ session('success') }}
             </div>
@@ -13,13 +13,6 @@
 
         <form action="{{ route('admin.users.store') }}" method="POST">
             @csrf
-            {{-- <div class="form-group">
-                <label for="name">Name</label>
-                <input type="text" name="name" id="name" class="form-control" value="{{ old('name') }}" required>
-                @error('name')
-                    <div class="text-danger">{{ $message }}</div>
-                @enderror
-            </div> --}}
 
             <div class="form-group">
                 <label for="email">Email</label>

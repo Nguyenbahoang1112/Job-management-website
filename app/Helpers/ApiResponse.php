@@ -3,6 +3,7 @@
 namespace App\Helpers;
 
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Resources\Json\JsonResource;
 
 class ApiResponse
 {
@@ -17,10 +18,19 @@ class ApiResponse
 
     public static function success($data, $message, $statusCode = 200): JsonResponse
     {
+        if ($data instanceof JsonResource) {
+            return response()->json(
+                $data->additional([
+                    'message' => $message,
+                    'status_code' => $statusCode
+                ])->response()->getData(true),
+                self::SUCCESS
+            );
+        }
         return response()->json([
             'data' => $data,
             'message' => $message,
-            'status_code' => $statusCode
+            'status_code' => $statusCode,
         ], self::SUCCESS);
     }
 

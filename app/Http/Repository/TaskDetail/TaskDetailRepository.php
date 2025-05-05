@@ -20,7 +20,7 @@ class TaskDetailRepository extends BaseRepository
             ->paginate(10);
         return $task_details;
     }
-    public function createTaskDetail($request, $due_date, $task_id, $parent_id = null)
+    public function createTaskDetail($request, $due_date, $task_id, $parent_id = null, $priority = TaskDetail::PRIORITY_ADMIN)
     {
         return $this->model->create([
             'task_id' => $task_id,
@@ -28,7 +28,7 @@ class TaskDetailRepository extends BaseRepository
             'description' => $request->description,
             'due_date' => $due_date,
             'time' => $request->time,
-            'priority' => TaskDetail::PRIORITY_ADMIN,
+            'priority' => $priority,
             'parent_id' => $parent_id
         ]);
     }
