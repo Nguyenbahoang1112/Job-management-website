@@ -33,4 +33,30 @@ class TeamRepository extends BaseRepository{
             throw new \Exception('Không thể sửa nhóm',$e->getMessage());
         }
     }
+    public function getUserTeams(int $userId)
+    {
+        return $this->model
+            ->whereHas('users', function ($query) use ($userId) {
+                $query->where('user_id', $userId);
+            })
+            ->with('users:id,email') // Lấy thông tin user liên quan (tùy chọn)
+            ->get()
+            ->map(function ($team) {
+                return [
+                    'id' => $team->id,
+                    'name' => $team->name,
+                    'description' => $team->description,
+                    'users' => $team->users->map(function ($user) {
+                        return [
+                            'id' => $user->id,
+                            'name' => $user->email,
+                        ];
+                    }),
+                    'created_at' => $team->created_at->toISOString(),
+                    'updated_at' => $team->updated_at->toISOString(),
+                ];
+            })
+            ->toArray();
+    }
+
 }

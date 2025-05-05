@@ -17,6 +17,8 @@ return new class extends Migration
             $table->unsignedSmallInteger('is_admin_created')->default(TaskGroup::CREATED_BY_USER);
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->timestamps();
+
+            $table->unique(['user_id', 'name']);
         });
     }
 
