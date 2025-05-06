@@ -62,6 +62,9 @@ Route::prefix('/tasks')->middleware('auth:sanctum')->name('tasks.')->group(funct
     Route::get('/', [TaskController::class, 'getTasks'])->name('list');
     Route::get('/completed', [TaskController::class, 'getCompletedTasks']);
     Route::post('/create', [TaskController::class, 'create'])->name('create');
+    Route::post('/duplicate/{id}', [TaskController::class, 'duplicate'])->name('duplicate');
     Route::put('/update/{id}', [TaskController::class, 'update'])->name('update');
-    Route::delete('/delete/{id}', [TaskController::class, 'destroy'])->name('destroy');
+    Route::put('/updateAll/{id}', [TaskController::class, 'updateAll'])->name('updateAll');
+    Route::post('/bin/{id}', [TaskController::class, 'destroy'])->name('removeToBin');
+    Route::post('/binAll/{id}', [TaskController::class, 'destroyAll'])->name('removeAllToBin');
 });

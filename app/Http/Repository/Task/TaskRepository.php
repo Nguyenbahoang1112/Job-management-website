@@ -174,63 +174,68 @@ class TaskRepository extends BaseRepository
     }
 
 
-// Hàm mới để lấy tất cả task đã hoàn thành
-public function getCompletedTasks(int $userId)
-{
-    // Lấy danh sách team mà user tham gia
-    $teamIds = Team::whereHas('users', function ($query) use ($userId) {
-        $query->where('user_id', $userId);
-    })->pluck('id')->toArray();
+    // Hàm mới để lấy tất cả task đã hoàn thành
+    public function getCompletedTasks(int $userId)
+    {
+        // Lấy danh sách team mà user tham gia
+        $teamIds = Team::whereHas('users', function ($query) use ($userId) {
+            $query->where('user_id', $userId);
+        })->pluck('id')->toArray();
 
-    // Lấy task của user hoặc task thuộc team mà user tham gia
-    $query = Task::with([
-        'taskDetails' => function ($q) {
-            $q->select('id', 'task_id', 'title', 'description', 'due_date', 'time', 'priority', 'status', 'parent_id', 'created_at')
-              ->where('status', 1) // Chỉ lấy task đã hoàn thành
-              ->orderBy('created_at', 'asc'); // Sắp xếp theo created_at để lấy task đầu tiên nếu có lặp lại
-        },
-        'taskGroup:id,name',
-        'repeatRule:id,task_id,repeat_type',
-        'tags:id,name'
-    ])
-    ->where(function ($query) use ($userId, $teamIds) {
-        $query->where('user_id', $userId)
-              ->orWhereIn('team_id', $teamIds);
-    })
-    ->whereHas('taskDetails', function ($q) {
-        $q->where('status', 1); // Đảm bảo chỉ lấy task đã hoàn thành
-    });
+        // Lấy task của user hoặc task thuộc team mà user tham gia
+        $query = Task::with([
+            'taskDetails' => function ($q) {
+                $q->select('id', 'task_id', 'title', 'description', 'due_date', 'time', 'priority', 'status', 'parent_id', 'created_at')
+                ->where('status', 1) // Chỉ lấy task đã hoàn thành
+                ->orderBy('created_at', 'asc'); // Sắp xếp theo created_at để lấy task đầu tiên nếu có lặp lại
+            },
+            'taskGroup:id,name',
+            'repeatRule:id,task_id,repeat_type',
+            'tags:id,name'
+        ])
+        ->where(function ($query) use ($userId, $teamIds) {
+            $query->where('user_id', $userId)
+                ->orWhereIn('team_id', $teamIds);
+        })
+        ->whereHas('taskDetails', function ($q) {
+            $q->where('status', 1); // Đảm bảo chỉ lấy task đã hoàn thành
+        });
 
-    $tasks = $query->get();
+        $tasks = $query->get();
 
-    // Nhóm task theo taskGroup
-    $formattedTasks = [];
-    foreach ($tasks as $task) {
-        $groupName = $task->taskGroup ? $task->taskGroup->name : 'Khác';
+        // Nhóm task theo taskGroup
+        $formattedTasks = [];
+        foreach ($tasks as $task) {
+            $groupName = $task->taskGroup ? $task->taskGroup->name : 'Khác';
 
-        // Nếu không có task_details, vẫn tạo nhóm nhưng để mảng rỗng
-        if ($task->taskDetails->isEmpty()) {
+            // Nếu không có task_details, vẫn tạo nhóm nhưng để mảng rỗng
+            if ($task->taskDetails->isEmpty()) {
 
-            $formattedTasks[$groupName] = $formattedTasks[$groupName] ?? [];
-            continue;
+                $formattedTasks[$groupName] = $formattedTasks[$groupName] ?? [];
+                continue;
+            }
+
+            // Với quan hệ 1-1 của repeatRule, chỉ cần lấy task_details đầu tiên
+            $detail = $task->taskDetails->first();
+
+            $formattedTasks[$groupName][] = [
+                'id' => $detail->id,
+                'title' => $detail->title,
+                'description' => $detail->description,
+                'dueDate' => Carbon::parse($detail->due_date)->toISOString(),
+                'isRepeating' => !is_null($task->repeatRule),
+                'isImportant' => $detail->priority > 0,
+                'tags' => $task->tags->pluck('name')->toArray()
+            ];
         }
 
-        // Với quan hệ 1-1 của repeatRule, chỉ cần lấy task_details đầu tiên
-        $detail = $task->taskDetails->first();
 
-        $formattedTasks[$groupName][] = [
-            'id' => $detail->id,
-            'title' => $detail->title,
-            'description' => $detail->description,
-            'dueDate' => Carbon::parse($detail->due_date)->toISOString(),
-            'isRepeating' => !is_null($task->repeatRule),
-            'isImportant' => $detail->priority > 0,
-            'tags' => $task->tags->pluck('name')->toArray()
-        ];
+        return $formattedTasks;
     }
 
-
-    return $formattedTasks;
-}
-
+    public function checkAdminCreated($id)
+    {
+        $task = $this->model->find($id);
+        return $task->is_admin_created;
+    }
 }

@@ -32,4 +32,80 @@ class TaskDetailRepository extends BaseRepository
             'parent_id' => $parent_id
         ]);
     }
+
+    public function getAllTaskDetail($taskId)
+    {
+        $taskDetails = $this->model
+            ->select('*')
+            ->where('task_id', $taskId)
+            ->orderBy('parent_id', 'asc')
+            ->get();
+        return $taskDetails;
+    }
+    public function getTaskDetailProcess($taskId)
+    {
+        $taskDetails = $this->model
+            ->select('*')
+            ->where('task_id', $taskId)
+            ->where('status', TaskDetail::STATUS_IN_PROGRESS)
+            ->orderBy('parent_id', 'asc')
+            ->get();
+        return $taskDetails;
+    }
+    public function getTaskDetailDone($taskId)
+    {
+        $taskDetails = $this->model
+            ->select('id')
+            ->where('task_id', $taskId)
+            ->where('status', TaskDetail::STATUS_DONE)
+            ->get();
+        return $taskDetails;
+    }
+
+    //cập nhật toàn bộ task có status = processing sang deleting
+    public function removeAllToTrash($taskId, $taskDetails)
+    {
+        //nếu parent_id = null thì task bình thường (không lặp)
+        $isRepeat = $taskDetails->first()->parent_id;
+        //nếu là task lặp lại thì sẽ phải kiểm tra lần lượt từng task
+        if ($isRepeat) {
+            //có tồn tại
+            DB::transaction(function () use ($taskDetails) {
+                foreach ($taskDetails as $taskDetail) {
+                    if ($taskDetail->status == TaskDetail::STATUS_IN_PROGRESS) {
+                        $taskDetailDelete = $this->model
+                            ->where('id', $taskDetail->id)
+                            ->update([
+                                'status' => '2'
+                            ]);
+                    }
+                }
+            });
+            return true;
+        } else {
+            //xóa task không lặp (có thể xóa nếu fe gọi removeToTrash cho task không lặp lại)
+            return $this->model
+                ->where('task_id', $taskId)
+                ->update([
+                    'status' => '2'
+                ]);
+        }
+
+        return false;
+    }
+    //Cập nhật trạng thái của task detail sang deleting (gửi id của taskdetail)
+    public function removeToTrash($id) {
+        $taskDetail = $this->model->find($id);
+        if ($taskDetail->status == TaskDetail::STATUS_IN_PROGRESS) {
+            return $this->model
+            ->where('id', $id)
+            ->update([
+                'status' => '2'
+            ]);
+        }
+        else {
+            return false;
+        }
+    }
+
 }
