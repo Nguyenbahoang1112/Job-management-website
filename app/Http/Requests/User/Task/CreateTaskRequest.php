@@ -23,13 +23,14 @@ class CreateTaskRequest extends BaseFormRequest
     public function rules(): array
     {
         return [
-            'group_id'           => 'required|integer|exists:task_groups,id',
+            'group_id'           => 'nullable|integer|exists:task_groups,id',
             'title'              => 'required|string|max:255',
             'description'        => 'required|string|max:255',
             'due_date_select'    => 'required|integer|in:1,2,3,4', // nếu có danh sách cố định
             'due_date'           => 'nullable|date|after_or_equal:today',
             'time'               => 'required|date_format:H:i',
             'repeat_type'        => 'required|integer|in:0,1,2,3', // kiểu lặp: không lặp, hằng ngày, v.v...
+            'repeat_option'      => 'required|integer|in:1,2',
             'repeat_interval'    => 'nullable|integer|min:1|max:365',
             'repeat_due_date'    => 'nullable|date|after_or_equal:today',
             'tag_ids'            => 'nullable|array',

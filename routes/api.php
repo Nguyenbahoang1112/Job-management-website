@@ -8,6 +8,8 @@ use App\Http\Controllers\User\NoteController;
 use App\Http\Controllers\User\TaskController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\User\TaskGroupController;
+use App\Http\Controllers\User\SearchHistoryController;
+use App\Http\Controllers\User\TeamController;
 use App\Http\Controllers\Auth\VerifyEmailController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 
@@ -58,9 +60,33 @@ Route::prefix('auth')->group(function () {
     Route::post('/reset', [ForgotPasswordController::class, 'resetPasswordWithOtp'])->name('password.reset'); // Đổi mật khẩu
 });
 
-Route::prefix('/tasks')->middleware('auth:sanctum')->name('tasks.')->group(function () {
+
+// Route::post('/email/resend', [VerifyEmailController::class, 'resend'])
+//     ->middleware(['auth:sanctum'])
+//     ->name('verification.send');
+
+
+Route::prefix('/task')->name('task.')->group(function () {
     Route::get('/', [TaskController::class, 'getTasks'])->name('list');
     Route::get('/completed', [TaskController::class, 'getCompletedTasks']);
+    Route::get('/deleted', [TaskController::class, 'getDeletedTasks']);
+    Route::get('/important', [TaskController::class, 'getImportantTasks'])->name('important');
+    Route::get('/search', [TaskController::class, 'searchTasksByTitle'])->name('search');
+    Route::get('/user-teams', [TaskController::class, 'getTasksByUserInTeams'])->name('task.user-teams');
+    Route::get('/teams-and-groups', [TaskController::class, 'getTeamsAndTaskGroups'])->name('task.teams-and-groups');
+    Route::get('/tasks-by-team-or-group', [TaskController::class, 'getTasksByTeamOrGroup'])->name('task.tasks-by-team-or-group');
+    Route::get('/tasks-by-tag', [TaskController::class, 'getTasksByTag'])->name('task.tasks-by-tag');
+});
+
+
+Route::prefix('/search-history')->group(function () {
+    Route::post('/', [SearchHistoryController::class, 'store'])->name('search-history.store');
+    Route::get('/', [SearchHistoryController::class, 'index'])->name('search-history.index');
+    Route::delete('/{id}', [SearchHistoryController::class, 'destroy'])->name('search-history.destroy');
+});
+
+Route::prefix('/teams')->group(function () {
+    Route::get('/user', [TeamController::class, 'getUserTeams'])->name('teams.user');
     Route::post('/create', [TaskController::class, 'create'])->name('create');
     Route::post('/duplicate/{id}', [TaskController::class, 'duplicate'])->name('duplicate');
     Route::put('/update/{id}', [TaskController::class, 'update'])->name('update');
