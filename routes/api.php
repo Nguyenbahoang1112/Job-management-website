@@ -22,10 +22,7 @@ Route::prefix('/auth')->group(function () {
     //forgot password
     Route::post('/send-otp', [ForgotPasswordController::class, 'sendOtp']);
     Route::post('/reset-password', [ForgotPasswordController::class, 'resetPasswordWithOtp']);
-});
-
-// Nhóm route quên mật khẩu OTP
-Route::prefix('auth')->group(function () {
+    //verify
     Route::post('/forgot-password', [ForgotPasswordController::class, 'sendOtp'])->name('password.forgot'); // Gửi OTP
     Route::post('/verify-otp', [ForgotPasswordController::class, 'verifyOtp'])->name('password.verifyOtp'); // Xác minh OTP
     Route::post('/reset', [ForgotPasswordController::class, 'resetPasswordWithOtp'])->name('password.reset'); // Đổi mật khẩu
