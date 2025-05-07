@@ -369,24 +369,27 @@ class TaskController extends Controller
             $taskDetail = $this->taskDetailRepository->find($id);
             if ($taskDetail->task->is_admin_created == Task::TASK_CREATED_BY_USER) {
                 // dd($taskDetail->task->user_id, $taskDetail->task->task_group_id);
-                $taskCreate = $this->taskRepository->create([
-                    'user_id' => $taskDetail->task->user_id,
-                    'task_group_id' => $taskDetail->task->task_group_id,
-                ]);
+                DB::transaction(function ($taskDetail) {
+                    $taskCreate = $this->taskRepository->create([
+                        'user_id' => $taskDetail->task->user_id,
+                        'task_group_id' => $taskDetail->task->task_group_id,
+                    ]);
 
-                $taskDetailCreate = $this->taskDetailRepository->create([
-                    'task_id' => $taskCreate->id,
-                    'title' => $taskDetail->title,
-                    'description' => $taskDetail->description,
-                    'due_date' => $taskDetail->due_date,
-                    'time' => $taskDetail->time,
-                    'priority' => $taskDetail->priority
-                ]);
+                    $taskDetailCreate = $this->taskDetailRepository->create([
+                        'task_id' => $taskCreate->id,
+                        'title' => $taskDetail->title,
+                        'description' => $taskDetail->description,
+                        'due_date' => $taskDetail->due_date,
+                        'time' => $taskDetail->time,
+                        'priority' => $taskDetail->priority
+                    ]);
 
-                return ApiResponse::success($taskDetailCreate, 'Duplicate task successful', 200);
+                    return ApiResponse::success($taskDetailCreate, 'Duplicate task successful', 200);
+                });
             } else {
                 return ApiResponse::error('Task of admin created', 400);
             }
+            return ApiResponse::error('Task not found', 404);
         } catch (Exception $e) {
             return ApiResponse::error($e->getMessage(), ApiResponse::ERROR);
         }
@@ -436,7 +439,7 @@ class TaskController extends Controller
                     }
                 });
             }
-            return ApiResponse::success($request->tag_ids, 'Update task successful', 200);
+            return ApiResponse::success(true, 'Update task successful', 200);
         } catch (Exception $e) {
             return ApiResponse::error($e->getMessage(), ApiResponse::ERROR);
         }
@@ -448,186 +451,188 @@ class TaskController extends Controller
             //kiểm tra task của admin hay không?
             $isAdminCreated = $this->taskRepository->checkAdminCreated($taskId);
             if ($isAdminCreated == Task::TASK_CREATED_BY_USER) {
-                //lấy ra danh sách task detail của task (task_id)
-                $taskDetails = $this->taskDetailRepository->getAllTaskDetail($taskId);
-                //due_date
-                $due_date = Carbon::parse($request->due_date);
-                if ($request->repeat_option == RepeatRule::REPEAT_BY_INTERVAL)
-                {
-                    $due_date_copy = $due_date->copy();
-
-                    $indexRepeat = 0;
-                    //đánh dấu parent_id
-                    $parent_id = 1;
-                    //mảng thêm mới
-                    $taskDetailCreates = [];
-                    // dd($due_date_copy, $indexRepeat, $parent_id, $taskDetailCreates);
-                    //cập nhật trong mảng task detail ban đầu
-                    foreach ($taskDetails as $taskDetail)
+                DB::transaction(function () use ($request, $taskId) {
+                    //lấy ra danh sách task detail của task (task_id)
+                    $taskDetails = $this->taskDetailRepository->getAllTaskDetail($taskId);
+                    //due_date
+                    $due_date = Carbon::parse($request->due_date);
+                    if ($request->repeat_option == RepeatRule::REPEAT_BY_INTERVAL)
                     {
-                        if ($taskDetail->status == TaskDetail::STATUS_IN_PROGRESS)
-                        {
-                            if ($indexRepeat > $request->repeat_interval) {
-                                $this->taskDetailRepository->delete($taskDetail->id);
-                            } else {
-                                //cập nhật task detail
-                                $taskDetailUpdate = $this->taskDetailRepository->update([
-                                    'title' => $request->title,
-                                    'description' => $request->description,
-                                    'due_date' => $due_date_copy->copy(),
-                                    'time' => $request->time,
-                                    'priority' => $request->priority,
-                                ], $taskDetail->id);
-                            }
-                        }
-                        //tăng các giá trị due_date, số đếm lặp lại và parent_id để bỏ qua task hoàn thành hoặc ở thùng rác
-                        //tăng ngày theo quy tắc lặp lại
-                        switch ($request->repeat_type) {
-                            case RepeatRule::REPEAT_TYPE_DAILY:
-                                //tăng 1 ngày theo quy tắc lặp lại (hàng ngày)
-                                $due_date_copy = $due_date_copy->addDay();
-                                break;
-                            case RepeatRule::REPEAT_TYPE_DAY_OF_WEEK:
-                                //tăng ngày theo quy tắc lặp lại (ngày trong tuần)
-                                if ($due_date_copy->dayOfWeek == 5) {
-                                    //nếu đang là thứ 6 thì tăng lên 3 ngày để tới thứ 2
-                                    $due_date_copy->addDay(3);
-                                } else if ($due_date_copy->dayOfWeek == 6) {
-                                    //nếu đang là thứ 7 thì tăng lên 2 ngày để tới thứ 2
-                                    $due_date_copy->addDay(2);
-                                } else {
-                                    //tăng 1 ngày
-                                    $due_date_copy->addDay();
-                                }
-                                break;
-                            case RepeatRule::REPEAT_TYPE_MONTHLY:
-                                //tăng 1 tháng
-                                $due_date_copy->addMonth();
-                                break;
-                            default:
-                                break;
-                        }
-                        //tăng indexRepeat
-                        $indexRepeat++;
-                        //tăng parent_id
-                        $parent_id++;
-                    }
-                    //thêm mới các task detail nếu còn thiếu
-                    while ($indexRepeat <= $request->repeat_interval) {
-                        //thêm task detail vào array
-                        $taskDetailCreate = ArrayFormat::taskDetailByAdmin($request, $due_date_copy->copy(), $taskId, $parent_id, $request->priority);
-                        //thêm task detail vào mảng task details
-                        array_push($taskDetailCreates, $taskDetailCreate);
+                        $due_date_copy = $due_date->copy();
 
-                        //tăng indexRepeat
-                        $indexRepeat++;
-                        //tăng parent_id
-                        $parent_id++;
-                    }
-                    //nếu có thêm mới thì insert vào dbs
-                    if ($taskDetails->count() > 0) {
-                        $taskDetailUpdates = $this->taskDetailRepository->insertMany($taskDetailCreates);
-                        return ApiResponse::success(true, 'Update task successful', 200);
-                    }
-                } else if ($request->repeat_option == RepeatRule::REPEAT_BY_DUE_DATE) {
-                    $due_date_copy = $due_date->copy();
-                    //đánh dấu parent_id
-                    $parent_id = 1;
-                    //mảng thêm mới
-                    $taskDetailCreates = [];
-                    // dd($due_date_copy, $indexRepeat, $parent_id, $taskDetailCreates);
-                    //cập nhật trong mảng task detail ban đầu
-                    foreach ($taskDetails as $taskDetail)
-                    {
-                        if ($taskDetail->status == TaskDetail::STATUS_IN_PROGRESS)
+                        $indexRepeat = 0;
+                        //đánh dấu parent_id
+                        $parent_id = 1;
+                        //mảng thêm mới
+                        $taskDetailCreates = [];
+                        // dd($due_date_copy, $indexRepeat, $parent_id, $taskDetailCreates);
+                        //cập nhật trong mảng task detail ban đầu
+                        foreach ($taskDetails as $taskDetail)
                         {
-                            if ($due_date_copy > Carbon::parse($request->repeat_due_date)) {
-                                $this->taskDetailRepository->delete($taskDetail->id);
-                            } else {
-                                //cập nhật task detail
-                                $taskDetailUpdate = $this->taskDetailRepository->update([
-                                    'title' => $request->title,
-                                    'description' => $request->description,
-                                    'due_date' => $due_date_copy->copy(),
-                                    'time' => $request->time,
-                                    'priority' => $request->priority,
-                                ], $taskDetail->id);
+                            if ($taskDetail->status == TaskDetail::STATUS_IN_PROGRESS)
+                            {
+                                if ($indexRepeat > $request->repeat_interval) {
+                                    $this->taskDetailRepository->delete($taskDetail->id);
+                                } else {
+                                    //cập nhật task detail
+                                    $taskDetailUpdate = $this->taskDetailRepository->update([
+                                        'title' => $request->title,
+                                        'description' => $request->description,
+                                        'due_date' => $due_date_copy->copy(),
+                                        'time' => $request->time,
+                                        'priority' => $request->priority,
+                                    ], $taskDetail->id);
+                                }
                             }
+                            //tăng các giá trị due_date, số đếm lặp lại và parent_id để bỏ qua task hoàn thành hoặc ở thùng rác
+                            //tăng ngày theo quy tắc lặp lại
+                            switch ($request->repeat_type) {
+                                case RepeatRule::REPEAT_TYPE_DAILY:
+                                    //tăng 1 ngày theo quy tắc lặp lại (hàng ngày)
+                                    $due_date_copy = $due_date_copy->addDay();
+                                    break;
+                                case RepeatRule::REPEAT_TYPE_DAY_OF_WEEK:
+                                    //tăng ngày theo quy tắc lặp lại (ngày trong tuần)
+                                    if ($due_date_copy->dayOfWeek == 5) {
+                                        //nếu đang là thứ 6 thì tăng lên 3 ngày để tới thứ 2
+                                        $due_date_copy->addDay(3);
+                                    } else if ($due_date_copy->dayOfWeek == 6) {
+                                        //nếu đang là thứ 7 thì tăng lên 2 ngày để tới thứ 2
+                                        $due_date_copy->addDay(2);
+                                    } else {
+                                        //tăng 1 ngày
+                                        $due_date_copy->addDay();
+                                    }
+                                    break;
+                                case RepeatRule::REPEAT_TYPE_MONTHLY:
+                                    //tăng 1 tháng
+                                    $due_date_copy->addMonth();
+                                    break;
+                                default:
+                                    break;
+                            }
+                            //tăng indexRepeat
+                            $indexRepeat++;
+                            //tăng parent_id
+                            $parent_id++;
                         }
-                        //tăng các giá trị due_date, số đếm lặp lại và parent_id để bỏ qua task hoàn thành hoặc ở thùng rác
-                        //tăng ngày theo quy tắc lặp lại
-                        switch ($request->repeat_type) {
-                            case RepeatRule::REPEAT_TYPE_DAILY:
-                                //tăng 1 ngày theo quy tắc lặp lại (hàng ngày)
-                                $due_date_copy = $due_date_copy->addDay();
-                                break;
-                            case RepeatRule::REPEAT_TYPE_DAY_OF_WEEK:
-                                //tăng ngày theo quy tắc lặp lại (ngày trong tuần)
-                                if ($due_date_copy->dayOfWeek == 5) {
-                                    //nếu đang là thứ 6 thì tăng lên 3 ngày để tới thứ 2
-                                    $due_date_copy->addDay(3);
-                                } else if ($due_date_copy->dayOfWeek == 6) {
-                                    //nếu đang là thứ 7 thì tăng lên 2 ngày để tới thứ 2
-                                    $due_date_copy->addDay(2);
-                                } else {
-                                    //tăng 1 ngày
-                                    $due_date_copy->addDay();
-                                }
-                                break;
-                            case RepeatRule::REPEAT_TYPE_MONTHLY:
-                                //tăng 1 tháng
-                                $due_date_copy->addMonth();
-                                break;
-                            default:
-                                break;
-                        }
-                        //tăng parent_id
-                        $parent_id++;
-                    }
-                    //thêm mới các task detail nếu còn thiếu
-                    while ($due_date_copy <= Carbon::parse($request->repeat_due_date)) {
-                        //thêm task detail vào array
-                        $taskDetailCreate = ArrayFormat::taskDetailByAdmin($request, $due_date_copy->copy(), $taskId, $parent_id, $request->priority);
-                        //thêm task detail vào mảng task details
-                        array_push($taskDetailCreates, $taskDetailCreate);
+                        //thêm mới các task detail nếu còn thiếu
+                        while ($indexRepeat <= $request->repeat_interval) {
+                            //thêm task detail vào array
+                            $taskDetailCreate = ArrayFormat::taskDetailByAdmin($request, $due_date_copy->copy(), $taskId, $parent_id, $request->priority);
+                            //thêm task detail vào mảng task details
+                            array_push($taskDetailCreates, $taskDetailCreate);
 
-                        //tăng các giá trị due_date và parent_id
-                        //tăng ngày theo quy tắc lặp lại
-                        switch ($request->repeat_type) {
-                            case RepeatRule::REPEAT_TYPE_DAILY:
-                                //tăng 1 ngày theo quy tắc lặp lại (hàng ngày)
-                                $due_date_copy = $due_date_copy->addDay();
-                                break;
-                            case RepeatRule::REPEAT_TYPE_DAY_OF_WEEK:
-                                //tăng ngày theo quy tắc lặp lại (ngày trong tuần)
-                                if ($due_date_copy->dayOfWeek == 5) {
-                                    //nếu đang là thứ 6 thì tăng lên 3 ngày để tới thứ 2
-                                    $due_date_copy->addDay(3);
-                                } else if ($due_date_copy->dayOfWeek == 6) {
-                                    //nếu đang là thứ 7 thì tăng lên 2 ngày để tới thứ 2
-                                    $due_date_copy->addDay(2);
+                            //tăng indexRepeat
+                            $indexRepeat++;
+                            //tăng parent_id
+                            $parent_id++;
+                        }
+                        //nếu có thêm mới thì insert vào dbs
+                        if ($taskDetails->count() > 0) {
+                            $taskDetailUpdates = $this->taskDetailRepository->insertMany($taskDetailCreates);
+                            return ApiResponse::success(true, 'Update task successful', 200);
+                        }
+                    } else if ($request->repeat_option == RepeatRule::REPEAT_BY_DUE_DATE) {
+                        $due_date_copy = $due_date->copy();
+                        //đánh dấu parent_id
+                        $parent_id = 1;
+                        //mảng thêm mới
+                        $taskDetailCreates = [];
+                        // dd($due_date_copy, $indexRepeat, $parent_id, $taskDetailCreates);
+                        //cập nhật trong mảng task detail ban đầu
+                        foreach ($taskDetails as $taskDetail)
+                        {
+                            if ($taskDetail->status == TaskDetail::STATUS_IN_PROGRESS)
+                            {
+                                if ($due_date_copy > Carbon::parse($request->repeat_due_date)) {
+                                    $this->taskDetailRepository->delete($taskDetail->id);
                                 } else {
-                                    //tăng 1 ngày
-                                    $due_date_copy->addDay();
+                                    //cập nhật task detail
+                                    $taskDetailUpdate = $this->taskDetailRepository->update([
+                                        'title' => $request->title,
+                                        'description' => $request->description,
+                                        'due_date' => $due_date_copy->copy(),
+                                        'time' => $request->time,
+                                        'priority' => $request->priority,
+                                    ], $taskDetail->id);
                                 }
-                                break;
-                            case RepeatRule::REPEAT_TYPE_MONTHLY:
-                                //tăng 1 tháng
-                                $due_date_copy->addMonth();
-                                break;
-                            default:
-                                break;
+                            }
+                            //tăng các giá trị due_date, số đếm lặp lại và parent_id để bỏ qua task hoàn thành hoặc ở thùng rác
+                            //tăng ngày theo quy tắc lặp lại
+                            switch ($request->repeat_type) {
+                                case RepeatRule::REPEAT_TYPE_DAILY:
+                                    //tăng 1 ngày theo quy tắc lặp lại (hàng ngày)
+                                    $due_date_copy = $due_date_copy->addDay();
+                                    break;
+                                case RepeatRule::REPEAT_TYPE_DAY_OF_WEEK:
+                                    //tăng ngày theo quy tắc lặp lại (ngày trong tuần)
+                                    if ($due_date_copy->dayOfWeek == 5) {
+                                        //nếu đang là thứ 6 thì tăng lên 3 ngày để tới thứ 2
+                                        $due_date_copy->addDay(3);
+                                    } else if ($due_date_copy->dayOfWeek == 6) {
+                                        //nếu đang là thứ 7 thì tăng lên 2 ngày để tới thứ 2
+                                        $due_date_copy->addDay(2);
+                                    } else {
+                                        //tăng 1 ngày
+                                        $due_date_copy->addDay();
+                                    }
+                                    break;
+                                case RepeatRule::REPEAT_TYPE_MONTHLY:
+                                    //tăng 1 tháng
+                                    $due_date_copy->addMonth();
+                                    break;
+                                default:
+                                    break;
                             }
                             //tăng parent_id
                             $parent_id++;
+                        }
+                        //thêm mới các task detail nếu còn thiếu
+                        while ($due_date_copy <= Carbon::parse($request->repeat_due_date)) {
+                            //thêm task detail vào array
+                            $taskDetailCreate = ArrayFormat::taskDetailByAdmin($request, $due_date_copy->copy(), $taskId, $parent_id, $request->priority);
+                            //thêm task detail vào mảng task details
+                            array_push($taskDetailCreates, $taskDetailCreate);
+
+                            //tăng các giá trị due_date và parent_id
+                            //tăng ngày theo quy tắc lặp lại
+                            switch ($request->repeat_type) {
+                                case RepeatRule::REPEAT_TYPE_DAILY:
+                                    //tăng 1 ngày theo quy tắc lặp lại (hàng ngày)
+                                    $due_date_copy = $due_date_copy->addDay();
+                                    break;
+                                case RepeatRule::REPEAT_TYPE_DAY_OF_WEEK:
+                                    //tăng ngày theo quy tắc lặp lại (ngày trong tuần)
+                                    if ($due_date_copy->dayOfWeek == 5) {
+                                        //nếu đang là thứ 6 thì tăng lên 3 ngày để tới thứ 2
+                                        $due_date_copy->addDay(3);
+                                    } else if ($due_date_copy->dayOfWeek == 6) {
+                                        //nếu đang là thứ 7 thì tăng lên 2 ngày để tới thứ 2
+                                        $due_date_copy->addDay(2);
+                                    } else {
+                                        //tăng 1 ngày
+                                        $due_date_copy->addDay();
+                                    }
+                                    break;
+                                case RepeatRule::REPEAT_TYPE_MONTHLY:
+                                    //tăng 1 tháng
+                                    $due_date_copy->addMonth();
+                                    break;
+                                default:
+                                    break;
+                                }
+                                //tăng parent_id
+                                $parent_id++;
+                        }
+                        //nếu có thêm mới thì insert vào dbs
+                        if ($taskDetails->count() > 0) {
+                            $taskDetailUpdates = $this->taskDetailRepository->insertMany($taskDetailCreates);
+                            return ApiResponse::success(true, 'Update task successful', 200);
+                        }
                     }
-                    //nếu có thêm mới thì insert vào dbs
-                    if ($taskDetails->count() > 0) {
-                        $taskDetailUpdates = $this->taskDetailRepository->insertMany($taskDetailCreates);
-                        return ApiResponse::success(true, 'Update task successful', 200);
-                    }
-                }
-                return ApiResponse::success(true, 'Update task successful', 200);
+                    return ApiResponse::success(true, 'Update task successful', 200);
+                });
             }
             return ApiResponse::error('Task of admin created', 400);
         } catch (Exception $e) {
@@ -668,6 +673,7 @@ class TaskController extends Controller
         }
         return ApiResponse::error('Delete task failed', 400);
     }
+    //lấy danh sách task ở trong thùng rác
     public function getDeletedTasks()
     {
         $userId = auth('sanctum')->user()->id;
@@ -678,7 +684,7 @@ class TaskController extends Controller
 
         return ApiResponse::success($groupedTasks, 'Deleted tasks retrieved successfully.', ApiResponse::SUCCESS);
     }
-
+    //filter theo task ưu tiên
     public function getImportantTasks()
     {
         $userId = auth('sanctum')->user()->id;
@@ -689,7 +695,7 @@ class TaskController extends Controller
 
         return ApiResponse::success($tasks, 'Important tasks retrieved successfully.', ApiResponse::SUCCESS);
     }
-
+    //tìm kiếm task và lưu lịch sử tìm kiếm
     public function searchTasksByTitle(Request $request)
     {
         $request->validate([
@@ -700,9 +706,7 @@ class TaskController extends Controller
         $title = $request->input('title');
         $groupedTasks = $this->taskRepository->searchTasksByTitle($userId, $title);
 
-
         $this->searchHistoryRepo->createSearchHistory($title, $userId);
-
 
         if (empty(array_filter($groupedTasks, fn($group) => !empty($group)))) {
             return ApiResponse::error('No tasks found with the given title.', ApiResponse::NOT_FOUND);
@@ -710,7 +714,6 @@ class TaskController extends Controller
 
         return ApiResponse::success($groupedTasks, 'Tasks retrieved successfully.', ApiResponse::SUCCESS);
     }
-
 
     public function getTasksByUserInTeams()
     {
@@ -723,7 +726,6 @@ class TaskController extends Controller
 
         return ApiResponse::success($groupedTasks, 'Tasks retrieved successfully.', ApiResponse::SUCCESS);
     }
-
 
     public function getTeamsAndTaskGroups()
     {
@@ -799,5 +801,49 @@ class TaskController extends Controller
         }
 
         return ApiResponse::success($tasks, 'Tasks retrieved successfully.', ApiResponse::SUCCESS);
+    }
+
+    public function updatePriority($id) {
+        try {
+            $taskDetail = $this->taskDetailRepository->find($id);
+            $isAdminCreated = $this->taskRepository->checkAdminCreated($taskDetail->task_id);
+            if ($isAdminCreated == Task::TASK_CREATED_BY_USER)
+            {
+                $updatePriority = $this->taskDetailRepository->updatePriority($id, $taskDetail->priority);
+                return ApiResponse::success($updatePriority, 'Update priority successful', 200);
+            } else {
+                return ApiResponse::error('Task of admin created', 400);
+            }
+            return ApiResponse::error('Task cannot update priority', 404);
+        } catch (Exception $e) {
+            return ApiResponse::error($e->getMessage(), ApiResponse::ERROR);
+        }
+    }
+    public function updateStatusToDoing($taskDetailId)
+    {
+        try {
+            $taskDetail = $this->taskDetailRepository->find($taskDetailId);
+            $updateStatus = $this->taskDetailRepository->updateStatusToDoing($taskDetailId);
+
+            if ($updateStatus)
+            {
+                return ApiResponse::success($updateStatus, 'Update status to doing successful', 200);
+            } else {
+                return ApiResponse::error('Update status to doing failed', 400);
+            }
+        } catch (Exception $e) {
+            return ApiResponse::error($e->getMessage(), ApiResponse::ERROR);
+        }
+    }
+    public function deleteBin()
+    {
+        try {
+            $userId = auth('sanctum')->user()->id;
+            $taskDetails = $this->taskDetailRepository->getBin($userId);
+            dd($taskDetails);
+
+        } catch (Exception $e) {
+            return ApiResponse::error($e->getMessage(), ApiResponse::ERROR);
+        }
     }
 }

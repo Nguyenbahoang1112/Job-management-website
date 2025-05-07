@@ -138,6 +138,7 @@ class TaskRepository extends BaseRepository
 
                 $formattedTasks[$groupName][] = [
                     'id' => $taskDetail->id,
+                    'task_id' => $taskDetail->task_id,
                     'title' => $taskDetail->title,
                     'description' => $taskDetail->description,
                     'dueDate' => $dueDate,
@@ -158,6 +159,7 @@ class TaskRepository extends BaseRepository
 
                     $formattedTasks[$groupName][] = [
                         'id' => $detail->id,
+                        'task_id' => $taskDetail->task_id,
                         'title' => $detail->title,
                         'description' => $detail->description,
                         'dueDate' => $dueDate,
@@ -592,7 +594,6 @@ class TaskRepository extends BaseRepository
 
         return $formattedTasks;
     }
-
 
     public function getTeamsAndTaskGroups(int $userId)
     {

@@ -70,6 +70,10 @@ Route::prefix('/task')->name('task.')->group(function () {
     Route::put('/updateAll/{id}', [TaskController::class, 'updateAll'])->name('updateAll');
     Route::post('/bin/{id}', [TaskController::class, 'destroy'])->name('removeToBin');
     Route::post('/binAll/{id}', [TaskController::class, 'destroyAll'])->name('removeAllToBin');
+
+    Route::post('/updatePriority/{id}', [TaskController::class, 'updatePriority'])->name('updatePriority');
+    Route::post('/updateStatusToDoing/{id}', [TaskController::class, 'updateStatusToDoing'])->name('updateStatusToDoing');
+
 });
 
 

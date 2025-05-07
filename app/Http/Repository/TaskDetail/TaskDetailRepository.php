@@ -108,4 +108,40 @@ class TaskDetailRepository extends BaseRepository
         }
     }
 
+    public function updatePriority($id, $priority)
+    {
+        if ($priority == TaskDetail::PRIORITY_ADMIN)
+        {
+            return $this->model
+                ->where('id', $id)
+                ->update([
+                    'priority' => TaskDetail::PRIORITY_LOW
+                ]);
+        } else {
+            return $this->model
+                ->where('id', $id)
+                ->update([
+                    'priority' => TaskDetail::PRIORITY_ADMIN
+                ]);
+        }
+    }
+    public function updateStatusToDoing($id)
+    {
+        return $this->model
+            ->where('id', $id)
+            ->update([
+                'status' => TaskDetail::STATUS_IN_PROGRESS
+            ]);
+    }
+    public function getBin($userId)
+    {
+        $taskDetails = $this->model
+            ->where('status', TaskDetail::STATUS_DELETING)
+            ->whereHas('task', function ($query) use ($userId) {
+                $query->where('user_id', $userId);
+            })
+            ->with('task') // eager load để không bị N+1
+            ->get();
+        return $taskDetails;
+    }
 }
