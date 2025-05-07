@@ -38,7 +38,6 @@ class TaskController extends Controller
     public function __construct(TaskRepository $taskRepository,SearchHistoryRepository $searchHistoryRepo, TaskDetailRepository $taskDetailRepository, TaskTagRepository $taskTagRepository, RepeatRuleRepository $repeatRuleRepository)
     {
         $this->middleware('auth:sanctum');
-        $this->middleware('auth:sanctum');
         $this->taskRepository = $taskRepository;
         $this->taskDetailRepository = $taskDetailRepository;
         $this->taskTagRepository = $taskTagRepository;
@@ -354,7 +353,7 @@ class TaskController extends Controller
                     return ApiResponse::success($taskCreate, 'Create task successful', 200);
                     break;
                 default:
-                    return ApiResponse::success(true, 'Create task successful', 200);
+                    return ApiResponse::error(false, 'Create task successful', 200);
                     break;
             }
 

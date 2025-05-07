@@ -42,12 +42,12 @@ class TaskRepository extends BaseRepository
     }
 
     public function getAllTeamTaskByAdmin($columns = ['*'], $teamId,$page = 10)
-        {
-            $tasks = $this->model
-                ->where('team_id', $teamId)
-                ->paginate($page);
-            return $tasks;
-        }
+    {
+        $tasks = $this->model
+            ->where('team_id', $teamId)
+            ->paginate($page);
+        return $tasks;
+    }
 
     public function getTasksByType(string $type, int $userId)
     {
@@ -64,7 +64,7 @@ class TaskRepository extends BaseRepository
         ])
         ->where(function ($query) use ($userId, $teamIds) {
             $query->where('user_id', $userId)
-                  ->orWhereIn('team_id', $teamIds);
+                ->orWhereIn('team_id', $teamIds);
         });
 
         // Xây dựng điều kiện lọc thời gian
@@ -73,8 +73,8 @@ class TaskRepository extends BaseRepository
             if ($type === 'today') {
                 $q->where(function ($subQuery) {
                     $subQuery->whereDate('due_date', Carbon::today()->toDateString())
-                             ->whereRaw("CONCAT(due_date, ' ', COALESCE(time, '00:00:00')) >= ?", [Carbon::today()->startOfDay()])
-                             ->whereRaw("CONCAT(due_date, ' ', COALESCE(time, '00:00:00')) <= ?", [Carbon::today()->endOfDay()]);
+                            ->whereRaw("CONCAT(due_date, ' ', COALESCE(time, '00:00:00')) >= ?", [Carbon::today()->startOfDay()])
+                            ->whereRaw("CONCAT(due_date, ' ', COALESCE(time, '00:00:00')) <= ?", [Carbon::today()->endOfDay()]);
                 });
             } elseif ($type === 'three_days') {
                 $startOfDay = Carbon::today()->startOfDay();
@@ -92,10 +92,10 @@ class TaskRepository extends BaseRepository
         if ($type !== 'all') {
             $query->where(function ($query) use ($dateFilter) {
                 $query->whereHas('taskDetails', $dateFilter) // Task thỏa mãn điều kiện thời gian
-                      ->orWhereHas('taskDetails', function ($q) {
-                          $q->whereRaw("CONCAT(due_date, ' ', COALESCE(time, '00:00:00')) < ?", [Carbon::now()])
-                            ->where('status', 0); // Chưa hoàn thành
-                      });
+                    ->orWhereHas('taskDetails', function ($q) {
+                        $q->whereRaw("CONCAT(due_date, ' ', COALESCE(time, '00:00:00')) < ?", [Carbon::now()])
+                        ->where('status', 0); // Chưa hoàn thành
+                    });
             });
         } else {
             // Với type = 'all', lấy tất cả task chưa hoàn thành (bao gồm cả trễ hạn)
@@ -170,8 +170,6 @@ class TaskRepository extends BaseRepository
         }
         return $formattedTasks;
     }
-
-
 
     // Phương thức phụ để xác định tên nhóm
     private function getGroupName($task)
@@ -248,7 +246,7 @@ class TaskRepository extends BaseRepository
     }
 
 
-public function getDeletedTasks(int $userId)
+    public function getDeletedTasks(int $userId)
     {
         // Lấy danh sách team mà user tham gia
         $teamIds = Team::whereHas('users', function ($query) use ($userId) {
@@ -427,14 +425,14 @@ public function getDeletedTasks(int $userId)
         ])
         ->where(function ($query) use ($userId, $teamIds) {
             $query->where('user_id', $userId)
-                  ->orWhereIn('team_id', $teamIds);
+                ->orWhereIn('team_id', $teamIds);
         })
         ->whereHas('taskDetails', function ($q) use ($title) {
             $q->where('status', 0) // Chỉ lấy task chưa hoàn thành
-              ->where(function ($subQuery) use ($title) {
+            ->where(function ($subQuery) use ($title) {
                   $subQuery->where('title', 'LIKE', "%{$title}%") // Tìm theo title
                            ->orWhere('description', 'LIKE', "%{$title}%"); // Tìm theo description
-              });
+            });
         });
 
         $tasks = $query->get();
@@ -454,8 +452,8 @@ public function getDeletedTasks(int $userId)
                 $taskDetail = $task->taskDetails
                     ->where('status', 0)
                     ->where(function ($detail) use ($title) {
-                        return stripos($detail->title, $title) !== false ||
-                               ($detail->description !== null && stripos($detail->description, $title) !== false);
+                        return stripos($detail->title, $title) !== false
+                        || ($detail->description !== null && stripos($detail->description, $title) !== false);
                     })
                     ->sortBy(function ($detail) {
                         $taskDateTime = Carbon::parse($detail->due_date . ' ' . ($detail->time ?? '00:00:00'));
@@ -485,7 +483,7 @@ public function getDeletedTasks(int $userId)
                 foreach ($task->taskDetails as $detail) {
                     if ($detail->status != 0 ||
                         (stripos($detail->title, $title) === false &&
-                         ($detail->description === null || stripos($detail->description, $title) === false))) {
+                        ($detail->description === null || stripos($detail->description, $title) === false))) {
                         continue;
                     }
 
@@ -611,16 +609,16 @@ public function getDeletedTasks(int $userId)
         // Lấy danh sách task group từ các task của user (bao gồm task cá nhân và task trong team)
         $taskGroups = Task::where(function ($query) use ($userId, $teamIds) {
             $query->where('user_id', $userId)
-                  ->orWhereIn('team_id', $teamIds);
-        })
-        ->whereHas('taskGroup') // Chỉ lấy task có taskGroup
-        ->with('taskGroup:id,name')
-        ->get()
-        ->pluck('taskGroup.name')
-        ->filter() // Loại bỏ null
-        ->unique() // Loại bỏ trùng lặp
-        ->values()
-        ->toArray();
+                ->orWhereIn('team_id', $teamIds);
+            })
+            ->whereHas('taskGroup') // Chỉ lấy task có taskGroup
+            ->with('taskGroup:id,name')
+            ->get()
+            ->pluck('taskGroup.name')
+            ->filter() // Loại bỏ null
+            ->unique() // Loại bỏ trùng lặp
+            ->values()
+            ->toArray();
 
         // Kết hợp danh sách team và task group, team trước, task group sau
         return [

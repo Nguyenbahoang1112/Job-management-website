@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 use App\Helpers\ApiResponse;
 class SearchHistoryController extends Controller
 {
-    
+
     protected $searchHistoryRepository;
 
     public function __construct(SearchHistoryRepository $searchHistoryRepository)
@@ -54,5 +54,5 @@ class SearchHistoryController extends Controller
         }
     }
 
-    
+
 }
