@@ -133,6 +133,14 @@ class TaskDetailRepository extends BaseRepository
                 'status' => TaskDetail::STATUS_IN_PROGRESS
             ]);
     }
+    public function updateStatusToDone($id)
+    {
+        return $this->model
+            ->where('id', $id)
+            ->update([
+                'status' => TaskDetail::STATUS_DONE
+            ]);
+    }
     public function getBin($userId)
     {
         $taskDetails = $this->model
@@ -144,4 +152,5 @@ class TaskDetailRepository extends BaseRepository
             ->get();
         return $taskDetails;
     }
+
 }

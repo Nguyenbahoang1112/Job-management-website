@@ -73,7 +73,8 @@ Route::prefix('/task')->name('task.')->group(function () {
 
     Route::post('/updatePriority/{id}', [TaskController::class, 'updatePriority'])->name('updatePriority');
     Route::post('/updateStatusToDoing/{id}', [TaskController::class, 'updateStatusToDoing'])->name('updateStatusToDoing');
-
+    Route::post('/updateStatusToDone/{id}', [TaskController::class, 'updateStatusToDone'])->name('updateStatusToDone');
+    Route::delete('/deleteBin', [TaskController::class, 'deleteBin'])->name('deleteBinTask');
 });
 
 

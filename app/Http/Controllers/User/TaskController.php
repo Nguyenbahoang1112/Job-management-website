@@ -835,13 +835,39 @@ class TaskController extends Controller
             return ApiResponse::error($e->getMessage(), ApiResponse::ERROR);
         }
     }
+
+    public function updateStatusToDone($taskDetailId)
+    {
+        try {
+            $taskDetail = $this->taskDetailRepository->find($taskDetailId);
+            $updateStatus = $this->taskDetailRepository->updateStatusToDone($taskDetailId);
+
+            if ($updateStatus)
+            {
+                return ApiResponse::success($updateStatus, 'Update status to completed successful', 200);
+            } else {
+                return ApiResponse::error('Update status to completed failed', 400);
+            }
+        } catch (Exception $e) {
+            return ApiResponse::error($e->getMessage(), ApiResponse::ERROR);
+        }
+    }
+
     public function deleteBin()
     {
         try {
             $userId = auth('sanctum')->user()->id;
             $taskDetails = $this->taskDetailRepository->getBin($userId);
-            dd($taskDetails);
-
+            if ($taskDetails)
+            {
+                foreach ($taskDetails as $taskDetail)
+                {
+                    $this->taskDetailRepository->delete($taskDetail->id);
+                }
+                return ApiResponse::success(true, 'Delete bin successful', 200);
+            } else {
+                return ApiResponse::error('Done have task in bin', 400);
+            }
         } catch (Exception $e) {
             return ApiResponse::error($e->getMessage(), ApiResponse::ERROR);
         }
