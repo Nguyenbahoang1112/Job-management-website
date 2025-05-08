@@ -106,6 +106,8 @@ class TaskRepository extends BaseRepository
 
         $tasks = $query->get();
 
+        $totalTasks = 0;
+
         // Nhóm task theo team hoặc taskGroup
         $formattedTasks = [];
         foreach ($tasks as $task) {
@@ -143,8 +145,10 @@ class TaskRepository extends BaseRepository
                     'dueDate' => $dueDate,
                     'isRepeating' => true,
                     'isImportant' => $taskDetail->priority > 0,
+                    'isAdminCreated' => $task->is_admin_created,
                     'tags' => $task->tags->pluck('name')->toArray()
                 ];
+                $totalTasks++;
             } else {
                 // Với task không lặp lại hoặc type = 'all', lấy tất cả taskDetails
                 foreach ($task->taskDetails as $detail) {
@@ -163,11 +167,14 @@ class TaskRepository extends BaseRepository
                         'dueDate' => $dueDate,
                         'isRepeating' => $isRepeating,
                         'isImportant' => $detail->priority > 0,
+                        'isAdminCreated' => $task->is_admin_created,
                         'tags' => $task->tags->pluck('name')->toArray()
                     ];
+                    $totalTasks++;
                 }
             }
         }
+        $formattedTasks['total_tasks'] = $totalTasks;
         return $formattedTasks;
     }
 
@@ -213,7 +220,7 @@ class TaskRepository extends BaseRepository
         });
 
         $tasks = $query->get();
-
+        $totalTasks= 0;
         // Nhóm task theo team hoặc taskGroup
         $formattedTasks = [];
         foreach ($tasks as $task) {
@@ -239,10 +246,12 @@ class TaskRepository extends BaseRepository
                 'dueDate' => $dueDate,
                 'isRepeating' => !is_null($task->repeatRule),
                 'isImportant' => $detail->priority > 0,
+                'isAdminCreated' => $task->is_admin_created,
                 'tags' => $task->tags->pluck('name')->toArray()
             ];
+            $totalTasks++;
         }
-
+        $formattedTasks['total_tasks'] = $totalTasks;
         return $formattedTasks;
     }
 
@@ -275,7 +284,7 @@ public function getDeletedTasks(int $userId)
         });
 
         $tasks = $query->get();
-
+        $totalTasks  =0;
         // Nhóm task theo team hoặc taskGroup
         $formattedTasks = [];
         foreach ($tasks as $task) {
@@ -302,10 +311,12 @@ public function getDeletedTasks(int $userId)
                 'dueDate' => $dueDate,
                 'isRepeating' => !is_null($task->repeatRule),
                 'isImportant' => $detail->priority > 0,
+                'isAdminCreated' => $task->is_admin_created,
                 'tags' => $task->tags->pluck('name')->toArray()
             ];
+            $totalTasks ++;
         }
-
+        $formattedTasks['total_tasks'] = $totalTasks;
         return $formattedTasks;
     }
 
@@ -338,7 +349,7 @@ public function getDeletedTasks(int $userId)
         });
 
         $tasks = $query->get();
-
+        $totalTasks = 0;
         // Nhóm task theo team hoặc taskGroup
         $formattedTasks = [];
         foreach ($tasks as $task) {
@@ -375,8 +386,10 @@ public function getDeletedTasks(int $userId)
                     'dueDate' => $dueDate,
                     'isRepeating' => true,
                     'isImportant' => true,
+                    'isAdminCreated' => $task->is_admin_created,
                     'tags' => $task->tags->pluck('name')->toArray()
                 ];
+                $totalTasks++;
             } else {
                 foreach ($task->taskDetails as $detail) {
                     if ($detail->status != 0 || $detail->priority <= 0) {
@@ -394,12 +407,14 @@ public function getDeletedTasks(int $userId)
                         'dueDate' => $dueDate,
                         'isRepeating' => $isRepeating,
                         'isImportant' => true,
+                        'isAdminCreated' => $task->is_admin_created,
                         'tags' => $task->tags->pluck('name')->toArray()
                     ];
+                    $totalTasks++;
                 }
             }
         }
-
+        $formattedTasks['total_tasks'] = $totalTasks;
         return $formattedTasks;
     }
 
@@ -437,7 +452,7 @@ public function getDeletedTasks(int $userId)
         });
 
         $tasks = $query->get();
-
+        $totalTasks = 0;
         // Nhóm task theo team hoặc taskGroup
         $formattedTasks = [];
         foreach ($tasks as $task) {
@@ -477,8 +492,10 @@ public function getDeletedTasks(int $userId)
                     'dueDate' => $dueDate,
                     'isRepeating' => true,
                     'isImportant' => $taskDetail->priority > 0,
+                    'isAdminCreated' => $task->is_admin_created,
                     'tags' => $task->tags->pluck('name')->toArray()
                 ];
+                $totalTasks ++;
             } else {
                 // Với task không lặp lại, lấy tất cả taskDetails khớp với title hoặc description
                 foreach ($task->taskDetails as $detail) {
@@ -499,12 +516,14 @@ public function getDeletedTasks(int $userId)
                         'dueDate' => $dueDate,
                         'isRepeating' => $isRepeating,
                         'isImportant' => $detail->priority > 0,
+                        'isAdminCreated' => $task->is_admin_created,
                         'tags' => $task->tags->pluck('name')->toArray()
                     ];
+                    $totalTasks++;
                 }
             }
         }
-
+        $formattedTasks['total_tasks']  = $totalTasks;
         return $formattedTasks;
     }
 
@@ -566,6 +585,7 @@ public function getDeletedTasks(int $userId)
                     'dueDate' => $dueDate,
                     'isRepeating' => true,
                     'isImportant' => $taskDetail->priority > 0,
+                    'isAdminCreated' => $task->is_admin_created,
                     'tags' => $task->tags->pluck('name')->toArray()
                 ];
             } else {
@@ -585,6 +605,7 @@ public function getDeletedTasks(int $userId)
                         'dueDate' => $dueDate,
                         'isRepeating' => $isRepeating,
                         'isImportant' => $detail->priority > 0,
+                        'isAdminCreated' => $task->is_admin_created,
                         'tags' => $task->tags->pluck('name')->toArray()
                     ];
                 }
@@ -696,6 +717,7 @@ public function getDeletedTasks(int $userId)
                     'dueDate' => $dueDate,
                     'isRepeating' => true,
                     'isImportant' => $taskDetail->priority > 0,
+                    'isAdminCreated' => $task->is_admin_created,
                     'tags' => $task->tags->pluck('name')->toArray()
                 ];
             } else {
@@ -715,6 +737,7 @@ public function getDeletedTasks(int $userId)
                         'dueDate' => $dueDate,
                         'isRepeating' => $isRepeating,
                         'isImportant' => $detail->priority > 0,
+                        'isAdminCreated' => $task->is_admin_created,
                         'tags' => $task->tags->pluck('name')->toArray()
                     ];
                 }
@@ -786,6 +809,7 @@ public function getDeletedTasks(int $userId)
                     'dueDate' => $dueDate,
                     'isRepeating' => true,
                     'isImportant' => $taskDetail->priority > 0,
+                    'isAdminCreated' => $task->is_admin_created,
                     'tags' => $task->tags->pluck('name')->toArray()
                 ];
             } else {
@@ -805,6 +829,7 @@ public function getDeletedTasks(int $userId)
                         'dueDate' => $dueDate,
                         'isRepeating' => $isRepeating,
                         'isImportant' => $detail->priority > 0,
+                        'isAdminCreated' => $task->is_admin_created,
                         'tags' => $task->tags->pluck('name')->toArray()
                     ];
                 }
