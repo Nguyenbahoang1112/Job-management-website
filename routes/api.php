@@ -22,12 +22,11 @@ Route::prefix('/auth')->group(function () {
     //forgot password
     Route::post('/send-otp', [ForgotPasswordController::class, 'sendOtp']);
     Route::post('/reset-password', [ForgotPasswordController::class, 'resetPasswordWithOtp']);
+    //verify
+    Route::post('/forgot-password', [ForgotPasswordController::class, 'sendOtp'])->name('password.forgot'); // Gửi OTP
+    Route::post('/verify-otp', [ForgotPasswordController::class, 'verifyOtp'])->name('password.verifyOtp'); // Xác minh OTP
+    Route::post('/reset', [ForgotPasswordController::class, 'resetPasswordWithOtp'])->name('password.reset'); // Đổi mật khẩu
 });
-
-// Route::middleware('auth:sanctum')->group(function () {
-//     Route::get('/email/verify/{id}/{hash}', [VerifyEmailController::class, 'verify'])->name('verification.verify');
-//     Route::post('/email/resend', [VerifyEmailController::class, 'resend'])->name('verification.send');
-// });
 
 //Chức năng quản lý notes của user
 Route::prefix('/notes')->name('notes.')->group(function () {
@@ -45,7 +44,7 @@ Route::prefix('/tags')->name('tags.')->group(function () {
     Route::delete('/delete/{id}', [TagController::class, 'destroy'])->name('destroy');
 });
 
-//Chức năng quản lý group của user
+//Chức năng quản lý group của users
 Route::prefix('/task-groups')->name('task-groups.')->group(function () {
     Route::get('/', [TaskGroupController::class, 'index'])->name('index');
     Route::post('/create', [TaskGroupController::class, 'store'])->name('store');
@@ -53,36 +52,37 @@ Route::prefix('/task-groups')->name('task-groups.')->group(function () {
     Route::delete('/delete/{id}', [TaskGroupController::class, 'destroy'])->name('destroy');
 });
 
-// Nhóm route quên mật khẩu OTP
-Route::prefix('auth')->group(function () {
-    Route::post('/forgot-password', [ForgotPasswordController::class, 'sendOtp'])->name('password.forgot'); // Gửi OTP
-    Route::post('/verify-otp', [ForgotPasswordController::class, 'verifyOtp'])->name('password.verifyOtp'); // Xác minh OTP
-    Route::post('/reset', [ForgotPasswordController::class, 'resetPasswordWithOtp'])->name('password.reset'); // Đổi mật khẩu
-});
-
-
-// Route::post('/email/resend', [VerifyEmailController::class, 'resend'])
-//     ->middleware(['auth:sanctum'])
-//     ->name('verification.send');
-
-
+//Nhóm route task
 Route::prefix('/task')->name('task.')->group(function () {
     Route::get('/', [TaskController::class, 'getTasks'])->name('list');
     Route::get('/completed', [TaskController::class, 'getCompletedTasks']);
     Route::get('/deleted', [TaskController::class, 'getDeletedTasks']);
     Route::get('/important', [TaskController::class, 'getImportantTasks'])->name('important');
-    Route::get('/search', [TaskController::class, 'searchTasksByTitle'])->name('search');
+    Route::post('/search', [TaskController::class, 'searchTasksByTitle'])->name('search');
     Route::get('/user-teams', [TaskController::class, 'getTasksByUserInTeams'])->name('task.user-teams');
     Route::get('/teams-and-groups', [TaskController::class, 'getTeamsAndTaskGroups'])->name('task.teams-and-groups');
     Route::get('/tasks-by-team-or-group', [TaskController::class, 'getTasksByTeamOrGroup'])->name('task.tasks-by-team-or-group');
     Route::get('/tasks-by-tag', [TaskController::class, 'getTasksByTag'])->name('task.tasks-by-tag');
+//
+    Route::post('/create', [TaskController::class, 'create'])->name('create');
+    Route::post('/duplicate/{id}', [TaskController::class, 'duplicate'])->name('duplicate');
+    Route::put('/update/{id}', [TaskController::class, 'update'])->name('update');
+    Route::put('/updateAll/{id}', [TaskController::class, 'updateAll'])->name('updateAll');
+    Route::post('/bin/{id}', [TaskController::class, 'destroy'])->name('removeToBin');
+    Route::post('/binAll/{id}', [TaskController::class, 'destroyAll'])->name('removeAllToBin');
+
+    Route::post('/updatePriority/{id}', [TaskController::class, 'updatePriority'])->name('updatePriority');
+    Route::post('/updateStatusToDoing/{id}', [TaskController::class, 'updateStatusToDoing'])->name('updateStatusToDoing');
+    Route::post('/updateStatusToDone/{id}', [TaskController::class, 'updateStatusToDone'])->name('updateStatusToDone');
+    Route::delete('/deleteAllBin', [TaskController::class, 'deleteAllBin'])->name('deleteAllBin');
+    Route::delete('/deleteBin/{taskDetailId}', [TaskController::class, 'deleteBin'])->name('deleteBin');
 });
 
 
-Route::prefix('/search-history')->group(function () {
-    Route::post('/', [SearchHistoryController::class, 'store'])->name('search-history.store');
-    Route::get('/', [SearchHistoryController::class, 'index'])->name('search-history.index');
-    Route::delete('/{id}', [SearchHistoryController::class, 'destroy'])->name('search-history.destroy');
+Route::prefix('/search-history')->name('searh-history.')->group(function () {
+    Route::get('/', [SearchHistoryController::class, 'index'])->name('index');
+    Route::delete('/{id}', [SearchHistoryController::class, 'destroy'])->name('destroy');
+    Route::delete('/', [SearchHistoryController::class, 'destroyAll'])->name('destroyAll');
 });
 
 Route::prefix('/teams')->group(function () {

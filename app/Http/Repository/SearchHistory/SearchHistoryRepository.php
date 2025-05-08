@@ -38,7 +38,7 @@ class SearchHistoryRepository extends BaseRepository{
 
     public function getSearchHistories($userId)
     {
-      
+
         return $this->model
             ->where('user_id', $userId)
             ->orderBy('created_at', 'desc')
@@ -53,7 +53,7 @@ class SearchHistoryRepository extends BaseRepository{
                 ];
             })
             ->toArray();
-    }   
+    }
 
     public function deleteSearchHistory(int $id, $userId)
     {
@@ -63,5 +63,8 @@ class SearchHistoryRepository extends BaseRepository{
         }
         return $this->delete($id);
     }
-
+    public function deleteAllHistory($userId)
+    {
+        return $this->model->where('user_id', $userId)->delete();
+    }
 }

@@ -29,4 +29,9 @@ class RepeatRuleRepository extends BaseRepository
         }
         return self::create($data);
     }
+    public function getRepeatRule($taskId)
+    {
+        $repeatRule = $this->model->find($taskId);
+        return $repeatRule;
+    }
 }
