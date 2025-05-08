@@ -95,7 +95,6 @@ class TaskController extends Controller
 
             //xét kiểu lặp lại
             switch ($request->repeat_type) {
-
                 //tạo mới task không lặp lại
                 case RepeatRule::REPEAT_TYPE_NONE:
                     $taskCreate = null;
@@ -369,7 +368,7 @@ class TaskController extends Controller
             $taskDetail = $this->taskDetailRepository->find($id);
             if ($taskDetail->task->is_admin_created == Task::TASK_CREATED_BY_USER) {
                 // dd($taskDetail->task->user_id, $taskDetail->task->task_group_id);
-                DB::transaction(function ($taskDetail) {
+                DB::transaction(function () use ($taskDetail) {
                     $taskCreate = $this->taskRepository->create([
                         'user_id' => $taskDetail->task->user_id,
                         'task_group_id' => $taskDetail->task->task_group_id,
@@ -383,9 +382,8 @@ class TaskController extends Controller
                         'time' => $taskDetail->time,
                         'priority' => $taskDetail->priority
                     ]);
-
-                    return ApiResponse::success($taskDetailCreate, 'Duplicate task successful', 200);
                 });
+                return ApiResponse::success(true, 'Duplicate task successful', 200);
             } else {
                 return ApiResponse::error('Task of admin created', 400);
             }
@@ -853,7 +851,7 @@ class TaskController extends Controller
         }
     }
 
-    public function deleteBin()
+    public function deleteAllBin()
     {
         try {
             $userId = auth('sanctum')->user()->id;
@@ -862,11 +860,42 @@ class TaskController extends Controller
             {
                 foreach ($taskDetails as $taskDetail)
                 {
-                    $this->taskDetailRepository->delete($taskDetail->id);
+                    $taskDetailsOfTask = $this->taskDetailRepository->getAllTaskDetail($taskDetail->task_id);
+                    if ($taskDetailsOfTask->count() == 1)
+                    {
+                        $this->taskRepository->delete($taskDetail->task_id);
+                    }
+                    else if ($taskDetailsOfTask->count() > 1)
+                    {
+                        $this->taskDetailRepository->delete($taskDetail->id);
+                    }
                 }
                 return ApiResponse::success(true, 'Delete bin successful', 200);
             } else {
                 return ApiResponse::error('Done have task in bin', 400);
+            }
+        } catch (Exception $e) {
+            return ApiResponse::error($e->getMessage(), ApiResponse::ERROR);
+        }
+    }
+    public function deleteBin($taskDetailId)
+    {
+        try {
+            $taskDetail = $this->taskDetailRepository->find($taskDetailId);
+            $taskDetailsOfTask = $this->taskDetailRepository->getAllTaskDetail($taskDetail->task_id);
+            if ($taskDetailsOfTask->count() == 1)
+            {
+                $deleteBin = $this->taskRepository->delete($taskDetail->task_id);
+            }
+            else if ($taskDetailsOfTask->count() > 1)
+            {
+                $deleteBin = $this->taskDetailRepository->delete($taskDetail->id);
+            }
+            if ($deleteBin)
+            {
+                return ApiResponse::success($deleteBin, 'Delete bin successful', 200);
+            } else {
+                return ApiResponse::error('Delete bin failed', 400);
             }
         } catch (Exception $e) {
             return ApiResponse::error($e->getMessage(), ApiResponse::ERROR);

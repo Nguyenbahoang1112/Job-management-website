@@ -53,6 +53,15 @@ class SearchHistoryController extends Controller
             return ApiResponse::error($e->getMessage(), ApiResponse::FORBIDDEN);
         }
     }
-
+    public function destroyAll()
+    {
+        try {
+            $userId = auth('sanctum')->user()->id;
+            $this->searchHistoryRepository->deleteAllHistory($userId);
+            return ApiResponse::success([], 'Search history deleted all successfully.', ApiResponse::SUCCESS);
+        } catch (\Exception $e) {
+            return ApiResponse::error($e->getMessage(), ApiResponse::FORBIDDEN);
+        }
+    }
 
 }

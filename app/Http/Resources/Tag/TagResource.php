@@ -19,8 +19,6 @@ class TagResource extends JsonResource
             'name' => $this->name,
             'is_admin_created' => $this->is_admin_created,
             'user_id' => $this->user_id,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
         ];
     }
 }

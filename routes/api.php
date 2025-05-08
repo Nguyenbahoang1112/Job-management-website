@@ -44,7 +44,7 @@ Route::prefix('/tags')->name('tags.')->group(function () {
     Route::delete('/delete/{id}', [TagController::class, 'destroy'])->name('destroy');
 });
 
-//Chức năng quản lý group của user
+//Chức năng quản lý group của users
 Route::prefix('/task-groups')->name('task-groups.')->group(function () {
     Route::get('/', [TaskGroupController::class, 'index'])->name('index');
     Route::post('/create', [TaskGroupController::class, 'store'])->name('store');
@@ -74,13 +74,15 @@ Route::prefix('/task')->name('task.')->group(function () {
     Route::post('/updatePriority/{id}', [TaskController::class, 'updatePriority'])->name('updatePriority');
     Route::post('/updateStatusToDoing/{id}', [TaskController::class, 'updateStatusToDoing'])->name('updateStatusToDoing');
     Route::post('/updateStatusToDone/{id}', [TaskController::class, 'updateStatusToDone'])->name('updateStatusToDone');
-    Route::delete('/deleteBin', [TaskController::class, 'deleteBin'])->name('deleteBinTask');
+    Route::delete('/deleteAllBin', [TaskController::class, 'deleteAllBin'])->name('deleteAllBin');
+    Route::delete('/deleteBin/{taskDetailId}', [TaskController::class, 'deleteBin'])->name('deleteBin');
 });
 
 
-Route::prefix('/search-history')->group(function () {
-    Route::get('/', [SearchHistoryController::class, 'index'])->name('search-history.index');
-    Route::delete('/{id}', [SearchHistoryController::class, 'destroy'])->name('search-history.destroy');
+Route::prefix('/search-history')->name('searh-history.')->group(function () {
+    Route::get('/', [SearchHistoryController::class, 'index'])->name('index');
+    Route::delete('/{id}', [SearchHistoryController::class, 'destroy'])->name('destroy');
+    Route::delete('/', [SearchHistoryController::class, 'destroyAll'])->name('destroyAll');
 });
 
 Route::prefix('/teams')->group(function () {

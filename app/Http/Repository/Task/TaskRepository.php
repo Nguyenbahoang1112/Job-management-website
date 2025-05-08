@@ -2,14 +2,16 @@
 
 namespace App\Http\Repository\Task;
 
+use Carbon\Carbon;
 use App\Models\Task;
+use App\Models\Team;
+use App\Models\TaskGroup;
 use App\Models\RepeatRule;
+use App\Models\TaskDetail;
+
 use Illuminate\Support\Facades\DB;
 use App\Http\Repository\BaseRepository;
-use App\Models\TaskDetail;
-use Carbon\Carbon;
 
-use App\Models\Team;
 class TaskRepository extends BaseRepository
 {
     public function __construct(Task $task)
@@ -414,7 +416,7 @@ class TaskRepository extends BaseRepository
         $query = Task::with([
             'taskDetails' => function ($q) use ($title) {
                 $q->select('id', 'task_id', 'title', 'description', 'due_date', 'time', 'priority', 'status', 'parent_id')
-                    ->where('status', 0) // Chỉ lấy task chưa hoàn thành
+                    ->where('status','!=', 2) // Chỉ lấy task chưa hoàn thành
                     ->where(function ($subQuery) use ($title) {
                         $subQuery->where('title', 'LIKE', "%{$title}%") // Tìm theo title
                                  ->orWhere('description', 'LIKE', "%{$title}%"); // Tìm theo description
@@ -430,7 +432,7 @@ class TaskRepository extends BaseRepository
                 ->orWhereIn('team_id', $teamIds);
         })
         ->whereHas('taskDetails', function ($q) use ($title) {
-            $q->where('status', 0) // Chỉ lấy task chưa hoàn thành
+            $q->where('status', '!=', 2) // Chỉ lấy task chưa hoàn thành
             ->where(function ($subQuery) use ($title) {
                   $subQuery->where('title', 'LIKE', "%{$title}%") // Tìm theo title
                            ->orWhere('description', 'LIKE', "%{$title}%"); // Tìm theo description
@@ -452,7 +454,7 @@ class TaskRepository extends BaseRepository
             if ($isRepeating) {
                 // Với task lặp lại, tìm taskDetail khớp với title hoặc description và gần nhất với ngày hiện tại
                 $taskDetail = $task->taskDetails
-                    ->where('status', 0)
+                    ->where('status', '!=', 2)
                     ->where(function ($detail) use ($title) {
                         return stripos($detail->title, $title) !== false
                         || ($detail->description !== null && stripos($detail->description, $title) !== false);
@@ -473,6 +475,7 @@ class TaskRepository extends BaseRepository
 
                 $formattedTasks[$groupName][] = [
                     'id' => $taskDetail->id,
+                    'status' => $taskDetail->status,
                     'title' => $taskDetail->title,
                     'description' => $taskDetail->description,
                     'dueDate' => $dueDate,
@@ -495,6 +498,7 @@ class TaskRepository extends BaseRepository
 
                     $formattedTasks[$groupName][] = [
                         'id' => $detail->id,
+                        'status' => $taskDetail->status,
                         'title' => $detail->title,
                         'description' => $detail->description,
                         'dueDate' => $dueDate,
@@ -595,38 +599,67 @@ class TaskRepository extends BaseRepository
         return $formattedTasks;
     }
 
+    // public function getTeamsAndTaskGroups(int $userId)
+    // {
+    //     // Lấy danh sách team mà user tham gia
+    //     $teams = Team::whereHas('users', function ($query) use ($userId) {
+    //         $query->where('user_id', $userId);
+    //     })->pluck('name')->toArray();
+
+    //     // Lấy danh sách team_id mà user tham gia để lọc task
+    //     $teamIds = Team::whereHas('users', function ($query) use ($userId) {
+    //         $query->where('user_id', $userId);
+    //     })->pluck('id')->toArray();
+
+    //     // Lấy danh sách task group từ các task của user (bao gồm task cá nhân và task trong team)
+    //     $taskGroups = Task::where(function ($query) use ($userId, $teamIds) {
+    //         $query->where('user_id', $userId)
+    //             ->orWhereIn('team_id', $teamIds);
+    //         })
+    //         ->whereHas('taskGroup') // Chỉ lấy task có taskGroup
+    //         ->with('taskGroup:id,name')
+    //         ->get()
+    //         ->pluck('taskGroup.name')
+    //         ->filter() // Loại bỏ null
+    //         ->unique() // Loại bỏ trùng lặp
+    //         ->values()
+    //         ->toArray();
+
+    //     // Kết hợp danh sách team và task group, team trước, task group sau
+    //     return [
+    //         'teams' => $teams,
+    //         'task_groups' => $taskGroups
+    //     ];
+    // }
     public function getTeamsAndTaskGroups(int $userId)
     {
-        // Lấy danh sách team mà user tham gia
+        // Lấy danh sách team mà user tham gia (gồm id và name)
         $teams = Team::whereHas('users', function ($query) use ($userId) {
             $query->where('user_id', $userId);
-        })->pluck('name')->toArray();
+        })->get(['id', 'name']) // lấy cả id và name
+        ->map(function ($team) {
+            return [
+                'id' => $team->id,
+                'name' => $team->name,
+            ];
+        })
+        ->toArray();
 
         // Lấy danh sách team_id mà user tham gia để lọc task
-        $teamIds = Team::whereHas('users', function ($query) use ($userId) {
-            $query->where('user_id', $userId);
-        })->pluck('id')->toArray();
+        $teamIds = array_column($teams, 'id');
 
         // Lấy danh sách task group từ các task của user (bao gồm task cá nhân và task trong team)
-        $taskGroups = Task::where(function ($query) use ($userId, $teamIds) {
-            $query->where('user_id', $userId)
-                ->orWhereIn('team_id', $teamIds);
-            })
-            ->whereHas('taskGroup') // Chỉ lấy task có taskGroup
-            ->with('taskGroup:id,name')
-            ->get()
-            ->pluck('taskGroup.name')
-            ->filter() // Loại bỏ null
-            ->unique() // Loại bỏ trùng lặp
-            ->values()
-            ->toArray();
+        $taskGroups = $taskGroups = TaskGroup::where('user_id', 2)
+            ->orWhere('is_admin_created', 1)
+            ->select('id', 'name')
+            ->get();
 
-        // Kết hợp danh sách team và task group, team trước, task group sau
         return [
             'teams' => $teams,
             'task_groups' => $taskGroups
         ];
     }
+
     public function getTasksByTeamOrGroup(int $userId, $teamId = null, $taskGroupId = null)
     {
         // Lấy danh sách team_id mà user tham gia để kiểm tra quyền truy cập

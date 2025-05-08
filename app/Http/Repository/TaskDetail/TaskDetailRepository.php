@@ -152,5 +152,10 @@ class TaskDetailRepository extends BaseRepository
             ->get();
         return $taskDetails;
     }
-
+    public function getExpiredFromBin($date)
+    {
+        return TaskDetail::where('status', TaskDetail::STATUS_DELETING)
+                        ->where('updated_at', '<', $date)
+                        ->get();
+    }
 }

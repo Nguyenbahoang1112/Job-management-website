@@ -40,44 +40,42 @@ class ForgotPasswordController extends Controller
             'otp' => ['required'],
             'password' => ['required', 'confirmed', 'min:6']
         ]);
-    
+
         $otp = User::where('email', $request->email)
                   ->where('otp', $request->otp)
                   ->where('otp_expires_at', '>=', now())
                   ->first();
-    
+
         if (!$otp) {
             return response()->json(['message' => 'OTP không đúng hoặc đã hết hạn.'], 422);
         }
-    
+
         $user = User::where('email', $request->email)->first();
         $user->password = bcrypt($request->password);
         $user->save();
         $this->otpRepo->deleteAllForEmail($user->email);
-    
+
         return response()->json(['message' => 'Đặt lại mật khẩu thành công.']);
     }
-    
+
 
     public function verifyOtp(Request $request)
-{
-    $request->validate([
-        'email' => ['required', 'email'],
-        'otp' => ['required']
-    ]);
+    {
+        $request->validate([
+            'email' => ['required', 'email'],
+            'otp' => ['required']
+        ]);
 
-    $otp = User::where('email', $request->email)
-              ->where('otp', $request->otp)
-              ->where('otp_expires_at', '>=', now()->addMinutes(10)) // Hạn OTP 10 phút
-              ->first();
+        $otp = User::where('email', $request->email)
+                ->where('otp', $request->otp)
+                ->where('otp_expires_at', '>=', now()->addMinutes(10)) // Hạn OTP 10 phút
+                ->first();
 
-    if (!$otp) {
-        return response()->json(['message' => 'OTP không đúng hoặc đã hết hạn.'], 422);
+        if (!$otp) {
+            return response()->json(['message' => 'OTP không đúng hoặc đã hết hạn.'], 422);
+        }
+
+        return response()->json(['message' => 'Xác thực OTP thành công.']);
     }
 
-    return response()->json(['message' => 'Xác thực OTP thành công.']);
 }
-
-}
-
-
