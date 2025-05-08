@@ -669,9 +669,9 @@ class TaskRepository extends BaseRepository
         $teamIds = array_column($teams, 'id');
 
         // Lấy danh sách task group từ các task của user (bao gồm task cá nhân và task trong team)
-        $taskGroups = $taskGroups = TaskGroup::where('user_id', 2)
+        $taskGroups = $taskGroups = TaskGroup::where('user_id', $userId)
             ->orWhere('is_admin_created', 1)
-            ->select('id', 'name')
+            ->select('id', 'name', 'is_admin_created')
             ->get();
 
         return [

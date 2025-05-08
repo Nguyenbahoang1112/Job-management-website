@@ -30,7 +30,7 @@ class CreateTaskRequest extends BaseFormRequest
             'due_date'           => 'nullable|date|after_or_equal:today',
             'time'               => 'required|date_format:H:i',
             'repeat_type'        => 'required|integer|in:0,1,2,3', // kiểu lặp: không lặp, hằng ngày, v.v...
-            'repeat_option'      => 'required|integer|in:1,2',
+            'repeat_option'      => 'nullable|integer|in:1,2',
             'repeat_interval'    => 'nullable|integer|min:1|max:365',
             'repeat_due_date'    => 'nullable|date|after_or_equal:today',
             'tag_ids'            => 'nullable|array',

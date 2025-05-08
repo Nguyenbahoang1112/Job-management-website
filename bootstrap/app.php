@@ -19,5 +19,7 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
-        //
-    })->create();
+
+    })
+    // ->singleton(ConsoleKernelContract::class, ConsoleKernel::class) // Đăng ký Console Kerne
+    ->create();

@@ -39,29 +39,33 @@ class DeleteOldTask extends Command
 
     public function handle()
     {
-        $expiredTaskDetails = $this->taskDetailRepository->getExpiredFromBin(Carbon::now()->subDays(30));
+        if ($this->option('dry-run')) {
+            $this->info('Command chạy thử, không thay đổi dữ liệu.');
+        } else {
+            $expiredTaskDetails = $this->taskDetailRepository->getExpiredFromBin(Carbon::now()->subDays(30));
 
-        $deletedTaskCount = 0;
-        $deletedTaskDetailCount = 0;
+            $deletedTaskCount = 0;
+            $deletedTaskDetailCount = 0;
 
-        foreach ($expiredTaskDetails as $taskDetail) {
-            $relatedDetails = $this->taskDetailRepository->getAllTaskDetail($taskDetail->task_id);
+            foreach ($expiredTaskDetails as $taskDetail) {
+                $relatedDetails = $this->taskDetailRepository->getAllTaskDetail($taskDetail->task_id);
 
-            if ($relatedDetails->count() == 1) {
-                $this->taskRepository->delete($taskDetail->task_id);
-                $deletedTaskCount++;
-            } else {
-                $this->taskDetailRepository->delete($taskDetail->id);
-                $deletedTaskDetailCount++;
+                if ($relatedDetails->count() == 1) {
+                    $this->taskRepository->delete($taskDetail->task_id);
+                    $deletedTaskCount++;
+                } else {
+                    $this->taskDetailRepository->delete($taskDetail->id);
+                    $deletedTaskDetailCount++;
+                }
             }
+
+            $message = "Đã xóa {$deletedTaskCount} task và {$deletedTaskDetailCount} task detail quá hạn.";
+
+            // Hiện ra console
+            $this->info($message);
+
+            // Ghi log
+            Log::info('[DeleteOldTask] ' . $message);
         }
-
-        $message = "Đã xóa {$deletedTaskCount} task và {$deletedTaskDetailCount} task detail quá hạn.";
-
-        // Hiện ra console
-        $this->info($message);
-
-        // Ghi log
-        Log::info('[DeleteOldTask] ' . $message);
     }
 }
