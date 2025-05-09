@@ -18,7 +18,7 @@ class VerifyEmailController extends Controller
     protected function redirectTo()
     {
         // URL frontend muốn chuyển đến, ví dụ trang login FE
-        return 'http://192.168.0.88:3000/login';
+        return 'http://192.168.0.51:3000/login';
     }
     public function verify(Request $request, $id, $hash)
     {

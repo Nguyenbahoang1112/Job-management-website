@@ -65,8 +65,7 @@ class TaskRepository extends BaseRepository
             'tags:id,name'
         ])
         ->where(function ($query) use ($userId, $teamIds) {
-            $query->where('user_id', $userId)
-                ->orWhereIn('team_id', $teamIds);
+            $query->where('user_id', $userId);
         });
 
         // Xây dựng điều kiện lọc thời gian
@@ -165,7 +164,7 @@ class TaskRepository extends BaseRepository
 
                     $formattedTasks[$groupName][] = [
                         'id' => $detail->id,
-                        'task_id' => $taskDetail->task_id,
+                        'task_id' => $task->task_id,
                         'title' => $detail->title,
                         'description' => $detail->description,
                         'dueDate' => $dueDate,

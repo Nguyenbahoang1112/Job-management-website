@@ -18,8 +18,8 @@ class NoteResource extends JsonResource
             'id' => $this->id,
             'content' => $this->content,
             'user_id' => $this->user_id,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at
+            'created_at' => $this->created_at->timezone('Asia/Ho_Chi_Minh')->toDateTimeString(),
+            'updated_at' => $this->updated_at->timezone('Asia/Ho_Chi_Minh')->toDateTimeString(),
         ];
     }
 }
