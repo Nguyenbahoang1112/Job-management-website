@@ -1,4 +1,5 @@
 <!-- README -->
+Màn hình của user
 ![image](https://github.com/user-attachments/assets/701c0ad9-69b4-49a6-9ce6-c88fe652c03f)
 ![image](https://github.com/user-attachments/assets/3b4b00e9-5cc1-4f1e-a57f-4f6390227a11)
 ![image](https://github.com/user-attachments/assets/d74c72ea-2715-4c11-a22f-ea7017119bbc)
@@ -8,3 +9,14 @@
 ![image](https://github.com/user-attachments/assets/f8386d39-f41c-490b-9468-9f3c8ddf1fb8)
 ![image](https://github.com/user-attachments/assets/e2f24e5e-1fb6-44ea-aed7-d1734671d793)
 
+Màn hình của admin (blade)
+![image](https://github.com/user-attachments/assets/99fbea9c-fc68-49a7-a945-50a730a4bd95)
+![image](https://github.com/user-attachments/assets/7b80fa73-6ec2-4662-a3bd-cd72b08b631c)
+![image](https://github.com/user-attachments/assets/5ac1ee0f-36af-49fb-a66e-d20792978ba9)
+![image](https://github.com/user-attachments/assets/898581b4-4aaf-478d-ab51-192112386fe6)
+![image](https://github.com/user-attachments/assets/9e3cfcbc-2148-49b7-9259-81df64d9c85e)
+![image](https://github.com/user-attachments/assets/96964073-7960-44e7-a552-2ef88cb33bd8)
+![image](https://github.com/user-attachments/assets/f946520f-de8e-49ca-868a-d76ee6439464)
+![image](https://github.com/user-attachments/assets/07f3d78c-434e-4363-a930-b0528c9dadb6)
+![image](https://github.com/user-attachments/assets/dfac210e-d100-4991-808c-cea7a79a552a)
+![image](https://github.com/user-attachments/assets/36127d84-dbc9-4557-9f1c-38fa7c9f19ea)
